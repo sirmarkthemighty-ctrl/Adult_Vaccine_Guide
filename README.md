@@ -17,8 +17,11 @@ the full guideline, or the product label.
   and "updated in 2026". Search covers names, brands and the full text.
 - One **Tables** guide with Table 1 (by age) and Table 2 (by condition): each shows as a colour-coded table, and its **PDF** switch shows that table's page of the original PDF
   in the page (pdf.js from cdnjs; falls back to page pictures offline), with Open / Save when the page is not framed.
-- Pneumococcal planner (Tables 3 and 4), hepatitis B Figure 1, and guides for pregnancy, solid organ and stem cell
-  transplant, asplenia, travellers, and the general principles of adult vaccination.
+- Pneumococcal pathway: pick age, highest-risk condition and previous vaccines, and it summarises the plan from
+  Tables 3 and 4 (both options as dose timelines, the footnotes that apply, reminders, Copy plan); the full tables stay
+  below as folded details.
+- Hepatitis B Figure 1, and guides for pregnancy, solid organ and stem cell transplant, asplenia, travellers, and the
+  general principles of adult vaccination.
 - Light and dark themes, Thai / English, phone layout, colour-coded blocks that fold.
 
 Tap the version badge next to the title for the changelog.

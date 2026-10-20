@@ -234,6 +234,39 @@ a { color: var(--accent); }
 .viewseg button + button { border-left: 1px solid var(--line2); }
 .viewseg button.on { background: var(--accent2); color: #fff; }
 .viewseg svg { width: 15px; height: 15px; }
+/* pneumococcal pathway */
+.pw { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.pw-step { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; position: relative; padding-bottom: 14px; }
+.pw-step::before { content: ""; position: absolute; left: 14px; top: 30px; bottom: 0; width: 2px; background: var(--line2); }
+.pw-num { width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; background: var(--panel2); border: 2px solid var(--line2); color: var(--muted); position: relative; z-index: 1; }
+.pw-step.done .pw-num { background: var(--accent2); border-color: var(--accent2); color: #fff; }
+.pw-step.done::before { background: var(--accent2); }
+.pw-body { min-width: 0; display: flex; flex-direction: column; gap: 4px; padding-top: 4px; }
+.pw-body .ask { margin: 0; }
+.pw-opts { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 6px; margin-top: 4px; }
+.pw-opt { text-align: left; border: 1px solid var(--line2); background: var(--panel2); border-radius: 10px; padding: 8px 10px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.pw-opt b { font-size: 13px; }
+.pw-opt span { font-size: 11.5px; color: var(--faint); line-height: 1.35; }
+.pw-opt:hover { border-color: var(--accent); }
+.pw-opt.on { border-color: var(--accent2); background: color-mix(in srgb, var(--accent2) 16%, var(--panel)); box-shadow: 0 0 0 1px var(--accent2) inset; }
+.plan { border: 2px solid var(--accent2); border-radius: 14px; padding: 14px; background: color-mix(in srgb, var(--accent2) 7%, var(--panel)); display: flex; flex-direction: column; gap: 10px; }
+.plan-h { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.plan-h h3 { margin: 0; font-size: 17px; }
+.plan-lv { display: flex; gap: 8px; align-items: flex-start; font-weight: 600; font-size: 13.5px; }
+.plan-opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; }
+.plan-opt { border: 1px solid var(--line); background: var(--panel); border-radius: 10px; padding: 10px; min-width: 0; }
+.plan-sub ul { margin: 0; padding-left: 20px; font-size: 13px; }
+.plan-sub li { margin: 3px 0; }
+.tl { list-style: none; margin: 0; padding: 0 0 0 4px; }
+.tl-node { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 2px 0; }
+.tl-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent2); flex-shrink: 0; }
+.tl-last .tl-dot { background: var(--faint); }
+.tl-last { color: var(--muted); font-size: 12.5px; font-weight: 600; }
+.tl-n { font-size: 11.5px; font-weight: 700; color: var(--faint); min-width: 48px; }
+.tl-gap { margin-left: 4px; border-left: 2px dashed var(--line2); padding: 3px 0 3px 12px; font-size: 12.5px; color: var(--muted); }
+.tl-arr { margin-right: 6px; color: var(--faint); }
+.tl-note { font-size: 12px; color: var(--muted); padding: 0 0 2px 18px; }
+.vx { white-space: normal; }
 
 </style>
 </head>
@@ -1522,12 +1555,13 @@ const GUIDE_META = {
 
 const changelogData = [
   {
-    version: '1.1.0', date: 'October 20, 2026', title: 'First release',
+    version: '1.2.0', date: 'October 20, 2026', title: 'First release',
     features: [
       'Vaccine database built from the IDAT "Recommended Adult and Elderly Immunization 2026" (คำแนะนำการให้วัคซีนป้องกันโรคสำหรับผู้ใหญ่และผู้สูงอายุ ปี พ.ศ. 2569): 17 vaccines with information, administration, precautions, additional advice and references, in English and Thai.',
       'Filters by age group (Table 1), condition (Table 2), recommendation level, live / non-live vaccine and "updated in 2026"; search covers names, brands and the full text.',
       'One Tables guide holds Table 1 (by age) and Table 2 (by condition); each opens as a colour-coded table, and its PDF button shows that table\'s page of the original guideline PDF.',
-      'General principles of adult vaccination (first guide button), pneumococcal planner (Tables 3 and 4) and special-population guides (pregnancy, organ and stem cell transplant, asplenia, travellers).',
+      'General principles of adult vaccination (first guide button) and special-population guides (pregnancy, organ and stem cell transplant, asplenia, travellers).',
+      'Pneumococcal pathway: pick age, the highest-risk condition and previous vaccines, and it summarises the plan for the doctor from Tables 3 and 4 (both options as dose timelines, the footnotes that apply, reminders, Copy plan); the full tables stay below as folded details.',
       'Light and dark mode, Thai / English switch, colour-coded blocks that fold.',
     ],
     bugs: [],
@@ -1558,7 +1592,7 @@ const T = {
     showing: (n, m) => `Showing <b>${n}</b> of <b>${m}</b> vaccines`,
     details: 'DETAILS', table1: 'Table 1 · by age', table2: 'Table 2 · by condition', noT1: 'Not in Table 1 (see Table 2)',
     ageGroups: 'Age groups', conditions: 'Conditions', dose: 'Dose',
-    gPdf: 'Full table (PDF)', gTables: 'Tables · Age & conditions', colourTable: 'Colour table', gPcv: 'Pneumococcal planner', gGen: 'General principles',
+    gPdf: 'Full table (PDF)', gTables: 'Tables · Age & conditions', colourTable: 'Colour table', gPcv: 'Pneumococcal pathway', gGen: 'General principles',
     sTables: 'Tables', sPcv: 'Pneumo', sGen: 'Principles',
     close: 'Close', page: (p) => `Guideline p. ${p}`, refs: 'References', related: 'Special-population guides',
     figure: 'Original figure', viewPage: (p) => `View page ${p}`,
@@ -1596,7 +1630,7 @@ const T = {
     showing: (n, m) => `แสดง <b>${n}</b> จาก <b>${m}</b> วัคซีน`,
     details: 'รายละเอียด', table1: 'ตารางที่ 1 · ตามอายุ', table2: 'ตารางที่ 2 · ตามภาวะ', noT1: 'ไม่อยู่ในตารางที่ 1 (ดูตารางที่ 2)',
     ageGroups: 'กลุ่มอายุ', conditions: 'ภาวะ', dose: 'ขนาด',
-    gPdf: 'ตารางฉบับเต็ม (PDF)', gTables: 'ตาราง · อายุและภาวะ', colourTable: 'ตารางสี', gPcv: 'วางแผนวัคซีนนิวโมฯ', gGen: 'หลักการทั่วไป',
+    gPdf: 'ตารางฉบับเต็ม (PDF)', gTables: 'ตาราง · อายุและภาวะ', colourTable: 'ตารางสี', gPcv: 'แนวทางวัคซีนนิวโมฯ', gGen: 'หลักการทั่วไป',
     sTables: 'ตาราง', sPcv: 'นิวโมฯ', sGen: 'หลักการ',
     close: 'ปิด', page: (p) => `หน้า ${p} ในคำแนะนำ`, refs: 'เอกสารอ้างอิง', related: 'คำแนะนำในกลุ่มประชากรเฉพาะ',
     figure: 'ภาพต้นฉบับ', viewPage: (p) => `ดูหน้า ${p}`,
@@ -2028,28 +2062,180 @@ function openPage(p) {
   openModal(mHead(esc(t().figure), esc(t().page(p))) + `<div class="mb"><div class="imgbox"><img alt="Guideline page ${p}" src="${ASSETS['page' + p]}"></div></div>` + mFoot(), { wide: true, rerender: () => openPage(p) });
 }
 
-/* ---------- pneumococcal planner ---------- */
-const P = { prior: null, g: null, i: null };
+/* ---------- pneumococcal pathway ---------- */
+// An algorithm built on Tables 3 and 4 (guideline pages 24–26): age → highest-risk condition → previous
+// pneumococcal vaccine → (if any) which vaccines → a plan summary for the doctor. The tables, footnotes and
+// additional recommendations stay below as folded blocks.
+const PW = { age: null, risk: null, prior: null, i: null };
+const PW_AGES = [
+  { id: '18', en: '18–49 years', th: '18–49 ปี' },
+  { id: '50', en: '50–64 years', th: '50–64 ปี' },
+  { id: '65', en: '≥65 years', th: '≥65 ปี' },
+];
+// listed from lowest to highest risk; the doctor picks the highest one that applies
+const PW_RISKS = [
+  { id: 'none', en: 'No risk condition', th: 'ไม่มีภาวะเสี่ยง', ex: { en: 'No comorbidity listed below', th: 'ไม่มีภาวะร่วมหรือโรคประจำตัวตามรายการด้านล่าง' } },
+  { id: 'chronic', en: 'Chronic condition, not immunocompromising', th: 'โรคประจำตัวที่ไม่ใช่ภาวะภูมิคุ้มกันบกพร่อง', ex: { en: 'Chronic heart, lung or liver disease, diabetes, smoking, alcoholism', th: 'โรคหัวใจเรื้อรัง โรคปอดเรื้อรัง โรคตับเรื้อรัง เบาหวาน สูบบุหรี่ พิษสุราเรื้อรัง' } },
+  { id: 'ci', en: 'Cochlear implant or CSF leak', th: 'ฝังประสาทหูเทียมหรือน้ำไขสันหลังรั่ว', ex: { en: 'Cochlear implant, cerebrospinal fluid leak', th: 'cochlear implants, cerebrospinal fluid leaks' } },
+  { id: 'ic', en: 'Immunocompromised', th: 'ภาวะภูมิคุ้มกันบกพร่อง', ex: { en: 'CKD (especially stage ≥4), nephrotic syndrome, asplenia or hyposplenia, HIV with CD4 <200 cells/mm³ or <15%, congenital or acquired immunodeficiency, cancer (leukaemia, lymphoma, multiple myeloma), immunosuppressants (including long-term systemic steroids or radiotherapy), solid organ transplant', th: 'โรคไตเรื้อรัง (โดยเฉพาะระยะที่ 4 ขึ้นไป) nephrotic syndrome ไม่มีม้ามหรือม้ามทำงานบกพร่อง ติดเชื้อเอชไอวีที่มีซีดีสี่น้อยกว่า 200 เซลล์/ลบ.มม. หรือร้อยละ 15 congenital หรือ acquired immunodeficiency โรคมะเร็ง (มะเร็งเม็ดเลือดขาว มะเร็งต่อมน้ำเหลือง multiple myeloma) ได้รับยากดภูมิคุ้มกัน (รวมถึง systemic steroid ระยะยาวหรือรังสีรักษา) ได้รับการปลูกถ่ายอวัยวะ' } },
+  { id: 'hsct', en: 'Haematopoietic stem cell transplant', th: 'ปลูกถ่ายเซลล์ต้นกำเนิดเม็ดเลือด', ex: { en: 'HSCT recipient', th: 'ผู้ได้รับการปลูกถ่ายเซลล์ต้นกำเนิดเม็ดเลือด' } },
+];
+const PWT = {
+  en: {
+    title: 'Pneumococcal pathway', sub: 'Algorithm from Tables 3 and 4 · pages 24–26',
+    q1: 'Age', q2: 'Highest-risk condition', q2h: 'Pick the highest one that applies.', q3: 'Previous pneumococcal vaccine?', q4: 'Which vaccines were given?',
+    never: 'Never', yes: 'Yes', plan: 'Plan', opt1: 'Option 1', opt2: 'Option 2', either: 'Either option may be used.', both: 'Plan',
+    lastDose: 'Last pneumococcal dose', dose: (n) => `Dose ${n}`, notes: 'Notes for this plan', remind: 'Before you give it', details: 'Details',
+    copy: 'Copy plan', copied: 'Plan copied.', copyFail: 'Copy blocked by the browser; select the plan text instead.', restart: 'Start again',
+    lvRec65: 'Recommended: everyone aged ≥65.', lvRecRisk: 'Recommended: age 18–64 with a risk condition.', lvOpt: 'Consider (optional): age 50–64 without a risk condition.',
+    lvNone: 'Not routinely recommended: age 18–49 with no risk condition. Table 1 recommends pneumococcal vaccine at this age only with an additional risk factor or another indication.',
+    lvHsct: 'Recommended: haematopoietic stem cell transplant recipients.',
+    src: (tbl) => `Source: Table ${tbl}, IDAT 2026`,
+    r1: 'Dose 0.5 mL, intramuscular.', r2: 'PCV13 or PCV15 can be chosen: their coverage of Thai serotypes does not differ.',
+    r3: 'Contraindicated: PCV in anyone with a history of allergy to diphtheria toxoid vaccine.',
+    r4: 'Pregnant with a comorbidity and never vaccinated: consider PCV20, 1 dose.',
+    r5: 'Planned splenectomy: vaccinate at least 2 weeks before surgery; if not possible, 2 weeks after (asplenia chapter, p. 45).',
+    r6: 'Start inactivated vaccines 3–6 months after HSCT; pneumococcal from 3 months (HSCT chapter, p. 42).',
+  },
+  th: {
+    title: 'แนวทางวัคซีนนิวโมค็อกคัส', sub: 'แผนภูมิจากตารางที่ 3 และ 4 · หน้า 24–26',
+    q1: 'อายุ', q2: 'ภาวะเสี่ยงสูงสุด', q2h: 'เลือกข้อที่มีความเสี่ยงสูงสุดที่ผู้ป่วยมี', q3: 'เคยได้รับวัคซีนนิวโมค็อกคัสหรือไม่', q4: 'เคยได้รับวัคซีนใด',
+    never: 'ไม่เคย', yes: 'เคย', plan: 'แผนการให้วัคซีน', opt1: 'แบบที่ 1', opt2: 'แบบที่ 2', either: 'เลือกแบบใดก็ได้', both: 'แผน',
+    lastDose: 'วัคซีนนิวโมค็อกคัสโดสสุดท้าย', dose: (n) => `โดสที่ ${n}`, notes: 'หมายเหตุสำหรับแผนนี้', remind: 'ก่อนให้วัคซีน', details: 'รายละเอียด',
+    copy: 'คัดลอกแผน', copied: 'คัดลอกแผนแล้ว', copyFail: 'เบราว์เซอร์ไม่อนุญาตให้คัดลอก กรุณาเลือกข้อความแผนแทน', restart: 'เริ่มใหม่',
+    lvRec65: 'แนะนำ: ผู้ที่มีอายุตั้งแต่ 65 ปีขึ้นไปทุกคน', lvRecRisk: 'แนะนำ: อายุ 18–64 ปี ที่มีภาวะร่วมหรือโรคประจำตัว', lvOpt: 'พิจารณาให้ (ทางเลือก): อายุ 50–64 ปี ที่ไม่มีภาวะร่วมหรือโรคประจำตัว',
+    lvNone: 'ไม่แนะนำเป็นการทั่วไป: อายุ 18–49 ปี ที่ไม่มีภาวะเสี่ยง ตารางที่ 1 แนะนำวัคซีนนิวโมค็อกคัสในช่วงอายุนี้เฉพาะผู้ที่มีปัจจัยเสี่ยงเพิ่มเติมหรือข้อบ่งชี้อื่น',
+    lvHsct: 'แนะนำ: ผู้ได้รับการปลูกถ่ายเซลล์ต้นกำเนิดเม็ดเลือด',
+    src: (tbl) => `ที่มา: ตารางที่ ${tbl} คำแนะนำ IDAT 2569`,
+    r1: 'ขนาด 0.5 มล. ฉีดเข้ากล้ามเนื้อ', r2: 'เลือก PCV13 หรือ PCV15 ก็ได้ เนื่องจากครอบคลุมสายพันธุ์ในประเทศไทยไม่แตกต่างกัน',
+    r3: 'ห้ามให้ PCV ในผู้ที่มีประวัติแพ้วัคซีนคอตีบ (diphtheria toxoid)',
+    r4: 'หญิงตั้งครรภ์ที่มีภาวะร่วมหรือโรคประจำตัวและยังไม่เคยได้รับวัคซีน พิจารณาให้ PCV20 1 โดส',
+    r5: 'กรณีจะผ่าตัดม้าม ให้วัคซีนก่อนผ่าตัดอย่างน้อย 2 สัปดาห์ หากทำไม่ได้ให้หลังผ่าตัด 2 สัปดาห์ (บทผู้ป่วยที่ไม่มีม้าม หน้า 45)',
+    r6: 'เริ่มวัคซีนชนิดเชื้อตายได้ที่ 3–6 เดือนหลังปลูกถ่ายเซลล์ต้นกำเนิด วัคซีนนิวโมค็อกคัสเริ่มที่ 3 เดือน (บทปลูกถ่ายเซลล์ต้นกำเนิด หน้า 42)',
+  },
+};
+const pt = () => PWT[S.lang];
+function pwGroup(table) {
+  const { age, risk } = PW;
+  if (risk === 'hsct') return table === 3 ? 'g6' : 'g4';
+  if (risk === 'ic') return table === 3 ? (age === '18' ? 'g5' : 'g34') : 'g3';
+  if (risk === 'ci') return table === 3 ? 'g34' : 'g3';
+  if (risk === 'chronic') return 'g12';
+  return age === '18' ? null : 'g12';
+}
+function pwLevel() {
+  const { age, risk } = PW;
+  if (risk === 'hsct') return ['rec', pt().lvHsct];
+  if (risk === 'none') return age === '65' ? ['rec', pt().lvRec65] : age === '50' ? ['opt', pt().lvOpt] : ['na', pt().lvNone];
+  return age === '65' ? ['rec', pt().lvRec65] : ['risk', pt().lvRecRisk];
+}
+// a schedule as a list of { vx } (vaccine) and { gap } (interval or instruction) items
+const VX_RE = /^((?:PCV|PPSV)\d+[^\s(,;]*(?:\s(?:or|หรือ|\/)\s(?:PCV|PPSV)\d+[^\s(,;]*)?)\s*(.*)$/;
+function pwSchedule(row, key) {
+  const items = [];
+  if (Array.isArray(row[key])) {
+    row[key].forEach((s) => { if (s[1]) items.push({ gap: S.lang === 'th' ? s[2] : s[1] }); items.push({ vx: s[0] }); });
+    return items;
+  }
+  const segs = L(row[key]).split('→').map((x) => x.trim()).filter(Boolean);
+  if (segs.length && /^(≥|พิจารณา|Consider)/.test(segs[0])) items.push({ last: true });
+  segs.forEach((s) => { const m = s.match(VX_RE); if (m) { items.push({ vx: m[1] }); if (m[2]) items.push({ note: m[2] }); } else items.push({ gap: s }); });
+  return items;
+}
+const vxCls = (n) => (/20/.test(n) ? 'p20' : /23/.test(n) ? 'p23' : 'p13');
+function scheduleHtml(items) {
+  let n = 0;
+  return `<ol class="tl">${items.map((it) => {
+    if (it.last) return `<li class="tl-node tl-last"><span class="tl-dot"></span><span>${esc(pt().lastDose)}</span></li>`;
+    if (it.vx) { n++; return `<li class="tl-node"><span class="tl-dot"></span><span class="tl-n">${esc(pt().dose(n))}</span><span class="vx ${vxCls(it.vx)}">${esc(it.vx)}</span></li>`; }
+    if (it.note) return `<li class="tl-note">${esc(it.note)}</li>`;
+    return `<li class="tl-gap"><span class="tl-arr">↓</span>${esc(it.gap)}</li>`;
+  }).join('')}</ol>`;
+}
+const scheduleText = (items) => { let n = 0; return items.map((it) => it.last ? pt().lastDose : it.vx ? `${pt().dose(++n)}: ${it.vx}` : it.note ? `(${it.note})` : `→ ${it.gap}`).join('\n'); };
+function pwNotes(table, items) {
+  const txt = items.map((it) => it.vx || it.note || it.gap || '').join(' ');
+  const notes = table === 3 ? PCV_T3_NOTES : PCV_T4_NOTES;
+  const has = (mk) => (mk === '*' ? /\*/.test(txt.replace(/\*\*/g, '')) : txt.includes(mk));
+  return notes.filter((n) => { const mk = n.en.split(' ')[0]; return mk !== '#' || table === 4 ? has(mk) : false; });
+}
+function pwPlan() {
+  const table = PW.prior === 'yes' ? 4 : 3;
+  const g = pwGroup(table);
+  const [lv, lvText] = pwLevel();
+  const head = `<div class="plan-lv">${sBadge(lv === 'na' ? 'na' : lv)}<span>${esc(lvText)}</span></div>`;
+  if (!g) return { html: `<section class="plan" data-plan="none">${head}</section>`, text: lvText };
+  const row = table === 3 ? PCV_T3.find((r) => r.g === g) : PCV_T4[PW.i];
+  const opts = row.both ? [[pt().both, pwSchedule(row, 'both')]] : [[pt().opt1, pwSchedule(row, 'o1')], [pt().opt2, pwSchedule(row, 'o2')]];
+  const notes = [];
+  opts.forEach(([, items]) => pwNotes(table, items).forEach((n) => { if (!notes.includes(n)) notes.push(n); }));
+  const rem = [pt().r1, pt().r2, pt().r3];
+  if (PW.prior === 'never' && PW.risk !== 'none') rem.push(pt().r4);
+  if (PW.risk === 'ic') rem.push(pt().r5);
+  if (PW.risk === 'hsct') rem.push(pt().r6);
+  const groupLabel = L((table === 3 ? PCV_GROUPS : PCV_GROUPS_T4)[g]).replace(/#/g, '').split('  ').join(' · ');
+  const html = `<section class="plan" data-plan="${table}:${g}${table === 4 ? ':' + PW.i : ''}">
+    <div class="plan-h"><h3>${esc(pt().plan)}</h3><span class="alt">${esc(pt().src(table))}</span></div>
+    ${head}
+    <div class="alt">${esc(groupLabel)}${table === 4 ? ' · ' + esc(L(row.prior)) : ''}</div>
+    <div class="plan-opts">${opts.map(([lab, items]) => `<div class="plan-opt"><div class="bt">${esc(lab)}</div>${scheduleHtml(items)}</div>`).join('')}</div>
+    ${opts.length > 1 ? `<div class="alt">${esc(pt().either)}</div>` : ''}
+    ${notes.length ? `<div class="plan-sub"><div class="bt">${esc(pt().notes)}</div><ul>${notes.map((n) => `<li>${esc(L(n))}</li>`).join('')}</ul></div>` : ''}
+    <div class="plan-sub"><div class="bt">${esc(pt().remind)}</div><ul>${rem.map((r) => `<li>${esc(r)}</li>`).join('')}</ul></div>
+    <div><button class="btn" data-act="pwcopy">${esc(pt().copy)}</button></div>
+  </section>`;
+  const text = [`${t().gPcv} (IDAT 2026, Table ${table})`, `${pt().q1}: ${L(PW_AGES.find((a) => a.id === PW.age))}`, `${pt().q2}: ${L(PW_RISKS.find((r) => r.id === PW.risk))}`,
+    `${pt().q3}: ${PW.prior === 'yes' ? pt().yes + ' — ' + L(row.prior) : pt().never}`, lvText, '',
+    ...opts.flatMap(([lab, items]) => [lab + ':', scheduleText(items), '']), ...notes.map((n) => L(n)), ...rem.map((r) => '- ' + r)].join('\n');
+  return { html, text };
+}
+let pwText = '';
 function openPcv() {
-  const render = () => {
-    const tabs = (act, cur, opts) => `<div class="sel">${opts.map((o) => `<button class="chip${cur === o[0] ? ' on' : ''}" data-act="${act}" data-val="${o[0]}">${esc(o[1])}</button>`).join('')}</div>`;
-    let q = `<div><div class="ask">${esc(t().pq1)}</div>${tabs('pcvprior', P.prior, [['never', t().pNever], ['yes', t().pYes]])}</div>`;
-    let body = '';
-    const p = pcvTablesHtml(P.prior ? { t: P.prior === 'never' ? 3 : 4, g: P.g, i: P.i } : null);
-    if (P.prior === 'never') {
-      q += `<div><div class="ask">${esc(t().pq2)}</div>${tabs('pcvg', P.g, Object.keys(PCV_GROUPS).map((k) => [k, L(PCV_GROUPS[k]).replace(/#/g, '')]))}</div>`;
-      body = block('pcvp:t3', 'var(--k-fig)', esc(t().t3), p.t3, true);
-    } else if (P.prior === 'yes') {
-      q += `<div><div class="ask">${esc(t().pq2)}</div>${tabs('pcvg', P.g, Object.keys(PCV_GROUPS_T4).map((k) => [k, L(PCV_GROUPS_T4[k])]))}</div>`;
-      if (P.g) q += `<div><div class="ask">${esc(t().pq3)}</div>${tabs('pcvi', P.i == null ? '' : String(P.i), PCV_T4.map((r, i) => [String(i), L(r.prior)]).filter((x) => PCV_T4[+x[0]].g === P.g))}</div>`;
-      body = block('pcvp:t4', 'var(--k-fig)', esc(t().t4), p.t4, true);
-    } else {
-      body = block('pcvp:t3', 'var(--k-fig)', esc(t().t3), p.t3, false) + block('pcvp:t4', 'var(--k-fig)', esc(t().t4), p.t4, false);
+  const scroller = modalStack.length ? $('.mb', modalStack[modalStack.length - 1].ov) : null;
+  const card = (act, cur, id, title, ex) => `<button class="pw-opt${cur === id ? ' on' : ''}" data-act="${act}" data-val="${id}"><b>${esc(title)}</b>${ex ? `<span>${esc(ex)}</span>` : ''}</button>`;
+  const step = (n, q, help, inner, done) => `<li class="pw-step${done ? ' done' : ''}"><span class="pw-num">${n}</span><div class="pw-body"><div class="ask">${esc(q)}</div>${help ? `<div class="alt">${esc(help)}</div>` : ''}<div class="pw-opts">${inner}</div></div></li>`;
+  let steps = step(1, pt().q1, '', PW_AGES.map((a) => card('pwage', PW.age, a.id, L(a))).join(''), !!PW.age);
+  let complete = false;
+  if (PW.age) steps += step(2, pt().q2, pt().q2h, [...PW_RISKS].reverse().map((r) => card('pwrisk', PW.risk, r.id, L(r), L(r.ex))).join(''), !!PW.risk);
+  if (PW.age && PW.risk) {
+    if (PW.age === '18' && PW.risk === 'none') complete = true;
+    else {
+      steps += step(3, pt().q3, '', card('pwprior', PW.prior, 'never', pt().never) + card('pwprior', PW.prior, 'yes', pt().yes), !!PW.prior);
+      if (PW.prior === 'never') complete = true;
+      if (PW.prior === 'yes') {
+        const g = pwGroup(4);
+        steps += step(4, pt().q4, '', PCV_T4.map((r, i) => [r, i]).filter(([r]) => r.g === g).map(([r, i]) => card('pwi', PW.i == null ? null : String(PW.i), String(i), L(r.prior))).join(''), PW.i != null);
+        if (PW.i != null) complete = true;
+      }
     }
-    const pcv = VACCINES.find((v) => v.id === 'pcv');
-    openModal(mHead(esc(t().gPcv), esc(S.lang === 'th' ? 'ตารางที่ 3 และ 4 · หน้า 24–26' : 'Tables 3 and 4 · pages 24–26')) + `<div class="mb"><div class="box" style="display:flex;flex-direction:column;gap:10px">${q}</div>${body}${block('pcvp:more', 'var(--k-more)', esc(t().secs.more), itemsHtml(pcv.sections.find((s) => s.k === 'more').items), true)}${figBtns(PAGE_IMG.pcv)}</div>` + mFoot(`<button class="btn" data-act="vaccine" data-id="pcv">${esc(L(pcv))} ›</button>`), { wide: true, rerender: render });
-  };
-  render();
+  }
+  let plan = '';
+  pwText = '';
+  if (complete) { const p = pwPlan(); plan = p.html; pwText = p.text; }
+  const sel = complete && PW.age && !(PW.age === '18' && PW.risk === 'none') ? { t: PW.prior === 'yes' ? 4 : 3, g: pwGroup(PW.prior === 'yes' ? 4 : 3), i: PW.i } : null;
+  const p = pcvTablesHtml(sel);
+  const pcv = VACCINES.find((v) => v.id === 'pcv');
+  const details = `<div class="bt" style="margin-top:4px">${esc(pt().details)}</div>` +
+    block('pcvd:t3', 'var(--k-fig)', esc(t().t3), p.t3, false) + block('pcvd:t4', 'var(--k-fig)', esc(t().t4), p.t4, false) +
+    block('pcvd:more', 'var(--k-more)', esc(t().secs.more), itemsHtml(pcv.sections.find((s) => s.k === 'more').items), false) +
+    block('pcvd:fig', 'var(--k-fig)', esc(t().figure), figBtns(PAGE_IMG.pcv), false);
+  const ov = openModal(mHead(esc(pt().title), esc(pt().sub)) + `<div class="mb"><ol class="pw">${steps}</ol>${plan}${details}</div>` +
+    mFoot(`<button class="btn" data-act="pwreset">${esc(pt().restart)}</button><button class="btn" data-act="vaccine" data-id="pcv">${esc(L(pcv))} ›</button>`), { wide: true, rerender: openPcv });
+  if (scroller) $('.mb', ov).scrollTop = scroller.scrollTop;
+}
+function pwSet(k, v) {
+  const keepScroll = modalStack.length ? $('.mb', modalStack[modalStack.length - 1].ov).scrollTop : 0;
+  PW[k] = v;
+  if (k !== 'i') PW.i = null;
+  if (PW.prior === 'yes' && PW.i != null && PCV_T4[PW.i].g !== pwGroup(4)) PW.i = null;
+  closeModal(); openPcv();
+  const mb = $('.mb', modalStack[modalStack.length - 1].ov); mb.scrollTop = keepScroll;
+  const planEl = $('.plan', mb);
+  if (planEl && (k === 'prior' || k === 'i' || (k === 'risk' && PW.age === '18' && v === 'none'))) planEl.scrollIntoView({ block: 'nearest' });
+}
+function pwCopy() {
+  const done = () => toast(pt().copied), fail = () => toast(pt().copyFail);
+  try { navigator.clipboard.writeText(pwText).then(done, fail); } catch (e) { fail(); }
 }
 
 /* ---------- other modals ---------- */
@@ -2095,10 +2281,13 @@ document.addEventListener('click', (e) => {
     case 'tables': openTables(1, 'grid'); break;
     case 'tbltab': closeModal(); openTables(+val, PDFV.mode); break;
     case 'tblmode': closeModal(); openTables(PDFV.tab, val); break;
-    case 'pcv': P.prior = null; P.g = null; P.i = null; openPcv(); break;
-    case 'pcvprior': P.prior = val; P.g = null; P.i = null; closeModal(); openPcv(); break;
-    case 'pcvg': P.g = val; P.i = null; closeModal(); openPcv(); break;
-    case 'pcvi': P.i = +val; closeModal(); openPcv(); break;
+    case 'pcv': PW.age = null; PW.risk = null; PW.prior = null; PW.i = null; openPcv(); break;
+    case 'pwage': pwSet('age', val); break;
+    case 'pwrisk': pwSet('risk', val); break;
+    case 'pwprior': pwSet('prior', val); break;
+    case 'pwi': pwSet('i', +val); break;
+    case 'pwreset': PW.age = null; PW.risk = null; PW.prior = null; PW.i = null; closeModal(); openPcv(); break;
+    case 'pwcopy': pwCopy(); break;
     case 'pdf': openPdf(1); break;
     case 'pdfzoom': PDFV.zoom = !PDFV.zoom; closeModal(); openTables(PDFV.tab, 'pdf'); break;
     case 'pdfopen': pdfOpenWindow(); break;
