@@ -1,0 +1,21 @@
+Thai Adult Vaccine Guide 2026
+Copyright (c) 2026 Warodom Phaenthong, M.D.
+
+The app (its code, layout, English translation and the way the content is organised) is licensed under the
+Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License (CC BY-NC-SA 4.0).
+The full licence text is in the LICENSE file and at
+https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+In short: you may share and adapt the app for non-commercial purposes, provided you credit the
+author, link to the licence, say what you changed, and release your version under the same licence.
+
+Third-party content (not covered by the licence above):
+- The recommendations, Thai text, Tables 1-4, Figure 1 and the embedded table PDF come from
+  "Recommended Adult and Elderly Immunization 2026" (คำแนะนำการให้วัคซีนป้องกันโรคสำหรับผู้ใหญ่และ
+  ผู้สูงอายุ ปี พ.ศ. 2569), Infectious Disease Association of Thailand (IDAT), 1 July 2569 B.E.
+  They remain the property of IDAT and its co-authoring societies.
+- The Full table window loads pdf.js 3.11.174 (Mozilla, Apache License 2.0) from cdnjs at run time.
+- Fonts: IBM Plex Sans and IBM Plex Sans Thai (SIL Open Font License 1.1) from Google Fonts.
+
+No warranty. The guide is a teaching and decision-support aid for healthcare professionals. It does not
+replace clinical judgement, the full guideline, or the product label.
