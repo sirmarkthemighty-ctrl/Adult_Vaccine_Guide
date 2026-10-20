@@ -5,6 +5,9 @@ A searchable vaccine database by Warodom Phaenthong, M.D., built from the Infect
 ปี พ.ศ. 2569). It is one self-contained HTML page (`vaccine-guide.html`, opened by `index.html`) that runs in the browser,
 with no installation and no data sent anywhere.
 
+Use it online on GitHub Pages (https://sirmarkthemighty-ctrl.github.io/Adult_Vaccine_Guide/) or in the MED Library
+Google Site (https://sites.google.com/view/med-helper-tools/id/adult-vaccine).
+
 It is a teaching and decision-support aid for healthcare professionals, not a substitute for clinical judgement,
 the full guideline, or the product label.
 
