@@ -277,6 +277,10 @@ a { color: var(--accent); }
 .achip { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--accent2); background: var(--chip); color: var(--chipText); border-radius: 999px; padding: 3px 10px; font-size: 12px; font-weight: 600; }
 .achip .sw { display: inline-block; width: 9px; height: 9px; border-radius: 3px; }
 .achip > span[aria-hidden] { font-size: 14px; line-height: 1; opacity: .8; }
+.g-hbv { background: #b45309; }
+.plan-list { margin: 0; padding-left: 20px; font-size: 13.5px; }
+.plan-list li { margin: 3px 0; }
+.pw-after { margin-top: 2px; }
 
 </style>
 </head>
@@ -1565,10 +1569,11 @@ const GUIDE_META = {
 
 const changelogData = [
   {
-    version: '1.3.0', date: 'October 20, 2026', title: 'First release',
+    version: '1.4.0', date: 'October 20, 2026', title: 'First release',
     features: [
       'Vaccine database built from the IDAT "Recommended Adult and Elderly Immunization 2026" (คำแนะนำการให้วัคซีนป้องกันโรคสำหรับผู้ใหญ่และผู้สูงอายุ ปี พ.ศ. 2569): 17 vaccines with information, administration, precautions, additional advice and references, in English and Thai.',
       'Filters by age group (Table 1), condition (Table 2), recommendation level, live / non-live vaccine and "updated in 2026"; search covers names, brands and the full text.',
+      'Hepatitis B pathway: pick the patient group (general adult, healthcare personnel or partner, CKD stage, HIV, organ or stem cell transplant, other immunocompromise), vaccination history and test results; it gives the schedule as a dose timeline, the next test, Figure 1 step by step, follow-up and boosters, with the chapter text folded below.',
       'Filters button beside the search box shows how many filters are on and opens or closes the filter panel (open on desktop, closed on phones); while closed, the filters in use show as chips you can tap to remove.',
       'One Tables guide holds Table 1 (by age) and Table 2 (by condition); each opens as a colour-coded table, and its PDF button shows that table\'s page of the original guideline PDF.',
       'General principles of adult vaccination (first guide button) and special-population guides (pregnancy, organ and stem cell transplant, asplenia, travellers).',
@@ -1605,8 +1610,8 @@ const T = {
     showing: (n, m) => `Showing <b>${n}</b> of <b>${m}</b> vaccines`,
     details: 'DETAILS', table1: 'Table 1 · by age', table2: 'Table 2 · by condition', noT1: 'Not in Table 1 (see Table 2)',
     ageGroups: 'Age groups', conditions: 'Conditions', dose: 'Dose',
-    gPdf: 'Full table (PDF)', gTables: 'Tables · Age & conditions', colourTable: 'Colour table', gPcv: 'Pneumococcal pathway', gGen: 'General principles',
-    sTables: 'Tables', sPcv: 'Pneumo', sGen: 'Principles',
+    gPdf: 'Full table (PDF)', gTables: 'Tables · Age & conditions', colourTable: 'Colour table', gPcv: 'Pneumococcal pathway', gHbv: 'Hepatitis B pathway', gGen: 'General principles',
+    sTables: 'Tables', sPcv: 'Pneumo', sHbv: 'Hep B', sGen: 'Principles',
     close: 'Close', page: (p) => `Guideline p. ${p}`, refs: 'References', related: 'Special-population guides',
     figure: 'Original figure', viewPage: (p) => `View page ${p}`,
     openPdf: 'Open PDF', savePdf: 'Save PDF', zoom: 'Zoom', fit: 'Fit width',
@@ -1643,8 +1648,8 @@ const T = {
     showing: (n, m) => `แสดง <b>${n}</b> จาก <b>${m}</b> วัคซีน`,
     details: 'รายละเอียด', table1: 'ตารางที่ 1 · ตามอายุ', table2: 'ตารางที่ 2 · ตามภาวะ', noT1: 'ไม่อยู่ในตารางที่ 1 (ดูตารางที่ 2)',
     ageGroups: 'กลุ่มอายุ', conditions: 'ภาวะ', dose: 'ขนาด',
-    gPdf: 'ตารางฉบับเต็ม (PDF)', gTables: 'ตาราง · อายุและภาวะ', colourTable: 'ตารางสี', gPcv: 'แนวทางวัคซีนนิวโมฯ', gGen: 'หลักการทั่วไป',
-    sTables: 'ตาราง', sPcv: 'นิวโมฯ', sGen: 'หลักการ',
+    gPdf: 'ตารางฉบับเต็ม (PDF)', gTables: 'ตาราง · อายุและภาวะ', colourTable: 'ตารางสี', gPcv: 'แนวทางวัคซีนนิวโมฯ', gHbv: 'แนวทางวัคซีนตับอักเสบบี', gGen: 'หลักการทั่วไป',
+    sTables: 'ตาราง', sPcv: 'นิวโมฯ', sHbv: 'ตับอักเสบบี', sGen: 'หลักการ',
     close: 'ปิด', page: (p) => `หน้า ${p} ในคำแนะนำ`, refs: 'เอกสารอ้างอิง', related: 'คำแนะนำในกลุ่มประชากรเฉพาะ',
     figure: 'ภาพต้นฉบับ', viewPage: (p) => `ดูหน้า ${p}`,
     openPdf: 'เปิด PDF', savePdf: 'บันทึก PDF', zoom: 'ขยาย', fit: 'พอดีความกว้าง',
@@ -1751,6 +1756,7 @@ const I = {
   pdf: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>',
   table: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 10v10M15 10v10"/></svg>',
   users: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/></svg>',
+  liver: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 8c0-2 2-3 5-3h11c1.5 0 2 1.5 1.5 3-1 3.5-4.5 8.5-9 10.5-3 1.3-5 .5-6-1.5S3 11 3 8z"/><path d="M14 5v6"/></svg>',
   lungs: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v8M12 11l-3 2M12 11l3 2"/><path d="M8.5 7C5 7 3 13 3 18c0 2 1.5 3 3 2.5s3.5-2 3.5-5V8.5M15.5 7C19 7 21 13 21 18c0 2-1.5 3-3 2.5s-3.5-2-3.5-5V8.5"/></svg>',
   pregnant: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="4" r="2"/><path d="M10 7c-1.5 1-2 3-2 5v3l1 6M12 7c2 1 5 3 5 6.5S14 18 12 17l-1 4"/></svg>',
   organ: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-7-11a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 6.5-7 11-7 11z"/></svg>',
@@ -1827,6 +1833,7 @@ function renderGuides() {
     g('g-gen', 'general', I.book, t().gGen, t().sGen, 'data-guide="general"'),
     g('g-t1', 'tables', I.table, t().gTables, t().sTables, 'data-guide="tables"'),
     g('g-pcv', 'pcv', I.lungs, t().gPcv, t().sPcv, 'data-guide="pcv"'),
+    g('g-hbv', 'hbv', I.liver, t().gHbv, t().sHbv, 'data-guide="hbv"'),
     grp('pregnancy', 'g-preg'), grp('sot', 'g-sot'), grp('hsct', 'g-hsct'), grp('asplenia', 'g-asp'), grp('travel', 'g-travel'),
   ].join('');
 }
@@ -2315,6 +2322,10 @@ document.addEventListener('click', (e) => {
     case 'tables': openTables(1, 'grid'); break;
     case 'tbltab': closeModal(); openTables(+val, PDFV.mode); break;
     case 'tblmode': closeModal(); openTables(PDFV.tab, val); break;
+    case 'hbv': HB.path = []; openHbv(); break;
+    case 'hbpick': hbPick(+el.dataset.step, val); break;
+    case 'hbreset': HB.path = []; closeModal(); openHbv(); break;
+    case 'hbcopy': hbCopy(); break;
     case 'pcv': PW.age = null; PW.risk = null; PW.prior = null; PW.i = null; openPcv(); break;
     case 'pwage': pwSet('age', val); break;
     case 'pwrisk': pwSet('risk', val); break;
@@ -2350,6 +2361,232 @@ if (window.matchMedia) {
 }
 
 renderAll();
+
+/* ---------- hepatitis B pathway ---------- */
+// Decision tree built only from the guideline's hepatitis B chapter (pages 17–20, Figure 1), the HIV and CKD
+// paragraphs in it, the solid organ / stem cell transplant chapters (pages 41–43) and the general principles (page 4).
+// A node asks one question; an option leads to another node or ends in a plan. A node may also carry `now`:
+// the plan for what to do while the next result is awaited (e.g. "give 1 dose, recheck in 1–2 months").
+const HB_T = (en, th) => ({ en, th });
+const M = (n) => HB_T(`Month ${n}`, `เดือนที่ ${n}`);
+const W = (n) => HB_T(`Week ${n}`, `สัปดาห์ที่ ${n}`);
+const doses = (mcg, at) => at.map((a) => ({ vx: `HepB ${mcg} µg`, at: a }));
+
+const HB_NODES = {
+  pop: { q: HB_T('Who is the patient?', 'ผู้ป่วยอยู่ในกลุ่มใด'), opts: [
+    { id: 'gen', t: HB_T('General adult', 'ผู้ใหญ่ทั่วไป'), ex: HB_T('No condition below', 'ไม่อยู่ในกลุ่มด้านล่าง'), next: 'hx' },
+    { id: 'hcp', t: HB_T('Healthcare personnel, or sexual partner of a person with hepatitis B', 'บุคลากรทางการแพทย์ หรือมีคู่นอนติดเชื้อไวรัสตับอักเสบบี'), ex: HB_T('Same schedule; anti-HBs check after the series', 'ให้วัคซีนเหมือนผู้ใหญ่ทั่วไป และตรวจ anti-HBs หลังครบ'), next: 'hx' },
+    { id: 'ckd', t: HB_T('Chronic kidney disease', 'โรคไตเรื้อรัง'), ex: HB_T('Dose depends on stage', 'ขนาดวัคซีนขึ้นกับระยะของโรคไต'), next: 'ckd' },
+    { id: 'hiv', t: HB_T('HIV', 'ผู้ติดเชื้อเอชไอวี'), ex: HB_T('Serology first, whatever the birth year', 'ตรวจเลือดก่อนโดยไม่คำนึงถึงปีที่เกิด'), next: 'hiv' },
+    { id: 'sot', t: HB_T('Solid organ transplant', 'ปลูกถ่ายอวัยวะ'), ex: HB_T('40 µg schedule', 'ใช้ขนาด 40 ไมโครกรัม'), next: 'sot' },
+    { id: 'hsct', t: HB_T('Haematopoietic stem cell transplant', 'ปลูกถ่ายเซลล์ต้นกำเนิดเม็ดเลือด'), ex: HB_T('Revaccinate after transplant', 'ให้วัคซีนใหม่หลังปลูกถ่าย'), plan: 'hsct' },
+    { id: 'ic', t: HB_T('Other immunocompromised', 'ภาวะภูมิคุ้มกันบกพร่องอื่น ๆ'), ex: HB_T('anti-HBs check after the series; yearly follow-up', 'ตรวจ anti-HBs หลังครบ และติดตามทุกปี'), next: 'hx' },
+  ] },
+  hx: { q: HB_T('Hepatitis B vaccination history', 'ประวัติการได้รับวัคซีนไวรัสตับอักเสบบี'), help: HB_T('Thailand has vaccinated every newborn since 2535 B.E. (1992).', 'ประเทศไทยให้วัคซีนไวรัสตับอักเสบบีแก่เด็กแรกเกิดทุกคนตั้งแต่ปี พ.ศ. 2535'), opts: [
+    { id: 'old', t: HB_T('Born before 2535 B.E., never vaccinated', 'เกิดก่อนปี พ.ศ. 2535 และไม่เคยได้รับวัคซีน'), next: 'pre' },
+    { id: 'young', t: HB_T('Born 2535 B.E. or later, or completed 3 doses', 'เกิดตั้งแต่ปี พ.ศ. 2535 หรือได้วัคซีนครบ 3 โดสแล้ว'), next: 'abs' },
+    { id: 'part', t: HB_T('Started the series but did not finish', 'เคยได้วัคซีนแต่ไม่ครบ'), plan: 'partial' },
+  ] },
+  pre: { q: HB_T('anti-HBs and HBsAg result', 'ผลตรวจ anti-HBs และ HBsAg'), now: 'pretest', opts: [
+    { id: 'neg', t: HB_T('Both negative', 'เป็นลบทั้งคู่'), plan: 'gen3' },
+    { id: 'imm', t: HB_T('anti-HBs ≥10 mIU/mL', 'anti-HBs ≥10 ล้านหน่วยสากล/มล.'), plan: 'immune' },
+    { id: 'sag', t: HB_T('HBsAg positive', 'HBsAg เป็นบวก'), plan: 'infected' },
+  ] },
+  abs: { q: HB_T('anti-HBs result', 'ผลตรวจ anti-HBs'), opts: [
+    { id: 'none', t: HB_T('Not tested', 'ไม่ได้ตรวจ'), plan: 'notest' },
+    { id: 'ge', t: HB_T('≥10 mIU/mL', '≥10 ล้านหน่วยสากล/มล.'), plan: 'immune' },
+    { id: 'lt', t: HB_T('<10 mIU/mL', '<10 ล้านหน่วยสากล/มล.'), next: 'f1a' },
+  ] },
+  // Figure 1 (page 20)
+  f1a: { q: HB_T('anti-HBs 1–2 months after that dose', 'anti-HBs ที่ 1–2 เดือนหลังให้วัคซีนโดสนั้น'), now: 'f1_1', fig: true, opts: [
+    { id: 'ge', t: HB_T('≥10 mIU/mL', '≥10 ล้านหน่วยสากล/มล.'), plan: 'responder' },
+    { id: 'lt', t: HB_T('<10 mIU/mL', '<10 ล้านหน่วยสากล/มล.'), next: 'f1b' },
+  ] },
+  f1b: { q: HB_T('anti-HBs after completing 3 doses', 'anti-HBs หลังได้วัคซีนครบ 3 โดส'), now: 'f1_2', fig: true, opts: [
+    { id: 'ge', t: HB_T('≥10 mIU/mL', '≥10 ล้านหน่วยสากล/มล.'), plan: 'responder' },
+    { id: 'lt', t: HB_T('<10 mIU/mL', '<10 ล้านหน่วยสากล/มล.'), next: 'f1c' },
+  ] },
+  f1c: { q: HB_T('HBsAg result', 'ผลตรวจ HBsAg'), now: 'f1_3', fig: true, opts: [
+    { id: 'pos', t: HB_T('Positive', 'เป็นบวก'), plan: 'infected' },
+    { id: 'neg', t: HB_T('Negative', 'เป็นลบ'), next: 'f1d' },
+  ] },
+  f1d: { q: HB_T('anti-HBs after 3 more doses', 'anti-HBs หลังได้วัคซีนเพิ่มอีก 3 โดส'), now: 'f1_4', fig: true, opts: [
+    { id: 'ge', t: HB_T('≥10 mIU/mL', '≥10 ล้านหน่วยสากล/มล.'), plan: 'responder' },
+    { id: 'lt', t: HB_T('<10 mIU/mL', '<10 ล้านหน่วยสากล/มล.'), plan: 'nonresp' },
+  ] },
+  ckd: { q: HB_T('CKD stage', 'ระยะของโรคไตเรื้อรัง'), opts: [
+    { id: 's12', t: HB_T('Stage 1–2 (eGFR ≥60)', 'ระยะ 1–2 (eGFR ≥60)'), ex: HB_T('As general adults', 'เหมือนผู้ใหญ่ทั่วไป'), next: 'hx' },
+    { id: 's3', t: HB_T('Stage 3', 'ระยะ 3'), ex: HB_T('Stages 3–4: eGFR 15–59', 'ระยะ 3–4: eGFR 15–59'), plan: 'ckd3' },
+    { id: 's4', t: HB_T('Stage 4', 'ระยะ 4'), ex: HB_T('Stages 3–4: eGFR 15–59; faster schedule available', 'ระยะ 3–4: eGFR 15–59 มีแบบเร่ง'), plan: 'ckd4' },
+    { id: 's5', t: HB_T('Stage 5 (eGFR <15) or kidney replacement therapy', 'ระยะ 5 (eGFR <15) หรือบำบัดทดแทนไต'), plan: 'ckd5' },
+  ] },
+  hiv: { q: HB_T('HBsAg, anti-HBs and anti-HBc result', 'ผลตรวจ HBsAg, anti-HBs และ anti-HBc'), now: 'hivtest', opts: [
+    { id: 'sag', t: HB_T('HBsAg positive', 'HBsAg เป็นบวก'), plan: 'infected' },
+    { id: 'imm', t: HB_T('anti-HBs ≥10 mIU/mL', 'anti-HBs ≥10 ล้านหน่วยสากล/มล.'), plan: 'immune' },
+    { id: 'core', t: HB_T('Isolated anti-HBc positive', 'anti-HBc เป็นบวกอย่างเดียว'), ex: HB_T('anti-HBs and HBsAg negative', 'anti-HBs และ HBsAg เป็นลบ'), next: 'hivc' },
+    { id: 'neg', t: HB_T('All three negative', 'เป็นลบทั้งหมด'), next: 'hivn' },
+  ] },
+  hivc: { q: HB_T('anti-HBs 1–2 months after the dose', 'anti-HBs ที่ 1–2 เดือนหลังให้วัคซีน'), now: 'hiv_c1', opts: [
+    { id: 'gt', t: HB_T('>100 mIU/mL', '>100 ล้านหน่วยสากล/มล.'), plan: 'responder' },
+    { id: 'lt', t: HB_T('<100 mIU/mL', '<100 ล้านหน่วยสากล/มล.'), plan: 'hiv_c2' },
+  ] },
+  hivn: { q: HB_T('anti-HBs 1–2 months after the 3 doses', 'anti-HBs ที่ 1–2 เดือนหลังได้วัคซีนครบ 3 โดส'), now: 'hiv_n1', opts: [
+    { id: 'ge', t: HB_T('≥10 mIU/mL', '≥10 ล้านหน่วยสากล/มล.'), plan: 'responder' },
+    { id: 'lt', t: HB_T('<10 mIU/mL', '<10 ล้านหน่วยสากล/มล.'), next: 'hivn2' },
+  ] },
+  hivn2: { q: HB_T('anti-HBs after the second 3-dose series', 'anti-HBs หลังได้วัคซีนชุดที่ 2 ครบ 3 โดส'), now: 'hiv_n2', opts: [
+    { id: 'ge', t: HB_T('≥10 mIU/mL', '≥10 ล้านหน่วยสากล/มล.'), plan: 'responder' },
+    { id: 'lt', t: HB_T('<10 mIU/mL', '<10 ล้านหน่วยสากล/มล.'), plan: 'nonresp' },
+  ] },
+  sot: { q: HB_T('Hepatitis B vaccination history', 'ประวัติการได้รับวัคซีนไวรัสตับอักเสบบี'), opts: [
+    { id: 'none', t: HB_T('Never vaccinated, or incomplete', 'ไม่เคยได้รับหรือได้ไม่ครบ'), next: 'sotn' },
+    { id: 'done', t: HB_T('Born after 2535 B.E., or had 3 doses of 20 µg', 'เกิดหลังปี พ.ศ. 2535 หรือเคยได้ขนาด 20 ไมโครกรัมแล้ว 3 โดส'), next: 'sot1' },
+  ] },
+  sotn: { q: HB_T('anti-HBs 1–2 months after the series', 'anti-HBs ที่ 1–2 เดือนหลังได้วัคซีนครบ'), now: 'sot4', opts: [
+    { id: 'ge', t: HB_T('≥10 mIU/mL', '≥10 ล้านหน่วยสากล/มล.'), plan: 'responder' },
+    { id: 'lt', t: HB_T('<10 mIU/mL', '<10 ล้านหน่วยสากล/มล.'), next: 'sotn2' },
+  ] },
+  sot1: { q: HB_T('anti-HBs 1–2 months after the dose', 'anti-HBs ที่ 1–2 เดือนหลังให้วัคซีน'), now: 'sot1d', opts: [
+    { id: 'ge', t: HB_T('≥10 mIU/mL', '≥10 ล้านหน่วยสากล/มล.'), plan: 'responder' },
+    { id: 'lt', t: HB_T('<10 mIU/mL', '<10 ล้านหน่วยสากล/มล.'), next: 'sotn2' },
+  ] },
+  sotn2: { q: HB_T('anti-HBs after the repeat 4-dose series', 'anti-HBs หลังได้วัคซีนซ้ำครบ 4 โดส'), now: 'sot4b', opts: [
+    { id: 'ge', t: HB_T('≥10 mIU/mL', '≥10 ล้านหน่วยสากล/มล.'), plan: 'responder' },
+    { id: 'lt', t: HB_T('<10 mIU/mL', '<10 ล้านหน่วยสากล/มล.'), plan: 'nonresp' },
+  ] },
+};
+
+// tone: ok (protected), act (vaccinate), test (test first), stop (infection / non-responder)
+const HB_PLANS = {
+  pretest: { tone: 'test', p: 19, title: HB_T('Test anti-HBs and HBsAg first', 'ตรวจ anti-HBs และ HBsAg ก่อน'), steps: [HB_T('Born before 2535 B.E. and never vaccinated: check anti-HBs and HBsAg; vaccinate if both are negative.', 'ผู้ใหญ่ที่เกิดก่อนปี พ.ศ. 2535 ที่ไม่เคยได้รับวัคซีน แนะนำให้ตรวจ anti-HBs และ HBsAg ถ้าเป็นลบทั้งคู่ แนะนำให้วัคซีน')] },
+  gen3: { tone: 'act', p: 18, title: HB_T('Vaccinate: 20 µg × 3 doses', 'ให้วัคซีน 20 ไมโครกรัม 3 โดส'), sched: doses(20, [M(0), M(1), M(6)]), steps: [HB_T('Intramuscular at 0, 1 and 6 months.', 'ฉีดเข้ากล้ามเนื้อที่ 0, 1 และ 6 เดือน')] },
+  partial: { tone: 'act', p: 4, title: HB_T('Continue the series; do not restart', 'ให้วัคซีนต่อจนครบ ไม่ต้องเริ่มนับใหม่'), steps: [HB_T('A late dose is given as the next dose and counted on; the series is not restarted (general principles).', 'การให้วัคซีนเลยกำหนดนัด สามารถให้วัคซีนโดสถัดไปได้เลยและนับต่อ ไม่ต้องเริ่มต้นนับใหม่ (หลักการทั่วไป)'), HB_T('General adult schedule: 20 µg at 0, 1 and 6 months.', 'ผู้ใหญ่ทั่วไป: ขนาด 20 ไมโครกรัม ที่ 0, 1 และ 6 เดือน')] },
+  notest: { tone: 'ok', p: 19, title: HB_T('No test or vaccine needed', 'ไม่จำเป็นต้องตรวจหรือให้วัคซีน'), steps: [HB_T('General adults born after 2535 B.E. do not need anti-HBs testing: most are already immune from newborn vaccination.', 'ผู้ใหญ่ทั่วไปที่เกิดหลังปี พ.ศ. 2535 ไม่จำเป็นต้องตรวจ anti-HBs เนื่องจากส่วนใหญ่จะมีภูมิคุ้มกันแล้ว'), HB_T('If anti-HBs is checked and is <10 mIU/mL, follow Figure 1 (choose "<10 mIU/mL" above).', 'หากตรวจแล้วพบ anti-HBs <10 ล้านหน่วยสากล/มล. ให้ทำตามแผนภูมิที่ 1 (เลือก "<10" ด้านบน)')] },
+  immune: { tone: 'ok', p: 17, title: HB_T('Immune: no vaccine needed', 'มีภูมิคุ้มกันแล้ว ไม่ต้องให้วัคซีน'), steps: [HB_T('anti-HBs ≥10 mIU/mL is the protective level (seroprotection).', 'ระดับ anti-HBs ≥10 ล้านหน่วยสากล/มล. ถือว่าป้องกันโรคได้ (seroprotection)')] },
+  responder: { tone: 'ok', p: 19, title: HB_T('Responded: protected for life', 'ตอบสนองต่อวัคซีน มีภูมิคุ้มกันตลอดชีวิต'), steps: [HB_T('After anti-HBs ≥10 mIU/mL post-vaccination, no repeat testing, revaccination or post-exposure immunoglobulin is needed, even if anti-HBs later falls below 10.', 'หากเคยตรวจ anti-HBs หลังให้วัคซีนและมีค่า ≥10 ถือว่ามีภูมิคุ้มกันตลอดชีวิต ไม่จำเป็นต้องตรวจซ้ำ ให้วัคซีนใหม่ หรือให้อิมมิวโนโกลบิวลินหลังสัมผัสโรค แม้ระดับจะลดลง <10')] },
+  infected: { tone: 'stop', p: 18, title: HB_T('Hepatitis B infection: evaluate and treat', 'ติดเชื้อไวรัสตับอักเสบบี แนะนำให้ประเมินและรักษา'), steps: [HB_T('HBsAg positive means hepatitis B infection: no vaccine; evaluate and continue care.', 'HBsAg เป็นบวก แสดงว่ามีการติดเชื้อไวรัสตับอักเสบบี แนะนำให้ประเมินและรักษาต่อเนื่อง ไม่ต้องให้วัคซีน')] },
+  nonresp: { tone: 'stop', p: 19, title: HB_T('Non-responder: no further vaccine', 'ไม่ตอบสนองต่อวัคซีน ไม่ต้องให้วัคซีนอีก'), steps: [HB_T('Strict prevention of exposure, and hepatitis B immunoglobulin (HBIg) when indicated.', 'แนะนำให้ป้องกันการได้รับเชื้ออย่างเคร่งครัด และให้อิมมิวโนโกลบิวลินของไวรัสตับอักเสบบี (HBIg) ถ้ามีข้อบ่งชี้')] },
+  f1_1: { tone: 'act', p: 20, title: HB_T('Give 1 dose of 20 µg, then recheck', 'ให้วัคซีน 20 ไมโครกรัม 1 โดส แล้วตรวจซ้ำ'), sched: doses(20, [HB_T('Now', 'ตอนนี้')]), steps: [HB_T('Check anti-HBs 1–2 months after this dose.', 'ตรวจ anti-HBs ที่ 1–2 เดือนหลังให้วัคซีน')] },
+  f1_2: { tone: 'act', p: 20, title: HB_T('Give 2 more doses (3 in total), then recheck', 'ให้วัคซีนเพิ่มอีก 2 โดส (รวม 3 โดส) แล้วตรวจซ้ำ'), steps: [HB_T('Complete the 3-dose series, then check anti-HBs.', 'ให้วัคซีนต่อจนครบ 3 โดส แล้วตรวจ anti-HBs')] },
+  f1_3: { tone: 'test', p: 20, title: HB_T('Test HBsAg', 'ตรวจ HBsAg'), steps: [HB_T('Screen for infection before giving more vaccine.', 'ตรวจ HBsAg เพื่อคัดกรองการติดเชื้อ')] },
+  f1_4: { tone: 'act', p: 20, title: HB_T('Give 3 more doses, then recheck', 'ให้วัคซีนเพิ่มอีก 3 โดส แล้วตรวจซ้ำ'), steps: [HB_T('HBsAg negative: give 3 more doses, then check anti-HBs again.', 'HBsAg เป็นลบ ให้วัคซีนอีก 3 โดส แล้วตรวจ anti-HBs ซ้ำ')] },
+  ckd3: { tone: 'act', p: 18, title: HB_T('Vaccinate: 20 µg × 4 doses', 'ให้วัคซีน 20 ไมโครกรัม 4 โดส'), sched: doses(20, [M(0), M(1), M(2), M(6)]), steps: [HB_T('Four doses give a better response than three in CKD stage 3–4.', 'ระยะ 3–4 ให้ 4 โดส เนื่องจากกระตุ้นภูมิคุ้มกันได้ดีกว่าการให้ 3 โดส')] },
+  ckd4: { tone: 'act', p: 18, title: HB_T('Vaccinate: 20 µg × 4 doses', 'ให้วัคซีน 20 ไมโครกรัม 4 โดส'), sched: doses(20, [M(0), M(1), M(2), M(6)]), alt: { title: HB_T('Faster protection (stage 4–5)', 'ต้องการภูมิคุ้มกันเร็วขึ้น (ระยะ 4–5)'), sched: doses(40, [W(0), W(1), W(4), W(8)]) }, steps: [HB_T('Four doses give a better response than three in CKD stage 3–4.', 'ระยะ 3–4 ให้ 4 โดส เนื่องจากกระตุ้นภูมิคุ้มกันได้ดีกว่าการให้ 3 โดส')] },
+  ckd5: { tone: 'act', p: 18, title: HB_T('Vaccinate: 40 µg × 4 doses', 'ให้วัคซีน 40 ไมโครกรัม 4 โดส'), sched: doses(40, [M(0), M(1), M(2), M(6)]), alt: { title: HB_T('Faster protection (stage 4–5)', 'ต้องการภูมิคุ้มกันเร็วขึ้น (ระยะ 4–5)'), sched: doses(40, [W(0), W(1), W(4), W(8)]) }, steps: [HB_T('Includes patients on kidney replacement therapy.', 'รวมทั้งผู้ป่วยที่ได้รับการบำบัดทดแทนไต')] },
+  hivtest: { tone: 'test', p: 18, title: HB_T('Test HBsAg, anti-HBs and anti-HBc', 'ตรวจ HBsAg, anti-HBs และ anti-HBc'), steps: [HB_T('In people with HIV, test all three regardless of birth year.', 'ผู้ติดเชื้อเอชไอวี แนะนำให้ตรวจทั้ง 3 อย่างโดยไม่คำนึงถึงปี พ.ศ. ที่เกิด')] },
+  hiv_c1: { tone: 'act', p: 18, title: HB_T('Give 1 dose of 20 µg, then recheck', 'ให้วัคซีน 20 ไมโครกรัม 1 โดส แล้วตรวจซ้ำ'), sched: doses(20, [HB_T('Now', 'ตอนนี้')]), steps: [HB_T('Check anti-HBs 1–2 months later: >100 mIU/mL means immune; <100 means 2 more doses.', 'ตรวจ anti-HBs ที่ 1–2 เดือนหลังให้วัคซีน ถ้า >100 แสดงว่ามีภูมิคุ้มกันแล้ว ถ้า <100 ให้อีก 2 โดส')] },
+  hiv_c2: { tone: 'act', p: 18, title: HB_T('Give 2 more doses of 20 µg (3 in total)', 'ให้วัคซีน 20 ไมโครกรัม อีก 2 โดส (รวม 3 โดส)'), steps: [HB_T('Recheck anti-HBs 1–2 months after the last dose.', 'ตรวจ anti-HBs อีกครั้งที่ 1–2 เดือนหลังให้วัคซีนครบ')] },
+  hiv_n1: { tone: 'act', p: 18, title: HB_T('Vaccinate: 40 µg × 3 doses', 'ให้วัคซีน 40 ไมโครกรัม 3 โดส'), sched: doses(40, [M(0), M(1), M(6)]), steps: [HB_T('Check anti-HBs 1–2 months after the third dose.', 'ตรวจ anti-HBs ที่ 1–2 เดือนหลังให้วัคซีนครบ')] },
+  hiv_n2: { tone: 'act', p: 18, title: HB_T('Repeat: 40 µg × 3 doses', 'ให้วัคซีนซ้ำ 40 ไมโครกรัม 3 โดส'), sched: doses(40, [M(0), M(1), M(6)]), steps: [HB_T('Check anti-HBs 1–2 months after; still <10 mIU/mL means non-responder.', 'ตรวจ anti-HBs ที่ 1–2 เดือนหลังให้วัคซีนครบ ถ้ายัง <10 ถือว่าไม่ตอบสนองต่อวัคซีน')] },
+  sot4: { tone: 'act', p: 41, title: HB_T('Vaccinate: 40 µg × 4 doses', 'ให้วัคซีน 40 ไมโครกรัม 4 โดส'), sched: doses(40, [M(0), M(1), M(2), M(6)]), steps: [HB_T('Check anti-HBs 1–2 months after the series.', 'ตรวจ anti-HBs ที่ 1–2 เดือนหลังให้วัคซีนครบ')] },
+  sot1d: { tone: 'act', p: 41, title: HB_T('Give 1 dose, then recheck', 'ให้วัคซีน 1 โดส แล้วตรวจซ้ำ'), sched: [{ vx: 'HepB 40 µg', at: HB_T('Now', 'ตอนนี้') }], steps: [HB_T('Check anti-HBs 1–2 months after the dose.', 'ตรวจ anti-HBs ที่ 1–2 เดือนหลังให้วัคซีน')] },
+  sot4b: { tone: 'act', p: 41, title: HB_T('Repeat: 40 µg × 4 doses', 'ให้วัคซีนซ้ำ 40 ไมโครกรัม 4 โดส'), sched: doses(40, [M(0), M(1), M(2), M(6)]), steps: [HB_T('Check anti-HBs 1–2 months after; still <10 mIU/mL means non-responder.', 'ตรวจ anti-HBs ที่ 1–2 เดือนหลังให้วัคซีนครบ หากยัง <10 ถือว่าไม่ตอบสนองต่อวัคซีน')] },
+  hsct: { tone: 'act', p: 43, title: HB_T('Revaccinate from 6 months after HSCT', 'ให้วัคซีนใหม่ตั้งแต่ 6 เดือนหลังปลูกถ่าย'), steps: [HB_T('All vaccines are given again as if never vaccinated; hepatitis B from 6 months after HSCT.', 'แนะนำให้วัคซีนใหม่ทั้งหมดเสมือนไม่เคยได้วัคซีนมาก่อน วัคซีนไวรัสตับอักเสบบีให้ที่ 6 เดือนขึ้นไปหลังปลูกถ่าย'), HB_T('Table 2 lists 3 doses for HSCT; the guideline does not give the dose per injection for this group.', 'ตารางที่ 2 ระบุ 3 โดสสำหรับ HSCT คำแนะนำไม่ได้ระบุขนาดต่อโดสสำหรับกลุ่มนี้')] },
+};
+
+const HBT = {
+  en: { title: 'Hepatitis B pathway', sub: 'From the hepatitis B chapter, Figure 1 and the transplant chapters', plan: 'Plan', now: 'Do now', next: 'When the result is back', schedule: 'Schedule', alt: 'Alternative', follow: 'Follow-up', remind: 'Before you give it', details: 'Details', copy: 'Copy plan', copied: 'Plan copied.', copyFail: 'Copy blocked by the browser; select the plan text instead.', restart: 'Start again', page: (p) => `Guideline p. ${p}`, fig1: 'Figure 1 (page 20)',
+    tone: { ok: 'Protected', act: 'Vaccinate', test: 'Test first', stop: 'Stop' } },
+  th: { title: 'แนวทางวัคซีนไวรัสตับอักเสบบี', sub: 'จากบทวัคซีนไวรัสตับอักเสบบี แผนภูมิที่ 1 และบทผู้ป่วยปลูกถ่าย', plan: 'แผน', now: 'ทำตอนนี้', next: 'เมื่อได้ผลตรวจ', schedule: 'ตารางการให้วัคซีน', alt: 'ทางเลือก', follow: 'การติดตาม', remind: 'ก่อนให้วัคซีน', details: 'รายละเอียด', copy: 'คัดลอกแผน', copied: 'คัดลอกแผนแล้ว', copyFail: 'เบราว์เซอร์ไม่อนุญาตให้คัดลอก กรุณาเลือกข้อความแผนแทน', restart: 'เริ่มใหม่', page: (p) => `หน้า ${p} ในคำแนะนำ`, fig1: 'แผนภูมิที่ 1 (หน้า 20)',
+    tone: { ok: 'มีภูมิคุ้มกัน', act: 'ให้วัคซีน', test: 'ตรวจก่อน', stop: 'หยุด' } },
+};
+const ht = () => HBT[S.lang];
+const TONE_CLS = { ok: 's-rec', act: 's-scdm', test: 's-opt', stop: 's-contra' };
+const HB = { path: [] }; // chosen option ids from the root
+
+// follow-up lines that depend on who the patient is (from the "additional recommendations", page 19)
+function hbFollow(pop, ckd, planId) {
+  const out = [];
+  const testAfter = pop === 'hcp' || pop === 'ic' || pop === 'hsct' || (pop === 'ckd' && ckd !== 's12');
+  const vaccinating = HB_PLANS[planId].tone === 'act';
+  if (vaccinating && testAfter)
+    out.push(HB_T('Check anti-HBs 1–2 months after completing the series (recommended for immunocompromised people, CKD stage 3–5 including kidney replacement therapy, sexual partners of people with hepatitis B, and healthcare personnel).', 'ตรวจ anti-HBs ที่ 1–2 เดือนหลังให้วัคซีนครบ (แนะนำในผู้ที่มีภาวะภูมิคุ้มกันบกพร่อง ผู้ป่วยโรคไตเรื้อรังระยะ 3–5 รวมทั้งผู้ที่ได้รับการบำบัดทดแทนไต ผู้ที่มีคู่นอนติดเชื้อไวรัสตับอักเสบบี และบุคลากรทางการแพทย์)'));
+  const yearly = pop === 'hiv' || pop === 'ic' || pop === 'sot' || pop === 'hsct' || (pop === 'ckd' && ckd === 's5');
+  if (yearly && (planId === 'responder' || vaccinating)) {
+    const mcg = pop === 'hiv' || (pop === 'ckd' && ckd === 's5') ? 40 : 20;
+    out.push(HB_T(`Yearly anti-HBs; if <10 mIU/mL give 1 booster of ${mcg} µg (immunocompromised people and CKD stage 5 / kidney replacement therapy).`, `ตรวจ anti-HBs ปีละ 1 ครั้ง ถ้า <10 ล้านหน่วยสากล/มล. ให้วัคซีนกระตุ้น 1 โดส ขนาด ${mcg} ไมโครกรัม (ผู้ที่มีภาวะภูมิคุ้มกันบกพร่องและผู้ป่วยโรคไตเรื้อรังระยะที่ 5 รวมทั้งผู้ที่ได้รับการบำบัดทดแทนไต)`));
+  }
+  if (pop === 'hiv' && (planId === 'responder' || vaccinating))
+    out.push(HB_T('People with HIV still at risk and not on tenofovir: consider anti-HBs every year; if <10 mIU/mL give a 40 µg booster.', 'ผู้ติดเชื้อเอชไอวีที่ยังมีความเสี่ยงและไม่ได้รับ tenofovir พิจารณาตรวจ anti-HBs ทุก 1 ปี ถ้า <10 ให้วัคซีน 40 ไมโครกรัมกระตุ้น 1 โดส'));
+  return out;
+}
+const HB_REMIND = [
+  HB_T('Intramuscular. ENGERIX-B® and hepatitis B vaccine (rDNA): 20 µg from age 20, 10 µg under 20.', 'ฉีดเข้ากล้ามเนื้อ ENGERIX-B® และ hepatitis B vaccine (rDNA) ใช้ขนาด 20 ไมโครกรัมในผู้ที่อายุ 20 ปีขึ้นไป และ 10 ไมโครกรัมในผู้ที่อายุน้อยกว่า 20 ปี'),
+  HB_T('Vaccines from different manufacturers are interchangeable.', 'สามารถให้วัคซีนจากต่างบริษัทผู้ผลิตทดแทนกันได้'),
+  HB_T('Hepatitis A wanted too: combined HepA-HepB (Twinrix®) 1 mL × 3 doses IM at 0, 1 and 6 months.', 'หากต้องการวัคซีนไวรัสตับอักเสบเอด้วย พิจารณาวัคซีนรวม (Twinrix®) 1 มล. 3 โดส ที่ 0, 1 และ 6 เดือน'),
+  HB_T('Precaution: allergy to a vaccine component such as yeast.', 'ควรระวังในผู้ที่แพ้ส่วนประกอบของวัคซีน เช่น ยีสต์'),
+];
+
+// walk the chosen path: returns the steps (node + chosen option) and the plan to show
+function hbWalk() {
+  const steps = []; let nodeId = 'pop'; let plan = null; const seen = {};
+  for (let i = 0; ; i++) {
+    const node = HB_NODES[nodeId];
+    const chosen = node.opts.find((o) => o.id === HB.path[i]);
+    steps.push({ nodeId, node, chosen });
+    seen[nodeId] = chosen && chosen.id;
+    if (!chosen) { plan = node.now || null; break; }
+    if (chosen.plan) { plan = chosen.plan; break; }
+    nodeId = chosen.next;
+  }
+  return { steps, plan, done: !!(steps[steps.length - 1].chosen), pop: HB.path[0], ckd: seen.ckd };
+}
+function hbTimeline(sched) {
+  return `<ol class="tl">${sched.map((d, i) => `<li class="tl-node"><span class="tl-dot"></span><span class="tl-n">${esc(L(d.at))}</span><span class="vx p13">${esc(d.vx)}</span></li>`).join('')}</ol>`;
+}
+function hbPlanHtml(w) {
+  const P = HB_PLANS[w.plan];
+  const follow = hbFollow(w.pop, w.ckd, w.plan);
+  const remind = P.tone === 'act' ? HB_REMIND : [];
+  const pending = !w.done;
+  const html = `<section class="plan" data-plan="${w.plan}">
+    <div class="plan-h"><h3>${esc(pending ? ht().now : ht().plan)}</h3><span class="alt">${esc(ht().page(P.p))}</span></div>
+    <div class="plan-lv"><span class="sbadge ${TONE_CLS[P.tone]}">${esc(ht().tone[P.tone])}</span><span>${esc(L(P.title))}</span></div>
+    ${P.steps ? `<ul class="plan-list">${P.steps.map((s) => `<li>${esc(L(s))}</li>`).join('')}</ul>` : ''}
+    ${P.sched ? `<div class="plan-opts"><div class="plan-opt"><div class="bt">${esc(ht().schedule)}</div>${hbTimeline(P.sched)}</div>${P.alt ? `<div class="plan-opt"><div class="bt">${esc(ht().alt)}: ${esc(L(P.alt.title))}</div>${hbTimeline(P.alt.sched)}</div>` : ''}</div>` : ''}
+    ${follow.length ? `<div class="plan-sub"><div class="bt">${esc(ht().follow)}</div><ul>${follow.map((s) => `<li>${esc(L(s))}</li>`).join('')}</ul></div>` : ''}
+    ${remind.length ? `<div class="plan-sub"><div class="bt">${esc(ht().remind)}</div><ul>${remind.map((s) => `<li>${esc(L(s))}</li>`).join('')}</ul></div>` : ''}
+    <div><button class="btn" data-act="hbcopy">${esc(ht().copy)}</button></div>
+  </section>`;
+  const text = [`${ht().title} (IDAT 2026)`, ...w.steps.filter((s) => s.chosen).map((s) => `${L(s.node.q)}: ${L(s.chosen.t)}`), '',
+    `${ht().tone[P.tone]}: ${L(P.title)} (${ht().page(P.p)})`, ...(P.steps || []).map((s) => '- ' + L(s)),
+    ...(P.sched ? [ht().schedule + ':', ...P.sched.map((d) => `  ${L(d.at)}: ${d.vx}`)] : []),
+    ...(P.alt ? [`${ht().alt} (${L(P.alt.title)}):`, ...P.alt.sched.map((d) => `  ${L(d.at)}: ${d.vx}`)] : []),
+    ...follow.map((s) => '- ' + L(s)), ...remind.map((s) => '- ' + L(s))].join('\n');
+  return { html, text };
+}
+let hbText = '';
+function openHbv() {
+  const w = hbWalk();
+  const card = (i, o, on) => `<button class="pw-opt${on ? ' on' : ''}" data-act="hbpick" data-step="${i}" data-val="${o.id}"><b>${esc(L(o.t))}</b>${o.ex ? `<span>${esc(L(o.ex))}</span>` : ''}</button>`;
+  const stepHtml = w.steps.map((s, i) => `<li class="pw-step${s.chosen ? ' done' : ''}"><span class="pw-num">${i + 1}</span><div class="pw-body"><div class="ask">${esc(L(s.node.q))}</div>${s.node.help ? `<div class="alt">${esc(L(s.node.help))}</div>` : ''}${s.node.now && !s.chosen ? `<div class="alt">${esc(ht().next)}:</div>` : ''}<div class="pw-opts">${s.node.opts.map((o) => card(i, o, s.chosen && s.chosen.id === o.id)).join('')}</div></div></li>`);
+  let plan = ''; hbText = '';
+  if (w.plan) { const p = hbPlanHtml(w); plan = p.html; hbText = p.text; }
+  const hbv = VACCINES.find((v) => v.id === 'hbv');
+  const admin = hbv.sections.find((s) => s.k === 'admin'), more = hbv.sections.find((s) => s.k === 'more');
+  const details = `<div class="bt" style="margin-top:4px">${esc(ht().details)}</div>` +
+    block('hbd:admin', 'var(--k-admin)', esc(t().secs.admin), itemsHtml(admin.items), false) +
+    block('hbd:more', 'var(--k-more)', esc(t().secs.more), itemsHtml(more.items), false) +
+    block('hbd:fig', 'var(--k-fig)', esc(ht().fig1), figBtns(PAGE_IMG.hbv), false) +
+    block('hbd:refs', 'var(--k-refs)', esc(t().refs) + ` (${hbv.refs.length})`, refsHtml(hbv.refs), false);
+  // the plan for the current step goes right under the steps; while a result is awaited it sits above the next question
+  const body = w.plan && !w.done
+    ? `<ol class="pw">${stepHtml.slice(0, -1).join('')}</ol>${plan}<ol class="pw pw-after">${stepHtml[stepHtml.length - 1]}</ol>`
+    : `<ol class="pw">${stepHtml.join('')}</ol>${plan}`;
+  openModal(mHead(esc(ht().title), esc(ht().sub)) + `<div class="mb">${body}${details}</div>` +
+    mFoot(`<button class="btn" data-act="hbreset">${esc(ht().restart)}</button><button class="btn" data-act="vaccine" data-id="hbv">${esc(L(hbv))} ›</button>`), { wide: true, rerender: openHbv });
+}
+function hbPick(step, val) {
+  const keep = modalStack.length ? $('.mb', modalStack[modalStack.length - 1].ov).scrollTop : 0;
+  HB.path = HB.path.slice(0, step); HB.path[step] = val;
+  closeModal(); openHbv();
+  const mb = $('.mb', modalStack[modalStack.length - 1].ov); mb.scrollTop = keep;
+  const planEl = $('.plan', mb); if (planEl) planEl.scrollIntoView({ block: 'nearest' });
+}
+function hbCopy() {
+  const done = () => toast(ht().copied), fail = () => toast(ht().copyFail);
+  try { navigator.clipboard.writeText(hbText).then(done, fail); } catch (e) { fail(); }
+}
 
 </script>
 </body>

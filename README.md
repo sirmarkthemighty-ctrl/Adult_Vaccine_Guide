@@ -21,7 +21,10 @@ the full guideline, or the product label.
 - Pneumococcal pathway: pick age, highest-risk condition and previous vaccines, and it summarises the plan from
   Tables 3 and 4 (both options as dose timelines, the footnotes that apply, reminders, Copy plan); the full tables stay
   below as folded details.
-- Hepatitis B Figure 1, and guides for pregnancy, solid organ and stem cell transplant, asplenia, travellers, and the
+- Hepatitis B pathway: patient group (general, healthcare personnel or partner, CKD stage, HIV, organ or stem cell
+  transplant, other immunocompromise), vaccination history and test results lead to the schedule, the next test,
+  Figure 1 step by step, follow-up and boosters.
+- Guides for pregnancy, solid organ and stem cell transplant, asplenia, travellers, and the
   general principles of adult vaccination.
 - Light and dark themes, Thai / English, phone layout, colour-coded blocks that fold.
 
