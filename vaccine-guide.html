@@ -228,6 +228,12 @@ a { color: var(--accent); }
   .ptbl td { border: 0; padding: 4px 2px; }
   .ptbl td::before { content: attr(data-l); display: block; font-size: 10.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--faint); }
 }
+/* Tables window: colour table / PDF switch */
+.viewseg { display: inline-flex; border: 1px solid var(--line2); border-radius: 9px; overflow: hidden; background: var(--panel2); }
+.viewseg button { border: 0; background: none; padding: 6px 12px; font-size: 13px; font-weight: 700; display: inline-flex; gap: 6px; align-items: center; color: var(--muted); }
+.viewseg button + button { border-left: 1px solid var(--line2); }
+.viewseg button.on { background: var(--accent2); color: #fff; }
+.viewseg svg { width: 15px; height: 15px; }
 
 </style>
 </head>
@@ -1516,12 +1522,12 @@ const GUIDE_META = {
 
 const changelogData = [
   {
-    version: '1.0.0', date: 'October 20, 2026', title: 'First release',
+    version: '1.1.0', date: 'October 20, 2026', title: 'First release',
     features: [
       'Vaccine database built from the IDAT "Recommended Adult and Elderly Immunization 2026" (คำแนะนำการให้วัคซีนป้องกันโรคสำหรับผู้ใหญ่และผู้สูงอายุ ปี พ.ศ. 2569): 17 vaccines with information, administration, precautions, additional advice and references, in English and Thai.',
       'Filters by age group (Table 1), condition (Table 2), recommendation level, live / non-live vaccine and "updated in 2026"; search covers names, brands and the full text.',
-      'Table 1 (by age) and Table 2 (by condition) as colour-coded tables, plus a Full table (PDF) button that shows the original table pages and opens or saves the PDF.',
-      'Pneumococcal planner (Tables 3 and 4), special-population guides (pregnancy, organ and stem cell transplant, asplenia, travellers) and the general principles of adult vaccination.',
+      'One Tables guide holds Table 1 (by age) and Table 2 (by condition); each opens as a colour-coded table, and its PDF button shows that table\'s page of the original guideline PDF.',
+      'General principles of adult vaccination (first guide button), pneumococcal planner (Tables 3 and 4) and special-population guides (pregnancy, organ and stem cell transplant, asplenia, travellers).',
       'Light and dark mode, Thai / English switch, colour-coded blocks that fold.',
     ],
     bugs: [],
@@ -1552,8 +1558,8 @@ const T = {
     showing: (n, m) => `Showing <b>${n}</b> of <b>${m}</b> vaccines`,
     details: 'DETAILS', table1: 'Table 1 · by age', table2: 'Table 2 · by condition', noT1: 'Not in Table 1 (see Table 2)',
     ageGroups: 'Age groups', conditions: 'Conditions', dose: 'Dose',
-    gPdf: 'Full table (PDF)', gT1: 'Table 1 · Age', gT2: 'Table 2 · Conditions', gPcv: 'Pneumococcal planner', gGen: 'General principles',
-    sPdf: 'PDF', sT1: 'By age', sT2: 'Conditions', sPcv: 'Pneumo', sGen: 'Principles',
+    gPdf: 'Full table (PDF)', gTables: 'Tables · Age & conditions', colourTable: 'Colour table', gPcv: 'Pneumococcal planner', gGen: 'General principles',
+    sTables: 'Tables', sPcv: 'Pneumo', sGen: 'Principles',
     close: 'Close', page: (p) => `Guideline p. ${p}`, refs: 'References', related: 'Special-population guides',
     figure: 'Original figure', viewPage: (p) => `View page ${p}`,
     openPdf: 'Open PDF', savePdf: 'Save PDF', zoom: 'Zoom', fit: 'Fit width',
@@ -1590,8 +1596,8 @@ const T = {
     showing: (n, m) => `แสดง <b>${n}</b> จาก <b>${m}</b> วัคซีน`,
     details: 'รายละเอียด', table1: 'ตารางที่ 1 · ตามอายุ', table2: 'ตารางที่ 2 · ตามภาวะ', noT1: 'ไม่อยู่ในตารางที่ 1 (ดูตารางที่ 2)',
     ageGroups: 'กลุ่มอายุ', conditions: 'ภาวะ', dose: 'ขนาด',
-    gPdf: 'ตารางฉบับเต็ม (PDF)', gT1: 'ตารางที่ 1 · อายุ', gT2: 'ตารางที่ 2 · ภาวะ', gPcv: 'วางแผนวัคซีนนิวโมฯ', gGen: 'หลักการทั่วไป',
-    sPdf: 'PDF', sT1: 'ตามอายุ', sT2: 'ตามภาวะ', sPcv: 'นิวโมฯ', sGen: 'หลักการ',
+    gPdf: 'ตารางฉบับเต็ม (PDF)', gTables: 'ตาราง · อายุและภาวะ', colourTable: 'ตารางสี', gPcv: 'วางแผนวัคซีนนิวโมฯ', gGen: 'หลักการทั่วไป',
+    sTables: 'ตาราง', sPcv: 'นิวโมฯ', sGen: 'หลักการ',
     close: 'ปิด', page: (p) => `หน้า ${p} ในคำแนะนำ`, refs: 'เอกสารอ้างอิง', related: 'คำแนะนำในกลุ่มประชากรเฉพาะ',
     figure: 'ภาพต้นฉบับ', viewPage: (p) => `ดูหน้า ${p}`,
     openPdf: 'เปิด PDF', savePdf: 'บันทึก PDF', zoom: 'ขยาย', fit: 'พอดีความกว้าง',
@@ -1769,12 +1775,10 @@ function renderGuides() {
   const g = (cls, act, icon, long, short, extra = '') => `<button class="gbtn ${cls}" data-act="${act}" ${extra}>${icon}<span class="long">${esc(long)}</span><span class="short">${esc(short)}</span></button>`;
   const grp = (id, cls) => { const x = GROUPS.find((y) => y.id === id); return g(cls, 'group', I[x.icon], S.lang === 'th' ? x.shortTh : x.shortEn, S.lang === 'th' ? x.shortTh : x.shortEn, `data-id="${id}" data-guide="${id}"`); };
   $('#guides').innerHTML = [
-    g('g-pdf', 'pdf', I.pdf, t().gPdf, t().sPdf, 'data-guide="pdf"'),
-    g('g-t1', 'table1', I.table, t().gT1, t().sT1, 'data-guide="t1"'),
-    g('g-t2', 'table2', I.users, t().gT2, t().sT2, 'data-guide="t2"'),
+    g('g-gen', 'general', I.book, t().gGen, t().sGen, 'data-guide="general"'),
+    g('g-t1', 'tables', I.table, t().gTables, t().sTables, 'data-guide="tables"'),
     g('g-pcv', 'pcv', I.lungs, t().gPcv, t().sPcv, 'data-guide="pcv"'),
     grp('pregnancy', 'g-preg'), grp('sot', 'g-sot'), grp('hsct', 'g-hsct'), grp('asplenia', 'g-asp'), grp('travel', 'g-travel'),
-    g('g-gen', 'general', I.book, t().gGen, t().sGen, 'data-guide="general"'),
   ].join('');
 }
 function renderFilters() {
@@ -1931,22 +1935,16 @@ function legendHtml(which) {
 }
 const rowNames = () => VACCINES.flatMap((v) => rowsOf(v).map((r) => ({ v, r, name: ROW_LABEL[r] ? L(ROW_LABEL[r]) : L(v) })));
 const cellHtml = (lines) => (lines || [['na']]).map((l) => `<div class="s-${l[0]}">${esc(l[1] ? (S.lang === 'th' ? l[2] : l[1]) : '')}</div>`).join('');
-function openTable1() {
-  const render = () => {
-    const rows = rowNames().filter((x) => TABLE1[x.r]);
-    const tbl = `<div class="gridtbl"><table><thead><tr><th class="vh">${esc(S.lang === 'th' ? 'วัคซีน' : 'Vaccines')}</th>${AGE_BANDS.map((a) => `<th class="${S.age === a.id ? 'hl' : ''}">${esc(L(a))}</th>`).join('')}</tr></thead><tbody>${rows.map((x) => `<tr><td class="vn"><button data-act="vaccine" data-id="${x.v.id}">${esc(x.name)}</button></td>${AGE_BANDS.map((a) => `<td class="c${S.age === a.id ? ' hl' : ''}">${cellHtml(cellT1(x.r, a.id))}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
-    openModal(mHead(esc(t().ttl1), esc(GUIDE_META.org)) + `<div class="mb">${legendHtml(1)}${tbl}</div>` + mFoot(`<button class="btn" data-act="pdf">${I.pdf}${esc(t().gPdf)}</button>`), { wide: true, rerender: render });
-  };
-  render();
+function table1Html() {
+  const rows = rowNames().filter((x) => TABLE1[x.r]);
+  return `<div class="gridtbl"><table><thead><tr><th class="vh">${esc(S.lang === 'th' ? 'วัคซีน' : 'Vaccines')}</th>${AGE_BANDS.map((a) => `<th class="${S.age === a.id ? 'hl' : ''}">${esc(L(a))}</th>`).join('')}</tr></thead><tbody>${rows.map((x) => `<tr><td class="vn"><button data-act="vaccine" data-id="${x.v.id}">${esc(x.name)}</button></td>${AGE_BANDS.map((a) => `<td class="c${S.age === a.id ? ' hl' : ''}">${cellHtml(cellT1(x.r, a.id))}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
 }
-function openTable2() {
-  const render = () => {
-    const rows = rowNames().filter((x) => TABLE2[x.r]);
-    const tbl = `<div class="gridtbl"><table><thead><tr><th class="vh">${esc(S.lang === 'th' ? 'วัคซีน' : 'Vaccines')}</th>${CONDITIONS.map((c) => `<th class="${S.cond === c.id ? 'hl' : ''}">${esc(L(c))}</th>`).join('')}</tr></thead><tbody>${rows.map((x) => `<tr><td class="vn"><button data-act="vaccine" data-id="${x.v.id}">${esc(x.name)}</button></td>${CONDITIONS.map((c) => `<td class="c${S.cond === c.id ? ' hl' : ''}">${cellHtml(cellT2(x.r, c.id))}</td>`).join('')}</tr>`).join('')}</tbody></table></div><div class="alt">${esc(t().hsctNote)}</div>`;
-    openModal(mHead(esc(t().ttl2), esc(GUIDE_META.org)) + `<div class="mb">${legendHtml(2)}${tbl}</div>` + mFoot(`<button class="btn" data-act="pdf">${I.pdf}${esc(t().gPdf)}</button>`), { wide: true, rerender: render });
-  };
-  render();
+function table2Html() {
+  const rows = rowNames().filter((x) => TABLE2[x.r]);
+  return `<div class="gridtbl"><table><thead><tr><th class="vh">${esc(S.lang === 'th' ? 'วัคซีน' : 'Vaccines')}</th>${CONDITIONS.map((c) => `<th class="${S.cond === c.id ? 'hl' : ''}">${esc(L(c))}</th>`).join('')}</tr></thead><tbody>${rows.map((x) => `<tr><td class="vn"><button data-act="vaccine" data-id="${x.v.id}">${esc(x.name)}</button></td>${CONDITIONS.map((c) => `<td class="c${S.cond === c.id ? ' hl' : ''}">${cellHtml(cellT2(x.r, c.id))}</td>`).join('')}</tr>`).join('')}</tbody></table></div><div class="alt">${esc(t().hsctNote)}</div>`;
 }
+const openTable1 = () => openTables(1, 'grid');
+const openTable2 = () => openTables(2, 'grid');
 
 /* ---------- PDF viewer ---------- */
 let pdfUrl = null;
@@ -1995,21 +1993,28 @@ async function drawPdfPage(box, page, zoom) {
 // Open / Save only where the browser allows it: a page shown inside another site's or viewer's frame cannot
 // start downloads or open windows, so those buttons are left out there.
 const canSaveFiles = (() => { try { return window.self === window.top; } catch (e) { return false; } })();
-const PDFV = { tab: 1, zoom: false };
-function openPdf(tab = 1) {
-  PDFV.tab = tab;
-  const ov = openModal(mHead(esc(t().gPdf), esc(t().pdfNote)) + `<div class="mb">
-      <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap">
-        <div class="tabs"><button class="tab${tab === 1 ? ' on' : ''}" data-act="pdftab" data-val="1">${esc(S.lang === 'th' ? 'ตารางที่ 1' : 'Table 1')}</button><button class="tab${tab === 2 ? ' on' : ''}" data-act="pdftab" data-val="2">${esc(S.lang === 'th' ? 'ตารางที่ 2' : 'Table 2')}</button></div>
-        <button class="btn" data-act="pdfzoom">${esc(PDFV.zoom ? t().fit : t().zoom)}</button>
-      </div>
-      <div class="imgbox${PDFV.zoom ? ' zoom' : ''}" id="pdfimg" data-src="img"><img alt="${esc(tab === 1 ? t().ttl1 : t().ttl2)}" src="${tab === 1 ? ASSETS.table1 : ASSETS.table2}"></div>
-      <div class="alt" id="pdfstate">${esc(t().pdfLoading)}</div>
-    </div>` + mFoot(canSaveFiles ? `<button class="btn" data-act="pdfopen">${I.ext}${esc(t().openPdf)}</button><button class="btn" data-act="pdfsave">${I.dl}${esc(t().savePdf)}</button>` : ''), { wide: true, rerender: () => openPdf(PDFV.tab) });
+// One "Tables" window: Table 1 (by age) and Table 2 (by condition) as tabs, each shown either as the
+// colour-coded table or as its page of the original PDF.
+const PDFV = { tab: 1, mode: 'grid', zoom: false };
+function openTables(tab = PDFV.tab, mode = PDFV.mode) {
+  PDFV.tab = tab; PDFV.mode = mode;
+  const pdf = mode === 'pdf';
+  const tabs = `<div class="tabs">${[1, 2].map((n) => `<button class="tab${tab === n ? ' on' : ''}" data-act="tbltab" data-val="${n}">${esc(n === 1 ? t().table1 : t().table2)}</button>`).join('')}</div>`;
+  const modes = `<div class="viewseg">${[['grid', I.table, t().colourTable], ['pdf', I.pdf, 'PDF']].map(([m, ic, lab]) => `<button class="${mode === m ? 'on' : ''}" data-act="tblmode" data-val="${m}" data-mode="${m}">${ic}${esc(lab)}</button>`).join('')}</div>`;
+  const body = pdf
+    ? `<div class="imgbox${PDFV.zoom ? ' zoom' : ''}" id="pdfimg" data-src="img"><img alt="${esc(tab === 1 ? t().ttl1 : t().ttl2)}" src="${tab === 1 ? ASSETS.table1 : ASSETS.table2}"></div>
+       <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center"><div class="alt" id="pdfstate">${esc(t().pdfLoading)}</div><button class="btn" data-act="pdfzoom">${esc(PDFV.zoom ? t().fit : t().zoom)}</button></div>`
+    : legendHtml(tab) + (tab === 1 ? table1Html() : table2Html());
+  const foot = pdf && canSaveFiles ? `<button class="btn" data-act="pdfopen">${I.ext}${esc(t().openPdf)}</button><button class="btn" data-act="pdfsave">${I.dl}${esc(t().savePdf)}</button>` : '';
+  const ov = openModal(mHead(esc(tab === 1 ? t().ttl1 : t().ttl2), esc(pdf ? t().pdfNote : GUIDE_META.org)) +
+    `<div class="mb"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap">${tabs}${modes}</div>${body}</div>` + mFoot(foot),
+    { wide: true, rerender: () => openTables(PDFV.tab, PDFV.mode) });
+  if (!pdf) return;
   const box = $('#pdfimg', ov), state = $('#pdfstate', ov);
   drawPdfPage(box, tab, PDFV.zoom).then(() => { if (state.isConnected) state.textContent = t().pdfShown; })
     .catch(() => { if (state.isConnected) state.textContent = t().pdfFallback; });
 }
+const openPdf = (tab = 1) => openTables(tab, 'pdf');
 function pdfOpenWindow() {
   const w = window.open(pdfBlobUrl(), '_blank', 'noopener');
   if (!w) toast(t().toastPdfBlocked);
@@ -2087,15 +2092,15 @@ document.addEventListener('click', (e) => {
     case 'vaccine': openVaccine(el.dataset.id); break;
     case 'group': openGroup(el.dataset.id); break;
     case 'general': openGeneral(); break;
-    case 'table1': openTable1(); break;
-    case 'table2': openTable2(); break;
+    case 'tables': openTables(1, 'grid'); break;
+    case 'tbltab': closeModal(); openTables(+val, PDFV.mode); break;
+    case 'tblmode': closeModal(); openTables(PDFV.tab, val); break;
     case 'pcv': P.prior = null; P.g = null; P.i = null; openPcv(); break;
     case 'pcvprior': P.prior = val; P.g = null; P.i = null; closeModal(); openPcv(); break;
     case 'pcvg': P.g = val; P.i = null; closeModal(); openPcv(); break;
     case 'pcvi': P.i = +val; closeModal(); openPcv(); break;
     case 'pdf': openPdf(1); break;
-    case 'pdftab': closeModal(); openPdf(+val); break;
-    case 'pdfzoom': PDFV.zoom = !PDFV.zoom; closeModal(); openPdf(PDFV.tab); break;
+    case 'pdfzoom': PDFV.zoom = !PDFV.zoom; closeModal(); openTables(PDFV.tab, 'pdf'); break;
     case 'pdfopen': pdfOpenWindow(); break;
     case 'pdfsave': pdfSave(); break;
     case 'page': openPage(+el.dataset.page); break;

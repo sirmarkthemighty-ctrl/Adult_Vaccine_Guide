@@ -15,7 +15,7 @@ the full guideline, or the product label.
 - Filters by age group (Table 1), condition (Table 2: pregnancy, healthcare personnel, heart/diabetes/lung disease,
   CKD, liver disease, asplenia, HIV, immunocompromise, transplant, travellers), recommendation level, live / non-live,
   and "updated in 2026". Search covers names, brands and the full text.
-- Table 1 and Table 2 as colour-coded tables, and a **Full table (PDF)** button that shows the original table PDF
+- One **Tables** guide with Table 1 (by age) and Table 2 (by condition): each shows as a colour-coded table, and its **PDF** switch shows that table's page of the original PDF
   in the page (pdf.js from cdnjs; falls back to page pictures offline), with Open / Save when the page is not framed.
 - Pneumococcal planner (Tables 3 and 4), hepatitis B Figure 1, and guides for pregnancy, solid organ and stem cell
   transplant, asplenia, travellers, and the general principles of adult vaccination.
