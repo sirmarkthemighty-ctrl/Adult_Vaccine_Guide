@@ -30,7 +30,8 @@ the full guideline, or the product label.
   Figure 1 step by step, follow-up and boosters.
 - Guides for pregnancy, solid organ and stem cell transplant, asplenia, travellers, and the
   general principles of adult vaccination.
-- Light and dark themes, Thai / English, phone layout, colour-coded blocks that fold.
+- Soft-tint look like the Adult Bronchodilator Device Guide, light and dark themes, Thai / English, phone layout,
+  colour-coded blocks that fold.
 
 Tap the version badge next to the title for the changelog.
 
