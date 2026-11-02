@@ -1569,6 +1569,13 @@ const GUIDE_META = {
 
 const changelogData = [
   {
+    version: '1.5.0', date: 'November 2, 2026', title: 'Several conditions at once',
+    features: [
+      'Conditions can be combined: tap several and the list shows only vaccines indicated in all of them; All clears the choice. A condition now lists vaccines with an indication there (recommended, risk-based, optional or shared decision); pick the Contraindicated level to see contraindicated ones.',
+    ],
+    bugs: [],
+  },
+  {
     version: '1.4.0', date: 'October 20, 2026', title: 'First release',
     features: [
       'Vaccine database built from the IDAT "Recommended Adult and Elderly Immunization 2026" (คำแนะนำการให้วัคซีนป้องกันโรคสำหรับผู้ใหญ่และผู้สูงอายุ ปี พ.ศ. 2569): 17 vaccines with information, administration, precautions, additional advice and references, in English and Thai.',
@@ -1601,6 +1608,7 @@ const PAGE_IMG = { hbv: [20], pcv: [24, 25, 26] };
 const T = {
   en: {
     title: 'Thai Adult Vaccine Guide 2026',
+    allConds: 'indicated in all selected conditions',
     sub: 'Adult and elderly immunization, based on the IDAT recommendations 2569 B.E. (2026).',
     by: 'Made by Warodom Phaenthong, M.D.',
     disc: 'Decision support only: read the disclaimer',
@@ -1646,6 +1654,7 @@ const T = {
     age: 'อายุ', cond: 'ภาวะ', level: 'ระดับ', type: 'ชนิด', all: 'ทั้งหมด', any: 'ทุกแบบ',
     live: 'เชื้อเป็น', nonlive: 'ไม่ใช่เชื้อเป็น', updated: 'ปรับปรุงปี 2569', clear: 'ล้างตัวกรอง', key: 'คำอธิบายสี', filters: 'ตัวกรอง', remove: 'ลบตัวกรอง',
     showing: (n, m) => `แสดง <b>${n}</b> จาก <b>${m}</b> วัคซีน`,
+    allConds: 'มีข้อบ่งชี้ในทุกภาวะที่เลือก',
     details: 'รายละเอียด', table1: 'ตารางที่ 1 · ตามอายุ', table2: 'ตารางที่ 2 · ตามภาวะ', noT1: 'ไม่อยู่ในตารางที่ 1 (ดูตารางที่ 2)',
     ageGroups: 'กลุ่มอายุ', conditions: 'ภาวะ', dose: 'ขนาด',
     gPdf: 'ตารางฉบับเต็ม (PDF)', gTables: 'ตาราง · อายุและภาวะ', colourTable: 'ตารางสี', gPcv: 'แนวทางวัคซีนนิวโมฯ', gHbv: 'แนวทางวัคซีนตับอักเสบบี', gGen: 'หลักการทั่วไป',
@@ -1684,7 +1693,7 @@ const store = {
 };
 const S = {
   lang: store.get('tavg-lang', 'en') === 'th' ? 'th' : 'en',
-  q: '', age: null, cond: null, levels: new Set(), live: null, upd: false,
+  q: '', age: null, conds: new Set(), levels: new Set(), live: null, upd: false,
   view: store.get('tavg-view', 'grid') === 'list' ? 'list' : 'grid',
   fopen: store.get('tavg-filters', window.innerWidth > 640 ? '1' : '0') === '1',
 };
@@ -1697,17 +1706,20 @@ const $ = (sel, root = document) => root.querySelector(sel);
 const cellT1 = (row, age) => (TABLE1[row] ? TABLE1[row][age] : null);
 const cellT2 = (row, cond) => (TABLE2[row] ? TABLE2[row][cond] : null);
 const statusLabel = (s) => L(STATUS[s]);
-// The lines that apply to a vaccine row under the current age / condition filters
-function linesFor(row) {
-  if (S.cond) {
-    const c = cellT2(row, S.cond);
-    if (c && !(c.length === 1 && c[0][0] === 't1')) return c;
-    if (S.age) return cellT1(row, S.age) || [];
-    return c || [];
-  }
+// Table 2 lines for one condition; "See Table 1" falls back to the selected age band
+function condLines(row, cond) {
+  const c = cellT2(row, cond);
+  if (c && !(c.length === 1 && c[0][0] === 't1')) return c;
   if (S.age) return cellT1(row, S.age) || [];
-  return null;
+  return c || [];
 }
+// Table 1 lines for the selected age band (null when no age is selected)
+function linesFor(row) {
+  return S.age ? cellT1(row, S.age) || [] : null;
+}
+// a condition filter keeps vaccines with an indication there; the Level chips, when set, replace that list
+const INDICATED = ['rec', 'risk', 'opt', 'scdm'];
+const condMatch = (v, cond) => { const want = S.levels.size ? S.levels : new Set(INDICATED); return rowsOf(v).some((r) => condLines(r, cond).some((l) => want.has(l[0]))); };
 function statusesFor(v) {
   const out = new Set();
   rowsOf(v).forEach((r) => {
@@ -1740,7 +1752,9 @@ function filtered() {
     if (S.live === 'live' && !isLive(v)) return false;
     if (S.live === 'nonlive' && !hasNonLive(v)) return false;
     if (S.upd && !UPDATED_2026.includes(v.id)) return false;
-    if ((S.age || S.cond) && rowsOf(v).every((r) => { const l = linesFor(r); return !l || !l.length; })) return false;
+    if (S.age && rowsOf(v).every((r) => !linesFor(r).length)) return false;
+    // several conditions: the vaccine must be indicated in every one of them (intersection)
+    if (S.conds.size) return [...S.conds].every((c) => condMatch(v, c));
     if (S.levels.size) { const st = statusesFor(v); if (![...S.levels].some((s) => st.has(s))) return false; }
     return true;
   });
@@ -1794,14 +1808,15 @@ function stripHtml(row) {
 function filterLabel() {
   const parts = [];
   if (S.age) parts.push(L(AGE_BANDS.find((a) => a.id === S.age)));
-  if (S.cond) parts.push(L(CONDITIONS.find((c) => c.id === S.cond)));
   return parts.join(' · ');
 }
 function statusBox(v) {
   const rows = rowsOf(v);
-  if (S.age || S.cond) {
-    return `<div class="box"><div class="bt">${esc(filterLabel())}</div>${rows.map((r) => `${rows.length > 1 ? `<div class="alt" style="margin:2px 0">${esc(L(ROW_LABEL[r]))}</div>` : ''}<div class="cell">${linesHtml(linesFor(r))}</div>`).join('')}</div>`;
+  const rowCells = (fn) => rows.map((r) => `${rows.length > 1 ? `<div class="alt" style="margin:2px 0">${esc(L(ROW_LABEL[r]))}</div>` : ''}<div class="cell">${linesHtml(fn(r))}</div>`).join('');
+  if (S.conds.size) {
+    return `<div class="box">${S.age ? `<div class="bt">${esc(filterLabel())}</div>${rowCells(linesFor)}` : ''}${[...S.conds].map((c) => `<div class="bt"${S.age || c !== [...S.conds][0] ? ' style="margin-top:8px"' : ''}>${esc(L(CONDITIONS.find((x) => x.id === c)))}</div>${rowCells((r) => condLines(r, c))}`).join('')}</div>`;
   }
+  if (S.age) return `<div class="box"><div class="bt">${esc(filterLabel())}</div>${rowCells(linesFor)}</div>`;
   return `<div class="box"><div class="bt">${esc(t().ageGroups)} · ${esc(t().conditions)}</div>${rows.map((r) => `${rows.length > 1 ? `<div class="alt" style="margin:4px 0 2px">${esc(L(ROW_LABEL[r]))}</div>` : ''}${stripHtml(r)}`).join('')}</div>`;
 }
 function tagsHtml(v) {
@@ -1838,12 +1853,12 @@ function renderGuides() {
   ].join('');
 }
 // number of filters in use (search not counted) and their removable summary chips
-const activeCount = () => (S.age ? 1 : 0) + (S.cond ? 1 : 0) + S.levels.size + (S.live ? 1 : 0) + (S.upd ? 1 : 0);
+const activeCount = () => (S.age ? 1 : 0) + S.conds.size + S.levels.size + (S.live ? 1 : 0) + (S.upd ? 1 : 0);
 function activeChips() {
   const out = [];
   const x = (act, val, label, sw) => out.push(`<button class="achip" data-act="${act}" data-val="${val}" aria-label="${esc(t().remove + ': ' + label)}">${sw ? `<span class="sw s-${sw}"></span>` : ''}${esc(label)}<span aria-hidden="true">×</span></button>`);
   if (S.age) x('age', '', L(AGE_BANDS.find((b) => b.id === S.age)));
-  if (S.cond) { const c = CONDITIONS.find((y) => y.id === S.cond); x('cond', '', S.lang === 'th' ? (c.shortTh || c.th) : (c.short || c.en)); }
+  S.conds.forEach((id) => { const c = CONDITIONS.find((y) => y.id === id); x('cond', id, S.lang === 'th' ? (c.shortTh || c.th) : (c.short || c.en)); });
   S.levels.forEach((s) => x('level', s, statusLabel(s), s));
   if (S.live) x('live', S.live, S.live === 'live' ? t().live : t().nonlive);
   if (S.upd) x('upd', '1', t().updated);
@@ -1860,14 +1875,14 @@ function renderFilters() {
   if (!S.fopen) { fg.innerHTML = activeChips(); return; }
   fg.innerHTML = `
     <div class="fgroup"><span class="lab">${esc(t().age)}:</span>${chip(!S.age, 'age', '', t().all)}${AGE_BANDS.map((a) => chip(S.age === a.id, 'age', a.id, L(a).replace(/ (years|ปี)$/, ''))).join('')}</div>
-    <div class="fgroup"><span class="lab">${esc(t().cond)}:</span>${chip(!S.cond, 'cond', '', t().all)}${CONDITIONS.map((c) => chip(S.cond === c.id, 'cond', c.id, S.lang === 'th' ? (c.shortTh || c.th) : (c.short || c.en))).join('')}</div>
+    <div class="fgroup"><span class="lab">${esc(t().cond)}:</span>${chip(!S.conds.size, 'cond', '', t().all)}${CONDITIONS.map((c) => chip(S.conds.has(c.id), 'cond', c.id, S.lang === 'th' ? (c.shortTh || c.th) : (c.short || c.en))).join('')}</div>
     <div class="fgroup"><span class="lab">${esc(t().level)}:</span>${STATUS_ORDER.map((s) => chip(S.levels.has(s), 'level', s, statusLabel(s), s)).join('')}</div>
     <div class="fgroup"><span class="lab">${esc(t().type)}:</span>${chip(S.live === 'live', 'live', 'live', t().live)}${chip(S.live === 'nonlive', 'live', 'nonlive', t().nonlive)}${chip(S.upd, 'upd', '1', t().updated)}</div>`;
 }
 function renderList() {
   const list = filtered();
-  const active = S.q || S.age || S.cond || S.levels.size || S.live || S.upd;
-  $('#resbar').innerHTML = `<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">${active ? `<button class="clearbtn" data-act="clearall">${esc(t().clear)}</button>` : ''}<span>${t().showing(list.length, VACCINES.length)}</span></div><button class="keybtn" data-act="key">${I.key}${esc(t().key)}</button>`;
+  const active = S.q || S.age || S.conds.size || S.levels.size || S.live || S.upd;
+  $('#resbar').innerHTML = `<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">${active ? `<button class="clearbtn" data-act="clearall">${esc(t().clear)}</button>` : ''}<span>${t().showing(list.length, VACCINES.length)}${S.conds.size > 1 ? ' · ' + esc(t().allConds) : ''}</span></div><button class="keybtn" data-act="key">${I.key}${esc(t().key)}</button>`;
   const out = $('#out');
   if (!list.length) { out.className = ''; out.innerHTML = `<div class="empty">${esc(t().empty)}</div>`; return; }
   if (S.view === 'list') {
@@ -2013,7 +2028,7 @@ function table1Html() {
 }
 function table2Html() {
   const rows = rowNames().filter((x) => TABLE2[x.r]);
-  return `<div class="gridtbl"><table><thead><tr><th class="vh">${esc(S.lang === 'th' ? 'วัคซีน' : 'Vaccines')}</th>${CONDITIONS.map((c) => `<th class="${S.cond === c.id ? 'hl' : ''}">${esc(L(c))}</th>`).join('')}</tr></thead><tbody>${rows.map((x) => `<tr><td class="vn"><button data-act="vaccine" data-id="${x.v.id}">${esc(x.name)}</button></td>${CONDITIONS.map((c) => `<td class="c${S.cond === c.id ? ' hl' : ''}">${cellHtml(cellT2(x.r, c.id))}</td>`).join('')}</tr>`).join('')}</tbody></table></div><div class="alt">${esc(t().hsctNote)}</div>`;
+  return `<div class="gridtbl"><table><thead><tr><th class="vh">${esc(S.lang === 'th' ? 'วัคซีน' : 'Vaccines')}</th>${CONDITIONS.map((c) => `<th class="${S.conds.has(c.id) ? 'hl' : ''}">${esc(L(c))}</th>`).join('')}</tr></thead><tbody>${rows.map((x) => `<tr><td class="vn"><button data-act="vaccine" data-id="${x.v.id}">${esc(x.name)}</button></td>${CONDITIONS.map((c) => `<td class="c${S.conds.has(c.id) ? ' hl' : ''}">${cellHtml(cellT2(x.r, c.id))}</td>`).join('')}</tr>`).join('')}</tbody></table></div><div class="alt">${esc(t().hsctNote)}</div>`;
 }
 const openTable1 = () => openTables(1, 'grid');
 const openTable2 = () => openTables(2, 'grid');
@@ -2308,14 +2323,14 @@ document.addEventListener('click', (e) => {
     case 'disclaimer': openDisclaimer(); break;
     case 'key': openKey(); break;
     case 'age': S.age = val || null; renderFilters(); renderList(); break;
-    case 'cond': S.cond = val || null; renderFilters(); renderList(); break;
+    case 'cond': if (!val) S.conds.clear(); else S.conds.has(val) ? S.conds.delete(val) : S.conds.add(val); renderFilters(); renderList(); break;
     case 'level': S.levels.has(val) ? S.levels.delete(val) : S.levels.add(val); renderFilters(); renderList(); break;
     case 'live': S.live = S.live === val ? null : val; renderFilters(); renderList(); break;
     case 'upd': S.upd = !S.upd; renderFilters(); renderList(); break;
     case 'ftoggle': S.fopen = !S.fopen; store.set('tavg-filters', S.fopen ? '1' : '0'); renderFilters(); break;
     case 'view': S.view = val; store.set('tavg-view', val); renderFilters(); renderList(); break;
     case 'clearq': S.q = ''; renderFilters(); renderList(); $('#q').focus(); break;
-    case 'clearall': S.q = ''; S.age = null; S.cond = null; S.levels.clear(); S.live = null; S.upd = false; renderFilters(); renderList(); break;
+    case 'clearall': S.q = ''; S.age = null; S.conds.clear(); S.levels.clear(); S.live = null; S.upd = false; renderFilters(); renderList(); break;
     case 'vaccine': openVaccine(el.dataset.id); break;
     case 'group': openGroup(el.dataset.id); break;
     case 'general': openGeneral(); break;
