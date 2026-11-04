@@ -30,6 +30,7 @@ the full guideline, or the product label.
   Figure 1 step by step, follow-up and boosters.
 - Guides for pregnancy, solid organ and stem cell transplant, asplenia, travellers, and the
   general principles of adult vaccination.
+- A heart **Donate** button opens the author's PromptPay QR code for voluntary support.
 - Soft-tint look like the Adult Bronchodilator Device Guide, light and dark themes, Thai / English, phone layout,
   colour-coded blocks that fold.
 
