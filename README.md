@@ -20,6 +20,8 @@ the full guideline, or the product label.
   and "updated in 2026". Several conditions can be picked at once: the list then shows vaccines indicated in all of
   them. Search covers names, brands and the full text. A **Filters** button opens or closes the
   filter panel and counts the filters in use; while closed, they show as chips you can tap to remove.
+- The guide buttons sit in a collapsible **Clinical Tools & Knowledge** section (open on desktop, folded on phones).
+- A **Group pathogens** button turns the Respiratory / STI / Other headings on or off.
 - One **Tables** guide with Table 1 (by age) and Table 2 (by condition): each shows as a colour-coded table, and its **PDF** switch shows that table's page of the original PDF
   in the page (pdf.js from cdnjs; falls back to page pictures offline), with Open / Save when the page is not framed.
 - Pneumococcal pathway: pick age, highest-risk condition and previous vaccines, and it summarises the plan from

@@ -69,7 +69,9 @@ a { color: var(--accent); }
 .round svg { width: 16px; height: 16px; }
 
 /* guide buttons */
-.guides { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 14px; }
+.guides { margin: 16px 0 12px; }
+.gbtns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+[hidden] { display: none !important; }
 .gbtn { --gb: #f8fafc; --gt: #334155; --gbd: #e2e8f0; --gc: #94a3b8; --gl: #cbd5e1; display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--gbd); border-radius: 10px; padding: 9px 14px; background: var(--gb); color: var(--gt); font-weight: 700; font-size: 13.5px; box-shadow: 0 1px 2px rgba(15,23,42,.05); }
 :root.dark .gbtn { background: color-mix(in srgb, var(--gc) 12%, transparent); color: var(--gl); border-color: color-mix(in srgb, var(--gc) 35%, transparent); box-shadow: none; }
 .gbtn svg { width: 17px; height: 17px; flex-shrink: 0; }
@@ -236,7 +238,7 @@ a { color: var(--accent); }
   .hdr { flex-direction: column-reverse; gap: 10px; }
   .tools { align-self: flex-end; }
   .hdr h1 { font-size: 23px; }
-  .guides { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .gbtns { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
   .gbtn { flex-direction: column; gap: 3px; padding: 8px 2px; font-size: 10.5px; line-height: 1.15; text-align: center; justify-content: center; border-radius: 10px; min-width: 0; }
   .gbtn .long { display: none; } .gbtn .short { display: block; }
   .grid { grid-template-columns: 1fr; }
@@ -360,23 +362,31 @@ button:active:not(:disabled) { filter: brightness(.93); }
 @keyframes bd-zoom { from { opacity: .01; transform: scale(.96); } }
 @media (prefers-reduced-motion: reduce) { .ov, .modal { animation: none; } button { transition: none; } }
 /* guide bar pinned with the search bar (desktop: both rows; phone: the search row only) */
-.pinbar { position: sticky; top: var(--clip-top, 0px); z-index: 30; background: var(--bg); margin: 0 -12px; padding: 1px 12px 10px; }
-.pinbar .guides { margin: 12px 0 10px; }
 @media (min-width: 768px) { .card { border-radius: 16px; padding: 20px; } }
 @media (max-width: 640px) {
-  .pinbar { display: contents; }
-  .searchrow { position: sticky; top: var(--clip-top, 0px); z-index: 30; background: var(--bg); margin: 0 -12px; padding: 6px 12px; }
 }
+.searchrow { position: sticky; top: var(--clip-top, 0px); z-index: 30; background: var(--bg); margin: 0 -12px; padding: 6px 12px; }
+
+/* on/off switch chip (Group pathogens), like Group strengths in the bronchodilator guide */
+.chip.tog { display: inline-flex; align-items: center; gap: 5px; border: 1px solid var(--line2); background: var(--panel); height: 100%; min-height: 32px; padding: 3px 10px; }
+.chip.tog svg { width: 11px; height: 11px; flex-shrink: 0; }
+.chip.tog.on { background: var(--accent2); color: #fff; border-color: transparent; box-shadow: var(--shadow); }
+
+/* Clinical Tools & Knowledge: collapsible section holding the guide buttons */
+.toolhdr { width: 100%; display: flex; align-items: center; gap: 8px; text-align: left; padding: 9px 12px; border: 1px solid var(--line2); border-radius: 12px; background: var(--panel); box-shadow: var(--shadow); font-weight: 800; font-size: 13.5px; color: var(--text); }
+.toolhdr > svg { width: 17px; height: 17px; color: var(--accent); flex-shrink: 0; }
+.toolhdr .tt { flex: 1; min-width: 0; }
+.toolhdr .tn { min-width: 22px; height: 20px; padding: 0 7px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; font-size: 11.5px; background: var(--chip); color: var(--chipText); }
+.toolhdr .cv { display: inline-flex; color: var(--faint); transition: transform .15s; }
+.toolhdr.open .cv { transform: rotate(180deg); }
 
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="hdr" id="hdr"></header>
-  <div class="pinbar" id="bar">
-    <nav class="guides" id="guides"></nav>
-    <div class="searchrow" id="searchrow"></div>
-  </div>
+  <nav class="guides" id="guides"></nav>
+  <div class="searchrow" id="searchrow"></div>
   <div class="fgroups" id="fgroups"></div>
   <div class="resbar" id="resbar"></div>
   <main id="out"></main>
@@ -1657,10 +1667,10 @@ const GUIDE_META = {
 
 const changelogData = [
   {
-    version: '1.8.0', date: 'November 17, 2026', title: 'Infection-type groups and Bedside UI',
+    version: '1.9.0', date: 'November 17, 2026', title: 'Infection-type groups and Bedside UI',
     features: [
-      'Vaccines are grouped by the infection they mainly prevent: respiratory infections (influenza, COVID-19, RSV, pneumococcal), sexually transmitted infections (HPV, hepatitis B, mpox) and other infections (the remaining 10), with a heading and count for each group, an Infection type filter, and search by "respiratory" or "sexually transmitted".',
-      'Bedside UI with Fluent touches, as in the other guides: indigo-600 selected state, soft two-layer card elevation, flat cards (no box inside a box), blurred dialog overlay with a short fade / zoom (off with reduced motion), a visible keyboard focus ring, press feedback on buttons, and the guide bar pinned with the search bar (search bar only on phones).',
+      'Vaccines are grouped by the infection they mainly prevent: respiratory infections (influenza, COVID-19, RSV, pneumococcal), sexually transmitted infections (HPV, hepatitis B, mpox) and other infections (the remaining 10), with a heading and count for each group and search by "respiratory" or "sexually transmitted". The Group pathogens button in the filters switches the headings off to show one plain list; the choice is remembered on the device.',
+      'Bedside UI with Fluent touches, as in the other guides: indigo-600 selected state, soft two-layer card elevation, flat cards (no box inside a box), blurred dialog overlay with a short fade / zoom (off with reduced motion), a visible keyboard focus ring, press feedback on buttons, and the search bar pinned while the page scrolls.',
     ],
     bugs: [],
   },
@@ -1686,6 +1696,7 @@ const changelogData = [
       'Filters by age group (Table 1), condition (Table 2), recommendation level, live / non-live vaccine and "updated in 2026"; search covers names, brands and the full text.',
       'Hepatitis B pathway: pick the patient group (general adult, healthcare personnel or partner, CKD stage, HIV, organ or stem cell transplant, other immunocompromise), vaccination history and test results; it gives the schedule as a dose timeline, the next test, Figure 1 step by step, follow-up and boosters, with the chapter text folded below.',
       'Filters button beside the search box shows how many filters are on and opens or closes the filter panel (open on desktop, closed on phones); while closed, the filters in use show as chips you can tap to remove.',
+      'The guide buttons (principles, tables, pneumococcal and hepatitis B pathways, pregnancy, transplant, asplenia, travellers) sit in a collapsible Clinical Tools & Knowledge section: open on desktop, folded on phones, and remembered on the device.',
       'One Tables guide holds Table 1 (by age) and Table 2 (by condition); each opens as a colour-coded table, and its PDF button shows that table\'s page of the original guideline PDF.',
       'General principles of adult vaccination (first guide button) and special-population guides (pregnancy, organ and stem cell transplant, asplenia, travellers).',
       'Pneumococcal pathway: pick age, the highest-risk condition and previous vaccines, and it summarises the plan for the doctor from Tables 3 and 4 (both options as dose timelines, the footnotes that apply, reminders, Copy plan); the full tables stay below as folded details.',
@@ -1718,7 +1729,7 @@ const T = {
     disc: 'Decision support only: read the disclaimer',
     search: 'Search vaccine, brand, condition, drug…', searchShort: 'Search…',
     age: 'Age', cond: 'Condition', level: 'Level', type: 'Type', all: 'All', any: 'Any',
-    live: 'Live', nonlive: 'Non-live', updated: 'Updated 2026', clear: 'Clear filters', key: 'Key', filters: 'Filters', remove: 'Remove filter', pathogen: 'Infection type', groups: { resp: ['Respiratory', 'Respiratory infections'], sti: ['STI', 'Sexually transmitted infections (STI)'], oth: ['Other', 'Other infections'] },
+    live: 'Live', nonlive: 'Non-live', updated: 'Updated 2026', clear: 'Clear filters', key: 'Key', filters: 'Filters', remove: 'Remove filter', toolsTitle: 'Clinical Tools & Knowledge', groupPath: 'Group pathogens', groups: { resp: ['Respiratory', 'Respiratory infections'], sti: ['STI', 'Sexually transmitted infections (STI)'], oth: ['Other', 'Other infections'] },
     donBtn: 'Donate', donTitle: 'Support this guide', donAlt: 'PromptPay QR code for donations',
     donIntro: 'This guide is free to use. If it helps your practice, you can support its development by scanning this PromptPay QR code with your banking app.',
     donScan: 'Scan with a Thai banking app (PromptPay / Thai QR Payment).',
@@ -1760,7 +1771,7 @@ const T = {
     disc: 'เป็นเครื่องมือช่วยตัดสินใจเท่านั้น: อ่านข้อจำกัดความรับผิดชอบ',
     search: 'ค้นหาวัคซีน ชื่อการค้า โรค ยา…', searchShort: 'ค้นหา…',
     age: 'อายุ', cond: 'ภาวะ', level: 'ระดับ', type: 'ชนิด', all: 'ทั้งหมด', any: 'ทุกแบบ',
-    live: 'เชื้อเป็น', nonlive: 'ไม่ใช่เชื้อเป็น', updated: 'ปรับปรุงปี 2569', clear: 'ล้างตัวกรอง', key: 'คำอธิบายสี', filters: 'ตัวกรอง', remove: 'ลบตัวกรอง', pathogen: 'ประเภทโรค', groups: { resp: ['ทางเดินหายใจ', 'โรคติดเชื้อทางเดินหายใจ'], sti: ['STI', 'โรคติดต่อทางเพศสัมพันธ์ (STI)'], oth: ['อื่น ๆ', 'โรคติดเชื้ออื่น ๆ'] },
+    live: 'เชื้อเป็น', nonlive: 'ไม่ใช่เชื้อเป็น', updated: 'ปรับปรุงปี 2569', clear: 'ล้างตัวกรอง', key: 'คำอธิบายสี', filters: 'ตัวกรอง', remove: 'ลบตัวกรอง', toolsTitle: 'เครื่องมือและความรู้ทางคลินิก', groupPath: 'จัดกลุ่มเชื้อก่อโรค', groups: { resp: ['ทางเดินหายใจ', 'โรคติดเชื้อทางเดินหายใจ'], sti: ['STI', 'โรคติดต่อทางเพศสัมพันธ์ (STI)'], oth: ['อื่น ๆ', 'โรคติดเชื้ออื่น ๆ'] },
     donBtn: 'สนับสนุน', donTitle: 'สนับสนุนคู่มือนี้', donAlt: 'QR พร้อมเพย์สำหรับสนับสนุนผู้พัฒนา',
     donIntro: 'คู่มือนี้ใช้ได้ฟรี หากเป็นประโยชน์ต่อการทำงาน สามารถสนับสนุนการพัฒนาได้โดยสแกน QR พร้อมเพย์นี้ด้วยแอปธนาคาร',
     donScan: 'สแกนด้วยแอปธนาคารของไทย (พร้อมเพย์ / Thai QR Payment)',
@@ -1805,7 +1816,8 @@ const store = {
 };
 const S = {
   lang: store.get('tavg-lang', 'en') === 'th' ? 'th' : 'en',
-  q: '', age: null, conds: new Set(), levels: new Set(), live: null, upd: false, path: null,
+  q: '', age: null, conds: new Set(), levels: new Set(), live: null, upd: false, group: store.get('tavg-group', '1') !== '0',
+  tools: store.get('tavg-tools', window.innerWidth > 640 ? '1' : '0') === '1',
   view: store.get('tavg-view', 'grid') === 'list' ? 'list' : 'grid',
   fopen: store.get('tavg-filters', window.innerWidth > 640 ? '1' : '0') === '1',
 };
@@ -1856,7 +1868,6 @@ const doseLine = (v) => { const s = v.sections.find((x) => x.k === 'admin'); ret
 const GROUP_OF = { flu: 'resp', covid: 'resp', rsv: 'resp', pcv: 'resp', hpv: 'sti', hbv: 'sti', mpox: 'sti' };
 const PATHOGENS = ['resp', 'sti', 'oth'];
 VACCINES.forEach((v) => { v.path = GROUP_OF[v.id] || 'oth'; });
-const pathLabel = (p) => t().groups[p][0];
 
 /* ---------- search index ---------- */
 const flat = (items, acc = []) => { items.forEach((i) => { acc.push(i.th, i.en); if (i.sub) flat(i.sub, acc); }); return acc; };
@@ -1874,7 +1885,6 @@ function filtered() {
     if (S.live === 'live' && !isLive(v)) return false;
     if (S.live === 'nonlive' && !hasNonLive(v)) return false;
     if (S.upd && !UPDATED_2026.includes(v.id)) return false;
-    if (S.path && v.path !== S.path) return false;
     if (S.age && rowsOf(v).every((r) => !linesFor(r).length)) return false;
     // several conditions: the vaccine must be indicated in every one of them (intersection)
     if (S.conds.size) return [...S.conds].every((c) => condMatch(v, c));
@@ -1904,6 +1914,9 @@ const I = {
   chev: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>',
   funnel: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 5h18l-7 8v6l-4 2v-8z"/></svg>',
   heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+  cross: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>',
+  tools: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2M2 13h20"/></svg>',
   key: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>',
   ext: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>',
   dl: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>',
@@ -1969,16 +1982,18 @@ function renderHeader() {
 function renderGuides() {
   const g = (cls, act, icon, long, short, extra = '') => `<button class="gbtn ${cls}" data-act="${act}" ${extra}>${icon}<span class="long">${esc(long)}</span><span class="short">${esc(short)}</span></button>`;
   const grp = (id, cls) => { const x = GROUPS.find((y) => y.id === id); return g(cls, 'group', I[x.icon], S.lang === 'th' ? x.shortTh : x.shortEn, S.lang === 'th' ? x.shortTh : x.shortEn, `data-id="${id}" data-guide="${id}"`); };
-  $('#guides').innerHTML = [
+  const btns = [
     g('g-gen', 'general', I.book, t().gGen, t().sGen, 'data-guide="general"'),
     g('g-t1', 'tables', I.table, t().gTables, t().sTables, 'data-guide="tables"'),
     g('g-pcv', 'pcv', I.lungs, t().gPcv, t().sPcv, 'data-guide="pcv"'),
     g('g-hbv', 'hbv', I.liver, t().gHbv, t().sHbv, 'data-guide="hbv"'),
     grp('pregnancy', 'g-preg'), grp('sot', 'g-sot'), grp('hsct', 'g-hsct'), grp('asplenia', 'g-asp'), grp('travel', 'g-travel'),
-  ].join('');
+  ];
+  // collapsible section; the buttons stay in the page when folded (hidden), so they keep working for scripts and tests
+  $('#guides').innerHTML = `<button class="toolhdr${S.tools ? ' open' : ''}" data-act="ttoggle" aria-expanded="${S.tools}" aria-controls="gbtns">${I.tools}<span class="tt">${esc(t().toolsTitle)}</span><span class="tn">${btns.length}</span><span class="cv">${I.chev}</span></button><div class="gbtns" id="gbtns"${S.tools ? '' : ' hidden'}>${btns.join('')}</div>`;
 }
 // number of filters in use (search not counted) and their removable summary chips
-const activeCount = () => (S.age ? 1 : 0) + S.conds.size + S.levels.size + (S.live ? 1 : 0) + (S.upd ? 1 : 0) + (S.path ? 1 : 0);
+const activeCount = () => (S.age ? 1 : 0) + S.conds.size + S.levels.size + (S.live ? 1 : 0) + (S.upd ? 1 : 0);
 function activeChips() {
   const out = [];
   const x = (act, val, label, sw) => out.push(`<button class="achip" data-act="${act}" data-val="${val}" aria-label="${esc(t().remove + ': ' + label)}">${sw ? `<span class="sw s-${sw}"></span>` : ''}${esc(label)}<span aria-hidden="true">×</span></button>`);
@@ -1987,7 +2002,6 @@ function activeChips() {
   S.levels.forEach((s) => x('level', s, statusLabel(s), s));
   if (S.live) x('live', S.live, S.live === 'live' ? t().live : t().nonlive);
   if (S.upd) x('upd', '1', t().updated);
-  if (S.path) x('path', '', pathLabel(S.path));
   return out.join('');
 }
 function renderFilters() {
@@ -2003,17 +2017,18 @@ function renderFilters() {
     <div class="fgroup"><span class="lab">${esc(t().age)}:</span>${chip(!S.age, 'age', '', t().all)}${AGE_BANDS.map((a) => chip(S.age === a.id, 'age', a.id, L(a).replace(/ (years|ปี)$/, ''))).join('')}</div>
     <div class="fgroup"><span class="lab">${esc(t().cond)}:</span>${chip(!S.conds.size, 'cond', '', t().all)}${CONDITIONS.map((c) => chip(S.conds.has(c.id), 'cond', c.id, S.lang === 'th' ? (c.shortTh || c.th) : (c.short || c.en))).join('')}</div>
     <div class="fgroup"><span class="lab">${esc(t().level)}:</span>${STATUS_ORDER.map((s) => chip(S.levels.has(s), 'level', s, statusLabel(s), s)).join('')}</div>
-    <div class="fgroup"><span class="lab">${esc(t().pathogen)}:</span>${chip(!S.path, 'path', '', t().all)}${PATHOGENS.map((p) => chip(S.path === p, 'path', p, pathLabel(p))).join('')}</div>
-    <div class="fgroup"><span class="lab">${esc(t().type)}:</span>${chip(S.live === 'live', 'live', 'live', t().live)}${chip(S.live === 'nonlive', 'live', 'nonlive', t().nonlive)}${chip(S.upd, 'upd', '1', t().updated)}</div>`;
+    <div class="fgroup"><span class="lab">${esc(t().type)}:</span>${chip(S.live === 'live', 'live', 'live', t().live)}${chip(S.live === 'nonlive', 'live', 'nonlive', t().nonlive)}</div>
+    <div class="fgroup">${chip(S.upd, 'upd', '1', t().updated)}</div>
+    <button class="chip tog${S.group ? ' on' : ''}" data-act="gtoggle" aria-pressed="${S.group}">${S.group ? I.check : I.cross}${esc(t().groupPath)}</button>`;
 }
 function renderList() {
   const list = filtered();
-  const active = S.q || S.age || S.conds.size || S.levels.size || S.live || S.upd || S.path;
+  const active = S.q || S.age || S.conds.size || S.levels.size || S.live || S.upd;
   $('#resbar').innerHTML = `<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">${active ? `<button class="clearbtn" data-act="clearall">${esc(t().clear)}</button>` : ''}<span>${t().showing(list.length, VACCINES.length)}${S.conds.size > 1 ? ' · ' + esc(t().allConds) : ''}</span></div><button class="keybtn" data-act="key">${I.key}${esc(t().key)}</button>`;
   const out = $('#out');
   if (!list.length) { out.className = ''; out.innerHTML = `<div class="empty">${esc(t().empty)}</div>`; return; }
   // each group = a heading (with its count) followed by its vaccines
-  const grouped = (render) => PATHOGENS.map((p) => { const g = list.filter((v) => v.path === p); return g.length ? `<h2 class="grp-h grp-${p}" data-group="${p}">${esc(t().groups[p][1])}<span class="grp-n">${g.length}</span></h2>${g.map(render).join('')}` : ''; }).join('');
+  const grouped = (render) => !S.group ? list.map(render).join('') : PATHOGENS.map((p) => { const g = list.filter((v) => v.path === p); return g.length ? `<h2 class="grp-h grp-${p}" data-group="${p}">${esc(t().groups[p][1])}<span class="grp-n">${g.length}</span></h2>${g.map(render).join('')}` : ''; }).join('');
   if (S.view === 'list') {
     out.className = 'list';
     out.innerHTML = grouped((v) => `<div class="row" style="--vc:${VCOLORS[v.id]}" data-vid="${v.id}">
@@ -2464,12 +2479,13 @@ document.addEventListener('click', (e) => {
     case 'cond': if (!val) S.conds.clear(); else S.conds.has(val) ? S.conds.delete(val) : S.conds.add(val); renderFilters(); renderList(); break;
     case 'level': S.levels.has(val) ? S.levels.delete(val) : S.levels.add(val); renderFilters(); renderList(); break;
     case 'live': S.live = S.live === val ? null : val; renderFilters(); renderList(); break;
-    case 'path': S.path = val || null; renderFilters(); renderList(); break;
+    case 'ttoggle': S.tools = !S.tools; store.set('tavg-tools', S.tools ? '1' : '0'); renderGuides(); break;
+    case 'gtoggle': S.group = !S.group; store.set('tavg-group', S.group ? '1' : '0'); renderFilters(); renderList(); break;
     case 'upd': S.upd = !S.upd; renderFilters(); renderList(); break;
     case 'ftoggle': S.fopen = !S.fopen; store.set('tavg-filters', S.fopen ? '1' : '0'); renderFilters(); break;
     case 'view': S.view = val; store.set('tavg-view', val); renderFilters(); renderList(); break;
     case 'clearq': S.q = ''; renderFilters(); renderList(); $('#q').focus(); break;
-    case 'clearall': S.q = ''; S.age = null; S.conds.clear(); S.levels.clear(); S.live = null; S.upd = false; S.path = null; renderFilters(); renderList(); break;
+    case 'clearall': S.q = ''; S.age = null; S.conds.clear(); S.levels.clear(); S.live = null; S.upd = false; renderFilters(); renderList(); break;
     case 'vaccine': openVaccine(el.dataset.id); break;
     case 'group': openGroup(el.dataset.id); break;
     case 'general': openGeneral(); break;
