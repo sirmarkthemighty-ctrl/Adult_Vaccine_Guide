@@ -24,6 +24,15 @@ the full guideline, or the product label.
 - A **Group pathogens** button turns the Respiratory / STI / Other headings on or off.
 - One **Tables** guide with Table 1 (by age) and Table 2 (by condition): each shows as a colour-coded table, and its **PDF** switch shows that table's page of the original PDF
   in the page (pdf.js from cdnjs; falls back to page pictures offline), with Open / Save when the page is not framed.
+- **Patient planner**: pick an age band and any number of conditions and get one answer per vaccine (the strongest
+  recommendation; a contraindication in any chosen condition wins; conditional ones such as "If CD4 <200" show as
+  warnings), with every source line and a Copy plan button.
+- **Interval checker**: live vaccines (same day or 4 weeks apart) and the 4 / 6 / 7 / 8 month waits after HRIG, packed red
+  cells, plasma or platelets, and IVIG before measles, mumps, rubella and varicella vaccines.
+- **Zoster** and **HPV** pathways in the same step-by-step style as the pneumococcal and hepatitis B ones.
+- A pregnancy timeline (Td/Tdap, influenza, RSV windows by week) at the top of the pregnancy guide.
+- The guide buttons sit in three labelled rows (tools and reference, vaccine pathways, special populations) inside a
+  collapsible section.
 - Pneumococcal pathway: pick age, highest-risk condition and previous vaccines, and it summarises the plan from
   Tables 3 and 4 (both options as dose timelines, the footnotes that apply, reminders, Copy plan); the full tables stay
   below as folded details.

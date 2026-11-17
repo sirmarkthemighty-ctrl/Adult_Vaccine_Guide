@@ -70,7 +70,8 @@ a { color: var(--accent); }
 
 /* guide buttons */
 .guides { margin: 16px 0 12px; }
-.gbtns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.gbtns { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+.grow { display: flex; flex-wrap: wrap; gap: 8px; }
 [hidden] { display: none !important; }
 .gbtn { --gb: #f8fafc; --gt: #334155; --gbd: #e2e8f0; --gc: #94a3b8; --gl: #cbd5e1; display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--gbd); border-radius: 10px; padding: 9px 14px; background: var(--gb); color: var(--gt); font-weight: 700; font-size: 13.5px; box-shadow: 0 1px 2px rgba(15,23,42,.05); }
 :root.dark .gbtn { background: color-mix(in srgb, var(--gc) 12%, transparent); color: var(--gl); border-color: color-mix(in srgb, var(--gc) 35%, transparent); box-shadow: none; }
@@ -238,7 +239,8 @@ a { color: var(--accent); }
   .hdr { flex-direction: column-reverse; gap: 10px; }
   .tools { align-self: flex-end; }
   .hdr h1 { font-size: 23px; }
-  .gbtns { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .gbtns { gap: 10px; }
+  .grow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
   .gbtn { flex-direction: column; gap: 3px; padding: 8px 2px; font-size: 10.5px; line-height: 1.15; text-align: center; justify-content: center; border-radius: 10px; min-width: 0; }
   .gbtn .long { display: none; } .gbtn .short { display: block; }
   .grid { grid-template-columns: 1fr; }
@@ -384,6 +386,77 @@ button:active:not(:disabled) { filter: brightness(.93); }
 .seg .sl .ab { display: none; font-weight: 700; }
 .strip.cond { container-type: inline-size; }
 @container (max-width: 340px) { .seg .sl .full.has-ab { display: none; } .seg .sl .ab { display: inline; } }
+
+/* ---------- new tools ---------- */
+.g-plan { --gb: #eef2ff; --gt: #4338ca; --gbd: #c7d2fe; --gc: #6366f1; --gl: #a5b4fc; }
+.g-zos { --gb: #fefce8; --gt: #a16207; --gbd: #fef08a; --gc: #eab308; --gl: #fde047; }
+.g-hpv { --gb: #fdf4ff; --gt: #a21caf; --gbd: #f5d0fe; --gc: #d946ef; --gl: #f0abfc; }
+.g-iv { --gb: #f0f9ff; --gt: #0369a1; --gbd: #bae6fd; --gc: #0ea5e9; --gl: #7dd3fc; }
+/* patient planner */
+.pl-sel { display: flex; flex-direction: column; gap: 8px; }
+.pl-count { display: flex; flex-wrap: wrap; gap: 6px; }
+.pl-grp { display: flex; flex-direction: column; gap: 8px; }
+.pl-h { margin: 6px 0 0; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+.pl-item { border: 1px solid var(--line); border-radius: 12px; background: var(--panel); box-shadow: var(--shadow); padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; }
+.pl-top { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.pl-top b { font-size: 14.5px; }
+.pl-go { margin-left: auto; display: inline-flex; gap: 6px; flex-wrap: wrap; }
+.pl-src { display: flex; flex-direction: column; gap: 3px; border-top: 1px solid var(--line); padding-top: 6px; }
+.pl-s { font-size: 10.5px; letter-spacing: .05em; text-transform: uppercase; font-weight: 700; color: var(--faint); }
+.pl-l { display: inline-flex; flex-wrap: wrap; gap: 6px; align-items: baseline; font-size: 12.5px; }
+.pl-warn { font-size: 12.5px; font-weight: 600; color: var(--tt-opt); background: var(--t-opt); border: 1px solid var(--tb-opt); border-radius: 8px; padding: 4px 8px; }
+/* interval checker */
+.iv-form { display: grid; grid-template-columns: 1fr 190px; gap: 10px; }
+.iv-f { display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 700; color: var(--muted); min-width: 0; }
+.iv-f select, .iv-f input, .iv-row select, .iv-row input { height: 36px; border: 1px solid var(--line2); border-radius: 8px; background: var(--panel); color: var(--text); padding: 0 8px; font: inherit; min-width: 0; width: 100%; }
+.iv-row { display: grid; grid-template-columns: 1fr 160px auto; gap: 8px; align-items: center; }
+.iv-add { display: flex; flex-wrap: wrap; gap: 8px; }
+.iv-rows { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 5px; font-size: 13px; }
+.iv-rows li { display: flex; gap: 8px; align-items: baseline; }
+.iv-rows .sbadge { min-width: 22px; text-align: center; }
+.iv-verdict .plan-lv { font-size: 15px; }
+/* pregnancy timeline */
+.pt-axis, .pt-row { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 4px 10px; align-items: center; }
+.pt-ticks { position: relative; height: 14px; }
+.pt-ticks span { position: absolute; transform: translateX(-50%); font-size: 10px; color: var(--faint); }
+.pt-lab { font-size: 12.5px; font-weight: 700; }
+.pt-track { position: relative; height: 18px; background: var(--panel2); border: 1px solid var(--line); border-radius: 6px; }
+.pt-seg { position: absolute; top: 0; bottom: 0; border-radius: 4px; }
+.pt-best { background: var(--s-rec); } .pt-ok { background: color-mix(in srgb, var(--s-rec) 40%, transparent); } .pt-td { background: color-mix(in srgb, var(--s-scdm) 45%, transparent); }
+.pt-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; align-items: center; }
+.pt-legend .pt-seg { position: static; display: inline-block; width: 22px; height: 10px; margin-right: 6px; vertical-align: -1px; }
+.pt-now { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--accent2); }
+.pt-note { grid-column: 1 / -1; }
+.pt-ga { max-width: 220px; }
+@media (max-width: 640px) {
+  .iv-form { grid-template-columns: 1fr; }
+  .iv-row { grid-template-columns: 1fr 140px auto; }
+  .pt-axis, .pt-row { grid-template-columns: minmax(0, 1fr); }
+  .pt-axis .pt-lab { display: none; }
+}
+.pt-row { padding-bottom: 12px; }
+.pt-axis { padding-bottom: 2px; }
+
+/* the three rows of guide buttons */
+.gset-h { display: flex; align-items: center; gap: 8px; margin: 0 0 6px; font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--faint); }
+.gset-h .n { min-width: 18px; height: 16px; padding: 0 5px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; letter-spacing: 0; background: var(--chip); color: var(--chipText); }
+.gset-h::after { content: ""; flex: 1; height: 1px; background: var(--line2); }
+
+/* ---------- minimal guide buttons: neutral card, coloured icon only (colour comes back on hover) ---------- */
+.gbtn { background: var(--panel); border-color: var(--line2); color: var(--text); font-weight: 600; font-size: 13px; padding: 7px 12px; box-shadow: var(--shadow); }
+:root.dark .gbtn { background: var(--panel); border-color: var(--line2); color: var(--text); box-shadow: var(--shadow); }
+.gbtn svg { color: var(--gt); width: 16px; height: 16px; }
+:root.dark .gbtn svg { color: var(--gl); }
+.gbtn:hover, :root.dark .gbtn:hover { background: color-mix(in srgb, var(--gc) 10%, var(--panel)); border-color: color-mix(in srgb, var(--gc) 45%, var(--line2)); }
+/* desktop: the row name sits in a narrow left column beside its buttons */
+@media (min-width: 641px) {
+  .gbtns { gap: 0; }
+  .gset { display: grid; grid-template-columns: 128px minmax(0, 1fr); gap: 0 12px; align-items: center; padding: 8px 0; }
+  .gset + .gset { border-top: 1px solid var(--line); }
+  .gset-h { margin: 0; line-height: 1.25; }
+  .gset-h::after { display: none; }
+}
+@media (max-width: 640px) { .gbtn { padding: 8px 2px; font-size: 10.5px; font-weight: 700; box-shadow: none; } }
 
 </style>
 </head>
@@ -1672,7 +1745,7 @@ const GUIDE_META = {
 
 const changelogData = [
   {
-    version: '1.9.1', date: 'November 17, 2026', title: 'Infection-type groups and Bedside UI',
+    version: '1.10.3', date: 'November 17, 2026', title: 'Infection-type groups and Bedside UI',
     features: [
       'Vaccines are grouped by the infection they mainly prevent: respiratory infections (influenza, COVID-19, RSV, pneumococcal), sexually transmitted infections (HPV, hepatitis B, mpox) and other infections (the remaining 10), with a heading and count for each group and search by "respiratory" or "sexually transmitted". The Group pathogens button in the filters switches the headings off to show one plain list; the choice is remembered on the device.',
       'Bedside UI with Fluent touches, as in the other guides: indigo-600 selected state, soft two-layer card elevation, flat cards (no box inside a box), blurred dialog overlay with a short fade / zoom (off with reduced motion), a visible keyboard focus ring, press feedback on buttons, and the search bar pinned while the page scrolls.',
@@ -1701,7 +1774,11 @@ const changelogData = [
       'Filters by age group (Table 1), condition (Table 2), recommendation level, live / non-live vaccine and "updated in 2026"; search covers names, brands and the full text.',
       'Hepatitis B pathway: pick the patient group (general adult, healthcare personnel or partner, CKD stage, HIV, organ or stem cell transplant, other immunocompromise), vaccination history and test results; it gives the schedule as a dose timeline, the next test, Figure 1 step by step, follow-up and boosters, with the chapter text folded below.',
       'Filters button beside the search box shows how many filters are on and opens or closes the filter panel (open on desktop, closed on phones); while closed, the filters in use show as chips you can tap to remove.',
-      'The guide buttons (principles, tables, pneumococcal and hepatitis B pathways, pregnancy, transplant, asplenia, travellers) sit in a collapsible Clinical Tools & Knowledge section: open on desktop, folded on phones, and remembered on the device.',
+      'Patient planner: pick an age band and any number of conditions and get one answer per vaccine (the strongest recommendation, a contraindication in any condition wins, conditional ones such as "If CD4 <200" show as warnings), with every source line and a Copy plan button.',
+      'Zoster and HPV pathways in the same step-by-step style as the pneumococcal and hepatitis B ones: answers lead to a plan with the dose timeline, intervals and notes, and the chapter text folded below.',
+      'Interval checker: choose the vaccine and the date, add the live vaccines and antibody products the patient had (HRIG, packed red cells, plasma or platelets, IVIG) and see whether to give it today or wait, with the earliest date and why.',
+      'Pregnancy timeline in the pregnancy guide: bars across the weeks of pregnancy for Td/Tdap, influenza and RSV with the best and possible windows, plus a weeks-pregnant box that says what is due now.',
+      'The guide buttons (principles, tables, pneumococcal and hepatitis B pathways, pregnancy, transplant, asplenia, travellers, and the new tools) sit in a collapsible Clinical Tools & Knowledge section, in three labelled rows (tools and reference, vaccine pathways, special populations) of plain buttons that keep only their icon colour, with the row names beside the buttons on desktop: open on desktop, folded on phones, and remembered on the device.',
       'One Tables guide holds Table 1 (by age) and Table 2 (by condition); each opens as a colour-coded table, and its PDF button shows that table\'s page of the original guideline PDF.',
       'General principles of adult vaccination (first guide button) and special-population guides (pregnancy, organ and stem cell transplant, asplenia, travellers).',
       'Pneumococcal pathway: pick age, the highest-risk condition and previous vaccines, and it summarises the plan for the doctor from Tables 3 and 4 (both options as dose timelines, the footnotes that apply, reminders, Copy plan); the full tables stay below as folded details.',
@@ -1743,7 +1820,7 @@ const T = {
     showing: (n, m) => `Showing <b>${n}</b> of <b>${m}</b> vaccines`,
     details: 'DETAILS', table1: 'Table 1 · by age', table2: 'Table 2 · by condition', noT1: 'Not in Table 1 (see Table 2)',
     ageGroups: 'Age groups', conditions: 'Conditions', dose: 'Dose',
-    gPdf: 'Full table (PDF)', gTables: 'Tables · Age & conditions', colourTable: 'Colour table', gPcv: 'Pneumococcal pathway', gHbv: 'Hepatitis B pathway', gGen: 'General principles',
+    gPdf: 'Full table (PDF)', gTables: 'Tables · Age & conditions', colourTable: 'Colour table', gPcv: 'Pneumococcal', gHbv: 'Hepatitis B', gGen: 'General principles',
     sTables: 'Tables', sPcv: 'Pneumo', sHbv: 'Hep B', sGen: 'Principles',
     close: 'Close', page: (p) => `Guideline p. ${p}`, refs: 'References', related: 'Special-population guides',
     figure: 'Original figure', viewPage: (p) => `View page ${p}`,
@@ -1786,7 +1863,7 @@ const T = {
     allConds: 'มีข้อบ่งชี้ในทุกภาวะที่เลือก',
     details: 'รายละเอียด', table1: 'ตารางที่ 1 · ตามอายุ', table2: 'ตารางที่ 2 · ตามภาวะ', noT1: 'ไม่อยู่ในตารางที่ 1 (ดูตารางที่ 2)',
     ageGroups: 'กลุ่มอายุ', conditions: 'ภาวะ', dose: 'ขนาด',
-    gPdf: 'ตารางฉบับเต็ม (PDF)', gTables: 'ตาราง · อายุและภาวะ', colourTable: 'ตารางสี', gPcv: 'แนวทางวัคซีนนิวโมฯ', gHbv: 'แนวทางวัคซีนตับอักเสบบี', gGen: 'หลักการทั่วไป',
+    gPdf: 'ตารางฉบับเต็ม (PDF)', gTables: 'ตาราง · อายุและภาวะ', colourTable: 'ตารางสี', gPcv: 'วัคซีนนิวโมค็อกคัส', gHbv: 'วัคซีนไวรัสตับอักเสบบี', gGen: 'หลักการทั่วไป',
     sTables: 'ตาราง', sPcv: 'นิวโมฯ', sHbv: 'ตับอักเสบบี', sGen: 'หลักการ',
     close: 'ปิด', page: (p) => `หน้า ${p} ในคำแนะนำ`, refs: 'เอกสารอ้างอิง', related: 'คำแนะนำในกลุ่มประชากรเฉพาะ',
     figure: 'ภาพต้นฉบับ', viewPage: (p) => `ดูหน้า ${p}`,
@@ -1923,6 +2000,9 @@ const I = {
   check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
   cross: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>',
   tools: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2M2 13h20"/></svg>',
+  bolt: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>',
+  ribbon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a4 4 0 0 0-4 4c0 3 4 6 4 6s4-3 4-6a4 4 0 0 0-4-4zM9 13l-3 8 4-2 2 2M15 13l3 8-4-2"/></svg>',
+  clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
   key: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>',
   ext: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>',
   dl: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>',
@@ -1988,15 +2068,24 @@ function renderHeader() {
 function renderGuides() {
   const g = (cls, act, icon, long, short, extra = '') => `<button class="gbtn ${cls}" data-act="${act}" ${extra}>${icon}<span class="long">${esc(long)}</span><span class="short">${esc(short)}</span></button>`;
   const grp = (id, cls) => { const x = GROUPS.find((y) => y.id === id); return g(cls, 'group', I[x.icon], S.lang === 'th' ? x.shortTh : x.shortEn, S.lang === 'th' ? x.shortTh : x.shortEn, `data-id="${id}" data-guide="${id}"`); };
-  const btns = [
-    g('g-gen', 'general', I.book, t().gGen, t().sGen, 'data-guide="general"'),
-    g('g-t1', 'tables', I.table, t().gTables, t().sTables, 'data-guide="tables"'),
-    g('g-pcv', 'pcv', I.lungs, t().gPcv, t().sPcv, 'data-guide="pcv"'),
-    g('g-hbv', 'hbv', I.liver, t().gHbv, t().sHbv, 'data-guide="hbv"'),
-    grp('pregnancy', 'g-preg'), grp('sot', 'g-sot'), grp('hsct', 'g-hsct'), grp('asplenia', 'g-asp'), grp('travel', 'g-travel'),
+  const sets = [
+    { k: 'ref', title: t().tsRef, items: [
+      g('g-gen', 'general', I.book, t().gGen, t().sGen, 'data-guide="general"'),
+      g('g-t1', 'tables', I.table, t().gTables, t().sTables, 'data-guide="tables"'),
+      g('g-plan', 'tplan', I.users, t().gPlan, t().sPlan, 'data-guide="plan"'),
+      g('g-iv', 'tiv', I.clock, t().gIv, t().sIv, 'data-guide="interval"'),
+    ] },
+    { k: 'path', title: t().tsPath, items: [
+      g('g-pcv', 'pcv', I.lungs, t().gPcv, t().sPcv, 'data-guide="pcv"'),
+      g('g-hbv', 'hbv', I.liver, t().gHbv, t().sHbv, 'data-guide="hbv"'),
+      g('g-zos', 'tzos', I.bolt, t().gZos, t().sZos, 'data-guide="zoster"'),
+      g('g-hpv', 'thpv', I.ribbon, t().gHpv, t().sHpv, 'data-guide="hpv"'),
+    ] },
+    { k: 'pop', title: t().tsPop, items: [grp('pregnancy', 'g-preg'), grp('sot', 'g-sot'), grp('hsct', 'g-hsct'), grp('asplenia', 'g-asp'), grp('travel', 'g-travel')] },
   ];
+  const total = sets.reduce((n, x) => n + x.items.length, 0);
   // collapsible section; the buttons stay in the page when folded (hidden), so they keep working for scripts and tests
-  $('#guides').innerHTML = `<button class="toolhdr${S.tools ? ' open' : ''}" data-act="ttoggle" aria-expanded="${S.tools}" aria-controls="gbtns">${I.tools}<span class="tt">${esc(t().toolsTitle)}</span><span class="tn">${btns.length}</span><span class="cv">${I.chev}</span></button><div class="gbtns" id="gbtns"${S.tools ? '' : ' hidden'}>${btns.join('')}</div>`;
+  $('#guides').innerHTML = `<button class="toolhdr${S.tools ? ' open' : ''}" data-act="ttoggle" aria-expanded="${S.tools}" aria-controls="gbtns">${I.tools}<span class="tt">${esc(t().toolsTitle)}</span><span class="tn">${total}</span><span class="cv">${I.chev}</span></button><div class="gbtns" id="gbtns"${S.tools ? '' : ' hidden'}>${sets.map((x) => `<div class="gset" data-set="${x.k}"><div class="gset-h">${esc(x.title)}<span class="n">${x.items.length}</span></div><div class="grow">${x.items.join('')}</div></div>`).join('')}</div>`;
 }
 // number of filters in use (search not counted) and their removable summary chips
 const activeCount = () => (S.age ? 1 : 0) + S.conds.size + S.levels.size + (S.live ? 1 : 0) + (S.upd ? 1 : 0);
@@ -2149,6 +2238,7 @@ function openGroup(id) {
     const col = VACCINES.flatMap((v) => rowsOf(v).filter((r) => TABLE2[r]).map((r) => ({ v, r, lines: cellT2(r, g.cond) })));
     const t2 = `<div class="tbl2">${col.map((c) => `<div class="tcell"><div class="cl"><button class="vlink" data-act="vaccine" data-id="${c.v.id}">${esc(ROW_LABEL[c.r] ? L(ROW_LABEL[c.r]) : L(c.v))}</button></div>${linesHtml(c.lines)}</div>`).join('')}</div><div class="alt" style="margin-top:6px">${esc(t().hsctNote)}</div>`;
     parts = block(`${g.id}:t2`, 'var(--k-table)', esc(t().table2) + ' — ' + esc(L(CONDITIONS.find((c) => c.id === g.cond))), t2, false) + parts;
+    if (g.id === 'pregnancy') parts = pregTimelineBlock() + parts;
     parts += block(`${g.id}:refs`, 'var(--k-refs)', esc(t().refs) + ` (${g.refs.length})`, refsHtml(g.refs), false);
     openModal(mHead(esc(S.lang === 'th' ? g.th : `Vaccination for ${g.en}`), esc(S.lang === 'th' ? `Vaccination for ${g.en}` : g.th) + ' · ' + esc(t().page(g.page))) + `<div class="mb">${parts}</div>` + mFoot(), { rerender: render });
   };
@@ -2389,7 +2479,7 @@ function pwPlan() {
     <div class="plan-sub"><div class="bt">${esc(pt().remind)}</div><ul>${rem.map((r) => `<li>${esc(r)}</li>`).join('')}</ul></div>
     <div><button class="btn" data-act="pwcopy">${esc(pt().copy)}</button></div>
   </section>`;
-  const text = [`${t().gPcv} (IDAT 2026, Table ${table})`, `${pt().q1}: ${L(PW_AGES.find((a) => a.id === PW.age))}`, `${pt().q2}: ${L(PW_RISKS.find((r) => r.id === PW.risk))}`,
+  const text = [`${pt().title} (IDAT 2026, Table ${table})`, `${pt().q1}: ${L(PW_AGES.find((a) => a.id === PW.age))}`, `${pt().q2}: ${L(PW_RISKS.find((r) => r.id === PW.risk))}`,
     `${pt().q3}: ${PW.prior === 'yes' ? pt().yes + ' — ' + L(row.prior) : pt().never}`, lvText, '',
     ...opts.flatMap(([lab, items]) => [lab + ':', scheduleText(items), '']), ...notes.map((n) => L(n)), ...rem.map((r) => '- ' + r)].join('\n');
   return { html, text };
@@ -2536,7 +2626,7 @@ if (window.matchMedia) {
   });
 }
 
-renderAll();
+
 
 /* ---------- hepatitis B pathway ---------- */
 // Decision tree built only from the guideline's hepatitis B chapter (pages 17–20, Figure 1), the HIV and CKD
@@ -2763,6 +2853,473 @@ function hbCopy() {
   const done = () => toast(ht().copied), fail = () => toast(ht().copyFail);
   try { navigator.clipboard.writeText(hbText).then(done, fail); } catch (e) { fail(); }
 }
+
+/* ---------- shared bits for the clinical tools ---------- */
+const X = (en, th) => ({ en, th });
+// the hepatitis B plan card styles are reused: two more tones for "no routine vaccine" / "consider" / "shared decision"
+Object.assign(TONE_CLS, { none: 's-na', opt: 's-opt', scdm: 's-scdm' });
+Object.assign(HBT.en.tone, { none: 'No routine vaccine', opt: 'Consider', scdm: 'Shared decision' });
+Object.assign(HBT.th.tone, { none: 'ไม่มีข้อบ่งชี้ทั่วไป', opt: 'พิจารณาให้', scdm: 'ตัดสินใจร่วมกัน' });
+HBT.en.notes = 'Notes'; HBT.th.notes = 'หมายเหตุ';
+
+/* ---------- question-by-question pathways (zoster, HPV) ---------- */
+// A pathway = ordered questions; each answer reveals the next question; when all are answered, plan(answers) gives the plan.
+// plan = { tone, page, title, lines[], sched[], alt{title,sched}, notes[] }  (sched items: { vx, at })
+const WIZ = {};
+const WZS = {};      // answers per pathway
+const WZ_TEXT = {};  // plan text for Copy
+function wzVisible(def, A) {
+  const out = [];
+  for (const q of def.qs) {
+    if (q.show && !q.show(A)) continue;
+    out.push(q);
+    if (A[q.id] == null) break;
+  }
+  return out;
+}
+function wzPlanHtml(def, id, plan, qs, A) {
+  const li = (arr) => arr.map((s) => `<li>${esc(L(s))}</li>`).join('');
+  const html = `<section class="plan" data-plan="${esc(plan.id || '')}">
+    <div class="plan-h"><h3>${esc(ht().plan)}</h3><span class="alt">${esc(ht().page(plan.page))}</span></div>
+    <div class="plan-lv"><span class="sbadge ${TONE_CLS[plan.tone]}">${esc(ht().tone[plan.tone])}</span><span>${esc(L(plan.title))}</span></div>
+    ${plan.lines && plan.lines.length ? `<ul class="plan-list">${li(plan.lines)}</ul>` : ''}
+    ${plan.sched ? `<div class="plan-opts"><div class="plan-opt"><div class="bt">${esc(ht().schedule)}</div>${hbTimeline(plan.sched)}</div>${plan.alt ? `<div class="plan-opt"><div class="bt">${esc(ht().alt)}: ${esc(L(plan.alt.title))}</div>${hbTimeline(plan.alt.sched)}</div>` : ''}</div>` : ''}
+    ${plan.notes && plan.notes.length ? `<div class="plan-sub"><div class="bt">${esc(ht().notes)}</div><ul>${li(plan.notes)}</ul></div>` : ''}
+    <div><button class="btn" data-act="wzcopy" data-wz="${id}">${esc(ht().copy)}</button></div>
+  </section>`;
+  const sch = (a) => a.map((d) => `  ${L(d.at)}: ${d.vx}`);
+  const text = [`${L(def.title)} (IDAT 2026)`, ...qs.map((q) => `${L(q.q)}: ${L(q.opts.find((o) => o.id === A[q.id]).t)}`), '',
+    `${ht().tone[plan.tone]}: ${L(plan.title)} (${ht().page(plan.page)})`, ...(plan.lines || []).map((s) => '- ' + L(s)),
+    ...(plan.sched ? [ht().schedule + ':', ...sch(plan.sched)] : []),
+    ...(plan.alt ? [`${ht().alt} (${L(plan.alt.title)}):`, ...sch(plan.alt.sched)] : []),
+    ...(plan.notes || []).map((s) => '- ' + L(s))].join('\n');
+  WZ_TEXT[id] = text;
+  return html;
+}
+function openWizard(id) {
+  const def = WIZ[id]; const A = WZS[id] || (WZS[id] = {});
+  const qs = wzVisible(def, A);
+  const done = qs.every((q) => A[q.id] != null);
+  const steps = qs.map((q, i) => `<li class="pw-step${A[q.id] != null ? ' done' : ''}"><span class="pw-num">${i + 1}</span><div class="pw-body"><div class="ask">${esc(L(q.q))}</div>${q.help ? `<div class="alt">${esc(L(q.help))}</div>` : ''}<div class="pw-opts">${q.opts.map((o) => `<button class="pw-opt${A[q.id] === o.id ? ' on' : ''}" data-act="wzpick" data-wz="${id}" data-q="${q.id}" data-val="${o.id}"><b>${esc(L(o.t))}</b>${o.ex ? `<span>${esc(L(o.ex))}</span>` : ''}</button>`).join('')}</div></div></li>`).join('');
+  const plan = done ? def.plan(A) : null;
+  const card = plan ? wzPlanHtml(def, id, plan, qs, A) : '';
+  const v = VACCINES.find((x) => x.id === def.vaccine);
+  const sec = (k) => v.sections.find((s) => s.k === k);
+  const details = `<div class="bt" style="margin-top:4px">${esc(ht().details)}</div>` +
+    block(`${id}d:admin`, 'var(--k-admin)', esc(t().secs.admin), itemsHtml(sec('admin').items), false) +
+    (sec('safety') ? block(`${id}d:safety`, 'var(--k-safety)', esc(t().secs.safety), itemsHtml(sec('safety').items), false) : '') +
+    (sec('more') ? block(`${id}d:more`, 'var(--k-more)', esc(t().secs.more), itemsHtml(sec('more').items), false) : '') +
+    block(`${id}d:refs`, 'var(--k-refs)', esc(t().refs) + ` (${v.refs.length})`, refsHtml(v.refs), false);
+  openModal(mHead(esc(L(def.title)), esc(L(def.sub))) + `<div class="mb"><ol class="pw">${steps}</ol>${card}${details}</div>` +
+    mFoot(`<button class="btn" data-act="wzreset" data-wz="${id}">${esc(ht().restart)}</button><button class="btn" data-act="vaccine" data-id="${def.vaccine}">${esc(L(v))} ›</button>`), { wide: true, rerender: () => openWizard(id) });
+}
+function wzPick(id, qid, val) {
+  const def = WIZ[id]; const A = WZS[id] || (WZS[id] = {});
+  const keep = modalStack.length ? $('.mb', modalStack[modalStack.length - 1].ov).scrollTop : 0;
+  const i = def.qs.findIndex((q) => q.id === qid);
+  def.qs.slice(i + 1).forEach((q) => delete A[q.id]);
+  A[qid] = val;
+  closeModal(); openWizard(id);
+  const mb = $('.mb', modalStack[modalStack.length - 1].ov); mb.scrollTop = keep;
+  const pl = $('.plan', mb); if (pl) pl.scrollIntoView({ block: 'nearest' });
+}
+
+/* ---------- zoster pathway (guideline pages 29–30; transplant chapters pages 41–43) ---------- */
+const ZOS_DOSE = 'RZV 0.5 mL IM';
+const zosSched = (gap) => [{ vx: ZOS_DOSE, at: X('Dose 1', 'โดสที่ 1') }, { vx: ZOS_DOSE, at: X(`Dose 2 · ${gap[0]} after dose 1`, `โดสที่ 2 · ห่างจากโดสแรก ${gap[1]}`) }];
+WIZ.zoster = {
+  vaccine: 'zoster',
+  title: X('Zoster pathway', 'แนวทางวัคซีนงูสวัด'),
+  sub: X('From the zoster chapter (pages 29–30) and the transplant chapters', 'จากบทวัคซีนงูสวัด (หน้า 29–30) และบทผู้ป่วยปลูกถ่าย'),
+  qs: [
+    { id: 'age', q: X('Age', 'อายุ'), opts: [{ id: 'a18', t: X('18–49 years', '18–49 ปี') }, { id: 'a50', t: X('≥50 years', '≥50 ปี') }] },
+    { id: 'grp', q: X('Immune status or transplant', 'ภาวะภูมิคุ้มกันหรือการปลูกถ่าย'), opts: [
+      { id: 'none', t: X('None of these', 'ไม่มีข้อใด'), ex: X('Immunocompetent', 'ภูมิคุ้มกันปกติ') },
+      { id: 'imm', t: X('Immunocompromised', 'ภาวะภูมิคุ้มกันบกพร่อง'), ex: X('Not a transplant recipient', 'ไม่ใช่ผู้ป่วยปลูกถ่าย') },
+      { id: 'ckd5', t: X('CKD stage 5 or kidney replacement therapy', 'โรคไตเรื้อรังระยะ 5 หรือบำบัดทดแทนไต') },
+      { id: 'sot', t: X('Solid organ transplant', 'ปลูกถ่ายอวัยวะ') },
+      { id: 'auto', t: X('Autologous stem cell transplant', 'ปลูกถ่ายเซลล์ต้นกำเนิดชนิด autologous') },
+      { id: 'allo', t: X('Allogeneic stem cell transplant', 'ปลูกถ่ายเซลล์ต้นกำเนิดชนิด allogeneic') },
+      { id: 'preg', t: X('Pregnant', 'ตั้งครรภ์') },
+    ] },
+    { id: 'prev', q: X('Zoster vaccine already given', 'วัคซีนงูสวัดที่เคยได้รับ'), opts: [
+      { id: 'none', t: X('None', 'ไม่เคย') }, { id: 'zvl', t: X('ZVL (live vaccine)', 'ZVL (ชนิดเชื้อมีชีวิต)') },
+      { id: 'rzv1', t: X('RZV, 1 dose', 'RZV 1 โดส') }, { id: 'rzv2', t: X('RZV, 2 doses', 'RZV ครบ 2 โดส') }] },
+    { id: 'ep', q: X('Had shingles before', 'เคยเป็นงูสวัดมาก่อน'), show: (a) => a.prev !== 'rzv2' && a.grp !== 'preg', opts: [{ id: 'no', t: X('No', 'ไม่เคย') }, { id: 'yes', t: X('Yes', 'เคย') }] },
+  ],
+  plan(A) {
+    const pre = { id: 'zoster', page: 29 };
+    if (A.grp === 'preg') return { ...pre, page: 30, id: 'preg', tone: 'stop', title: X('Avoid zoster vaccines in pregnancy', 'หลีกเลี่ยงวัคซีนงูสวัดในหญิงตั้งครรภ์'), lines: [X('Avoid both ZVL and RZV during pregnancy.', 'หลีกเลี่ยงการให้ ZVL และ RZV ในหญิงตั้งครรภ์')] };
+    if (A.prev === 'rzv2') return { ...pre, id: 'done', tone: 'ok', title: X('RZV series complete', 'ได้ RZV ครบชุดแล้ว'), lines: [X('Two doses of RZV have been given. No booster dose is currently recommended.', 'ได้รับ RZV ครบ 2 โดสแล้ว ในปัจจุบันยังไม่มีคำแนะนำให้วัคซีนโดสกระตุ้น')] };
+    const imm = A.grp === 'imm' || A.grp === 'sot' || A.grp === 'auto' || A.grp === 'allo';
+    if (A.age === 'a18' && A.grp === 'none') return { ...pre, id: 'none', tone: 'none', title: X('No routine zoster vaccine at 18–49', 'ไม่มีข้อบ่งชี้ทั่วไปของวัคซีนงูสวัดที่อายุ 18–49 ปี'),
+      lines: [X('Table 1: RZV at 18–49 is listed only for immunocompromising conditions, and there is no guidance for the live vaccine (ZVL) at this age.', 'ตารางที่ 1: RZV ที่อายุ 18–49 ปี ระบุเฉพาะผู้ที่มีภาวะภูมิคุ้มกันบกพร่อง และไม่มีคำแนะนำสำหรับวัคซีนชนิดเชื้อมีชีวิต (ZVL) ในช่วงอายุนี้')] };
+    // dose gap: 1–2 months in immunocompromised people and transplant recipients, 2–6 months otherwise
+    const g = imm ? ['1–2 months', '1–2 เดือน'] : ['2–6 months', '2–6 เดือน'];
+    const consider = A.grp === 'ckd5' && A.age === 'a18';
+    const lines = [], notes = [];
+    if (A.prev === 'zvl') lines.push(X('Previous ZVL: RZV can still be given. Start it at least 2 months after the ZVL dose.', 'เคยได้ ZVL: ยังให้ RZV ได้ โดยเว้นระยะห่างจาก ZVL อย่างน้อย 2 เดือน'));
+    if (A.ep === 'yes') lines.push(X('Had shingles: vaccinate at least 3–6 months after the episode.', 'เคยเป็นงูสวัดแล้ว: ให้วัคซีนห่างจากการเป็นงูสวัดอย่างน้อย 3–6 เดือน'));
+    if (A.grp === 'auto') lines.push(X('Autologous stem cell transplant: first RZV dose from 3 months after the transplant.', 'ปลูกถ่ายเซลล์ต้นกำเนิดชนิด autologous: RZV โดสแรกตั้งแต่ 3 เดือนขึ้นไปหลังปลูกถ่าย'));
+    if (A.grp === 'allo') lines.push(X('Allogeneic stem cell transplant: first RZV dose from 6 months after the transplant.', 'ปลูกถ่ายเซลล์ต้นกำเนิดชนิด allogeneic: RZV โดสแรกตั้งแต่ 6 เดือนขึ้นไปหลังปลูกถ่าย'));
+    if (A.grp === 'sot') lines.push(X('Organ transplant: inactivated vaccines such as RZV can start from 3 months after the transplant (or 3 months after high-dose immunosuppression for rejection).', 'ปลูกถ่ายอวัยวะ: วัคซีนชนิดเชื้อตายเช่น RZV ให้ได้ตั้งแต่ 3 เดือนขึ้นไปหลังปลูกถ่าย หรือห่างจากยากดภูมิขนาดสูงเพื่อรักษาภาวะสลัดอวัยวะ 3 เดือนขึ้นไป'));
+    if (A.grp === 'sot' || A.grp === 'auto' || A.grp === 'allo') notes.push(X('Never infected with VZV: zoster vaccine can still be considered, because varicella vaccine is contraindicated.', 'ยังไม่เคยติดเชื้อ VZV: พิจารณาให้วัคซีนงูสวัดได้ เนื่องจากมีข้อห้ามการให้วัคซีนอีสุกอีใส'));
+    else notes.push(X('Do not test varicella IgG first: most people over 50 have had VZV, and the test can give a false negative. Vaccinate whether or not they remember chickenpox.', 'ไม่แนะนำให้ตรวจ varicella IgG ก่อน: ผู้ที่อายุตั้งแต่ 50 ปีขึ้นไปมักเคยติดเชื้อ VZV มาแล้ว และผลตรวจอาจให้ผลลบปลอม ให้วัคซีนได้ไม่ว่าจะจำประวัติอีสุกอีใสได้หรือไม่'));
+    notes.push(X('No booster dose is currently recommended.', 'ในปัจจุบันยังไม่มีคำแนะนำให้วัคซีนโดสกระตุ้น'));
+    notes.push(X('If dose 2 was given less than 4 weeks after dose 1, give one more dose at least 4 weeks after dose 2.', 'ถ้าได้ RZV โดสที่ 2 ห่างจากโดสแรกไม่ถึง 4 สัปดาห์ แนะนำให้วัคซีนเพิ่มอีก 1 โดสห่างจากโดสที่ 2 อย่างน้อย 4 สัปดาห์'));
+    const title = consider ? X(`Consider RZV: 2 doses, ${g[0]} apart`, `พิจารณาให้ RZV 2 โดส ห่างกัน ${g[1]}`) : X(`Vaccinate with RZV: 2 doses, ${g[0]} apart`, `ให้ RZV 2 โดส ห่างกัน ${g[1]}`);
+    let sched = zosSched(g);
+    if (A.prev === 'rzv1') { sched = [{ vx: ZOS_DOSE, at: X('Dose 2 (give it when due; do not restart)', 'โดสที่ 2 (ให้เมื่อถึงกำหนด ไม่ต้องเริ่มนับใหม่)') }]; lines.push(X('1 dose already given: give dose 2. A late dose is simply given and the series continues; it is not restarted.', 'เคยได้ 1 โดสแล้ว: ให้โดสที่ 2 หากเลยกำหนดให้โดสถัดไปได้เลยและนับต่อ ไม่ต้องเริ่มต้นนับใหม่')); }
+    const plan = { ...pre, id: consider ? 'consider' : 'rzv', tone: consider ? 'opt' : 'act', title, lines, sched, notes };
+    if (A.grp === 'none' && A.age === 'a50' && A.prev === 'none') {
+      plan.alt = { title: X('optional live vaccine (ZVL)', 'ทางเลือก: วัคซีนชนิดเชื้อมีชีวิต (ZVL)'), sched: [{ vx: 'ZVL 0.5 mL SC', at: X('1 dose', '1 โดส') }] };
+      notes.push(X('ZVL: contraindicated in severe immunocompromise and in pregnancy; avoid acyclovir, valacyclovir and famciclovir for 24 hours before and 2 weeks after it. The ZVL now in Thailand is the OKA/SK strain, with only immunogenicity data.', 'ZVL: ห้ามใช้ในผู้ที่มีภาวะภูมิคุ้มกันบกพร่องรุนแรงและหญิงตั้งครรภ์ หลีกเลี่ยง acyclovir, valacyclovir และ famciclovir ภายใน 24 ชั่วโมงก่อนและ 2 สัปดาห์หลังได้รับ ZVL ซึ่งที่มีใช้ในประเทศไทยขณะนี้เป็นสายพันธุ์ OKA/SK ที่มีเพียงข้อมูลระดับภูมิคุ้มกัน'));
+    }
+    return plan;
+  },
+};
+
+/* ---------- HPV pathway (guideline pages 21–22) ---------- */
+const hpvProducts = (A) => {
+  const f = A.sex === 'f', young = A.age === 'a914' || A.age === 'a1526', to45 = A.age !== 'a46';
+  const out = [];
+  if (f) out.push('HPV2: Cervarix®' + (to45 ? ', Cecolin®' : ''));
+  if (f ? to45 : young) out.push('HPV4: Gardasil®');
+  out.push('HPV9: Gardasil®9');
+  return out.join(' · ');
+};
+WIZ.hpv = {
+  vaccine: 'hpv',
+  title: X('HPV pathway', 'แนวทางวัคซีนเอชพีวี'),
+  sub: X('From the HPV chapter (pages 21–22)', 'จากบทวัคซีนเอชพีวี (หน้า 21–22)'),
+  qs: [
+    { id: 'sex', q: X('Sex', 'เพศ'), help: X('Decides which products are registered for the patient.', 'ใช้เลือกวัคซีนที่ขึ้นทะเบียนสำหรับผู้ป่วย'), opts: [{ id: 'f', t: X('Female', 'หญิง') }, { id: 'm', t: X('Male', 'ชาย') }] },
+    { id: 'age', q: X('Age', 'อายุ'), opts: [{ id: 'a914', t: X('9–14 years', '9–14 ปี') }, { id: 'a1526', t: X('15–26 years', '15–26 ปี') }, { id: 'a2745', t: X('27–45 years', '27–45 ปี') }, { id: 'a46', t: X('≥46 years', '≥46 ปี') }] },
+    { id: 'imm', q: X('Immune status', 'ภาวะภูมิคุ้มกัน'), opts: [{ id: 'n', t: X('Not immunocompromised', 'ภูมิคุ้มกันปกติ') }, { id: 'y', t: X('Immunocompromised', 'ภาวะภูมิคุ้มกันบกพร่อง'), ex: X('For example HIV or organ transplant', 'เช่น ติดเชื้อเอชไอวี หรือปลูกถ่ายอวัยวะ') }] },
+    { id: 'prev', q: X('HPV vaccine already given', 'วัคซีนเอชพีวีที่เคยได้รับ'), opts: [
+      { id: 'none', t: X('None', 'ไม่เคย') }, { id: 'p24', t: X('HPV2 or HPV4: 1–2 doses', 'HPV2 หรือ HPV4 1–2 โดส') }, { id: 'c24', t: X('HPV2 or HPV4: complete series', 'HPV2 หรือ HPV4 ครบชุด') },
+      { id: 'p9', t: X('HPV9: 1–2 doses', 'HPV9 1–2 โดส') }, { id: 'c9', t: X('HPV9: complete series', 'HPV9 ครบชุด') }] },
+    { id: 'preg', q: X('Pregnant now', 'ตั้งครรภ์ขณะนี้'), show: (a) => a.sex === 'f' && a.age !== 'a914', opts: [{ id: 'n', t: X('No', 'ไม่') }, { id: 'y', t: X('Yes', 'ใช่') }] },
+  ],
+  plan(A) {
+    const pre = { page: 21 };
+    if (A.preg === 'y') return { ...pre, id: 'preg', tone: 'stop', title: X('Do not give HPV vaccine in pregnancy', 'ห้ามให้วัคซีนเอชพีวีในหญิงตั้งครรภ์'),
+      lines: [X('If pregnancy starts before the series is finished, give the remaining doses after delivery.', 'หากตั้งครรภ์ขณะยังให้วัคซีนไม่ครบ แนะนำให้โดสที่เหลือหลังคลอด')] };
+    const notes = [
+      X(`Registered products for this patient: ${hpvProducts(A)}.`, `วัคซีนที่ขึ้นทะเบียนสำหรับผู้ป่วยรายนี้: ${hpvProducts(A)}`),
+      X('No Pap smear or HPV test is needed before vaccination. Past genital warts, abnormal cytology or CIN 2+ are not reasons to skip it: vaccination still lowers recurrence.', 'ไม่จำเป็นต้องตรวจ Pap smear หรือตรวจเอชพีวีก่อนให้วัคซีน ผู้ที่เคยเป็นหูดหงอนไก่ มีเซลล์ปากมดลูกผิดปกติ หรือเคยมีรอยโรคก่อนมะเร็งระยะที่ 2 ขึ้นไป ยังได้ประโยชน์เพราะลดการเกิดซ้ำได้'),
+      X('The vaccine does not replace cervical screening and does not treat HPV infection or an abnormal Pap smear.', 'วัคซีนไม่สามารถทดแทนการตรวจคัดกรองมะเร็งปากมดลูกได้ และไม่ใช้รักษาการติดเชื้อเอชพีวีหรือผล Pap smear ที่ผิดปกติ'),
+    ];
+    if (A.prev === 'c9') return { ...pre, id: 'done', tone: 'ok', title: X('HPV9 series complete', 'ได้ HPV9 ครบชุดแล้ว'), lines: [X('No more HPV vaccine is needed.', 'ไม่จำเป็นต้องให้วัคซีนเอชพีวีเพิ่ม')], notes };
+    if (A.prev === 'c24') return { ...pre, id: 'done24', tone: 'ok', title: X('HPV2 / HPV4 series complete', 'ได้ HPV2 หรือ HPV4 ครบชุดแล้ว'),
+      lines: [X('HPV9 is not needed. If the patient wants it, 3 doses of HPV9 can be given, starting 6–12 months after the last HPV2 or HPV4 dose.', 'ไม่จำเป็นต้องให้ HPV9 อีก แต่สามารถให้ HPV9 จำนวน 3 โดสแก่ผู้ที่ต้องการได้ และเว้นระยะหลังจาก HPV2 หรือ HPV4 โดสสุดท้าย 6–12 เดือน')], notes };
+    const young = A.age === 'a914' && A.imm === 'n';
+    const late = A.age === 'a2745' || A.age === 'a46';
+    const n = young ? 2 : 3;
+    const vx = 'HPV 0.5 mL IM';
+    const sched = young ? [{ vx, at: X('Dose 1', 'โดสที่ 1') }, { vx, at: X('Dose 2 · 6–12 months after dose 1', 'โดสที่ 2 · ห่างจากโดสแรก 6–12 เดือน') }]
+      : [{ vx, at: X('Dose 1 · month 0', 'โดสที่ 1 · เดือนที่ 0') }, { vx, at: X('Dose 2 · month 1–2', 'โดสที่ 2 · เดือนที่ 1–2') }, { vx, at: X('Dose 3 · month 6', 'โดสที่ 3 · เดือนที่ 6') }];
+    const lines = [];
+    if (A.age === 'a914') lines.push(X('Girls aged 9–14 are the first priority group: usually not yet infected and they respond well.', 'หญิงอายุ 9–14 ปีเป็นกลุ่มที่ควรพิจารณาเป็นลำดับแรก เนื่องจากมักยังไม่ติดเชื้อและตอบสนองต่อวัคซีนดี'));
+    if (A.age === 'a914') lines.push(A.imm === 'y' ? X('Immunocompromised (for example HIV, organ transplant): 3 doses.', 'ผู้ที่มีภาวะภูมิคุ้มกันบกพร่อง เช่น ติดเชื้อเอชไอวี ได้รับการปลูกถ่ายอวัยวะ: ให้วัคซีน 3 โดส') : X('Aged 9–14: 2 doses, 6–12 months apart.', 'อายุ 9–14 ปี: ให้วัคซีน 2 โดส ห่างกัน 6–12 เดือน'));
+    if (A.prev === 'p24') lines.push(X('HPV2 or HPV4 already started: give HPV9 as the next dose and continue until the series is complete. Do not restart.', 'เคยได้ HPV2 หรือ HPV4 ไปแล้ว 1–2 โดส: ให้ HPV9 เป็นโดสถัดไปจนครบได้ ไม่ต้องเริ่มนับใหม่'));
+    if (A.prev === 'p9') lines.push(X('HPV9 already started: give the remaining doses. Do not restart.', 'เคยได้ HPV9 ไปแล้ว: ให้โดสที่เหลือจนครบ ไม่ต้องเริ่มนับใหม่'));
+    const partial = A.prev === 'p24' || A.prev === 'p9';
+    if (A.sex === 'f' && A.imm === 'n' && (A.age === 'a914' || A.age === 'a1526') && !partial) notes.push(X('WHO: a single dose of HPV9 is an alternative in immunocompetent females aged 9–20 (effective and cost-saving).', 'องค์การอนามัยโลกแนะนำว่าให้ HPV9 เพียง 1 โดสเป็นทางเลือกในหญิงอายุ 9–20 ปีที่ไม่มีภาวะภูมิคุ้มกันบกพร่อง เนื่องจากมีประสิทธิภาพและคุ้มค่า'));
+    if (late) return { ...pre, id: 'scdm', tone: 'scdm', title: X('Age 27 or older: decide together with the patient', 'อายุ 27 ปีขึ้นไป: ตัดสินใจร่วมกันระหว่างแพทย์และผู้รับวัคซีน'),
+      lines: [X('Give it case by case, especially when the patient is at high risk of HPV infection. If agreed: 3 doses at 0, 1–2 and 6 months.', 'พิจารณาให้เป็นรายๆ ไป โดยเฉพาะกลุ่มที่มีความเสี่ยงสูงที่จะติดเชื้อเอชพีวี หากตกลงให้วัคซีน: 3 โดส ที่ 0, 1–2 และ 6 เดือน'), ...lines], sched: partial ? null : sched, notes };
+    return { ...pre, id: young ? 'hpv2' : 'hpv3', tone: 'act', title: X(`Vaccinate: ${n} doses`, `ให้วัคซีน ${n} โดส`), lines, sched: partial ? null : sched, notes };
+  },
+};
+
+/* ---------- labels for the new guide buttons and the planner ---------- */
+Object.assign(T.en, {
+  tsRef: 'Tools & reference', tsPath: 'Vaccine pathways', tsPop: 'Special populations',
+  gPlan: 'Patient planner', sPlan: 'Planner', gIv: 'Interval checker', sIv: 'Interval', gZos: 'Zoster', sZos: 'Zoster', gHpv: 'HPV', sHpv: 'HPV',
+  plTitle: 'Patient planner', plSub: 'Table 1 (age) and Table 2 (conditions) combined for one patient',
+  plAge: 'Age', plConds: 'Conditions (pick all that apply)',
+  plRule: 'How it works: for each vaccine the strongest recommendation among the age band and the chosen conditions is shown (recommended, then risk-based, shared decision, consider). A contraindication in any chosen condition wins. A conditional one (for example "If CD4 <200") appears as a warning.',
+  plNone: 'Pick an age band, one or more conditions, or both, to see the plan.',
+  plSrc: 'Where it comes from', plWarn: 'Warning', plPath: 'Pathway', plCopy: 'Copy plan', plConditional: 'conditional',
+  plH: { contra: 'Do not give', rec: 'Recommended', risk: 'Recommended for the risk or indication', scdm: 'Shared decision', opt: 'Consider (optional)', na: 'No guidance for this selection' },
+});
+Object.assign(T.th, {
+  tsRef: 'เครื่องมือและข้อมูลอ้างอิง', tsPath: 'แนวทางรายวัคซีน', tsPop: 'กลุ่มประชากรเฉพาะ',
+  gPlan: 'วางแผนวัคซีนรายผู้ป่วย', sPlan: 'วางแผน', gIv: 'ตรวจระยะห่างวัคซีน', sIv: 'ระยะห่าง', gZos: 'วัคซีนงูสวัด', sZos: 'งูสวัด', gHpv: 'วัคซีนเอชพีวี', sHpv: 'HPV',
+  plTitle: 'วางแผนวัคซีนรายผู้ป่วย', plSub: 'รวมตารางที่ 1 (ตามอายุ) และตารางที่ 2 (ตามภาวะ) สำหรับผู้ป่วยหนึ่งราย',
+  plAge: 'อายุ', plConds: 'ภาวะ (เลือกได้หลายข้อ)',
+  plRule: 'หลักการ: แต่ละวัคซีนแสดงคำแนะนำที่หนักแน่นที่สุดจากกลุ่มอายุและภาวะที่เลือก (แนะนำ → มีข้อบ่งชี้ → ตัดสินใจร่วมกัน → พิจารณาให้) หากมีข้อห้ามใช้ในภาวะใดภาวะหนึ่งที่เลือก ให้ถือข้อห้ามเป็นหลัก ส่วนข้อห้ามที่มีเงื่อนไข (เช่น "ถ้า CD4 <200") จะแสดงเป็นคำเตือน',
+  plNone: 'เลือกกลุ่มอายุ ภาวะอย่างน้อยหนึ่งข้อ หรือทั้งสองอย่าง เพื่อดูแผน',
+  plSrc: 'ที่มาของคำแนะนำ', plWarn: 'คำเตือน', plPath: 'แนวทาง', plCopy: 'คัดลอกแผน', plConditional: 'มีเงื่อนไข',
+  plH: { contra: 'ห้ามให้', rec: 'แนะนำ', risk: 'แนะนำตามข้อบ่งชี้หรือความเสี่ยง', scdm: 'ตัดสินใจร่วมกัน', opt: 'พิจารณาให้ (ทางเลือก)', na: 'ไม่มีคำแนะนำสำหรับกลุ่มที่เลือก' },
+});
+
+/* ---------- patient planner ---------- */
+const PL = { age: null, conds: new Set() };
+const PL_ORDER = ['contra', 'rec', 'risk', 'scdm', 'opt', 'na'];
+const PL_RANK = { rec: 4, risk: 3, scdm: 2, opt: 1 };
+const PL_PATH = { pcv: 'pcv', hbv: 'hbv', lzv: 'tzos', rzv: 'tzos', hpv: 'thpv' };
+// one result per vaccine row: the sources (age band, each condition) with their lines, and the combined answer
+function plannerResult(age, conds) {
+  return rowNames().map(({ v, r, name }) => {
+    const entries = [];
+    if (age) { const l = cellT1(r, age); if (l) entries.push({ src: AGE_BANDS.find((a) => a.id === age), lines: l }); }
+    [...conds].forEach((c) => {
+      const l = (cellT2(r, c) || []).filter((x) => x[0] !== 't1'); // "See Table 1" is covered by the age entry
+      if (l.length) entries.push({ src: CONDITIONS.find((x) => x.id === c), lines: l });
+    });
+    const flat = entries.flatMap((e) => e.lines.map((ln) => ({ src: e.src, st: ln[0], note: ln })));
+    const hard = flat.filter((x) => x.st === 'contra' && !x.note[1]);
+    const soft = flat.filter((x) => x.st === 'contra' && x.note[1]);
+    const pos = flat.filter((x) => PL_RANK[x.st]);
+    let final = 'na';
+    if (hard.length) final = 'contra';
+    else if (pos.length) final = pos.reduce((a, b) => (PL_RANK[b.st] > PL_RANK[a.st] ? b : a)).st;
+    else if (soft.length) final = 'contra';
+    return { v, r, name, entries, final, conditional: final === 'contra' && !hard.length, warn: final === 'contra' ? [] : soft };
+  });
+}
+const plNote = (ln) => (ln[1] ? (S.lang === 'th' ? ln[2] : ln[1]) : '');
+function plItemHtml(x) {
+  const src = x.entries.map((e) => `<div class="pl-src"><span class="pl-s">${esc(L(e.src))}</span>${e.lines.map((ln) => `<span class="pl-l"><span class="sbadge s-${ln[0]}">${esc(statusLabel(ln[0]))}</span>${plNote(ln) ? ` ${esc(plNote(ln))}` : ''}</span>`).join('')}</div>`).join('');
+  const warn = x.warn.map((w) => `<div class="pl-warn">⚠ ${esc(T[S.lang].plWarn)}: ${esc(L(w.src))}: ${esc(statusLabel('contra'))} — ${esc(plNote(w.note))}</div>`).join('');
+  const path = PL_PATH[x.r] ? `<button class="vlink" data-act="${PL_PATH[x.r]}">${esc(T[S.lang].plPath)} ›</button>` : '';
+  return `<div class="pl-item" data-pl="${x.r}" data-final="${x.final}"><div class="pl-top"><b>${esc(x.name)}</b><span class="sbadge s-${x.final}">${esc(statusLabel(x.final))}${x.conditional ? ' (' + esc(T[S.lang].plConditional) + ')' : ''}</span><span class="pl-go"><button class="vlink" data-act="vaccine" data-id="${x.v.id}">${esc(L(x.v))} ›</button>${path}</span></div>${src}${warn}</div>`;
+}
+function plText(res) {
+  const lines = [`${T[S.lang].plTitle} (IDAT 2026)`, `${T[S.lang].plAge}: ${PL.age ? L(AGE_BANDS.find((a) => a.id === PL.age)) : '-'}`, `${T[S.lang].plConds.replace(/ \(.*\)$/, '')}: ${PL.conds.size ? [...PL.conds].map((c) => L(CONDITIONS.find((x) => x.id === c))).join('; ') : '-'}`, ''];
+  PL_ORDER.forEach((b) => {
+    const g = res.filter((x) => x.final === b); if (!g.length) return;
+    lines.push(T[S.lang].plH[b] + ':');
+    g.forEach((x) => lines.push(`- ${x.name}${x.conditional ? ' (' + T[S.lang].plConditional + ')' : ''}: ` + x.entries.map((e) => `${L(e.src)}: ` + e.lines.map((ln) => statusLabel(ln[0]) + (plNote(ln) ? ' ' + plNote(ln) : '')).join(' / ')).join('; ') + x.warn.map((w) => ` | ${T[S.lang].plWarn}: ${L(w.src)} ${plNote(w.note)}`).join('')));
+    lines.push('');
+  });
+  return lines.join('\n');
+}
+let plCopyText = '';
+function plBody() {
+  const tl = T[S.lang];
+  const chip = (on, act, val, label) => `<button class="chip${on ? ' on' : ''}" data-act="${act}" data-val="${val}" aria-pressed="${on}">${esc(label)}</button>`;
+  const sel = `<div class="fgroup"><span class="lab">${esc(tl.plAge)}:</span>${chip(!PL.age, 'plage', '', t().all)}${AGE_BANDS.map((a) => chip(PL.age === a.id, 'plage', a.id, L(a).replace(/ (years|ปี)$/, ''))).join('')}</div>
+    <div class="fgroup"><span class="lab">${esc(tl.plConds)}:</span>${CONDITIONS.map((c) => chip(PL.conds.has(c.id), 'plcond', c.id, S.lang === 'th' ? (c.shortTh || c.th) : (c.short || c.en))).join('')}</div>
+    <div class="alt">${esc(tl.plRule)}</div>`;
+  if (!PL.age && !PL.conds.size) { plCopyText = ''; return `<div class="pl-sel">${sel}</div><div class="empty">${esc(tl.plNone)}</div>`; }
+  const res = plannerResult(PL.age, PL.conds);
+  plCopyText = plText(res);
+  const counts = PL_ORDER.map((b) => [b, res.filter((x) => x.final === b).length]).filter((c) => c[1]);
+  const groups = PL_ORDER.map((b) => { const g = res.filter((x) => x.final === b); return g.length ? `<section class="pl-grp" data-bucket="${b}"><h3 class="pl-h"><span class="sbadge s-${b}">${esc(tl.plH[b])}</span><span class="grp-n">${g.length}</span></h3>${g.map(plItemHtml).join('')}</section>` : ''; }).join('');
+  return `<div class="pl-sel">${sel}</div><div class="pl-count">${counts.map((c) => `<span class="sbadge s-${c[0]}">${esc(tl.plH[c[0]])}: ${c[1]}</span>`).join('')}</div>${groups}<div><button class="btn" data-act="plcopy">${esc(tl.plCopy)}</button></div>`;
+}
+function openPlanner() {
+  openModal(mHead(esc(T[S.lang].plTitle), esc(T[S.lang].plSub)) + `<div class="mb" id="plbody">${plBody()}</div>` + mFoot(), { wide: true, rerender: openPlanner });
+}
+function plRefresh() {
+  const mb = document.getElementById('plbody'); if (!mb) return;
+  const y = mb.scrollTop; mb.innerHTML = plBody(); mb.scrollTop = y;
+}
+
+/* ---------- interval checker (general principles of vaccination, guideline page 4) ---------- */
+Object.assign(T.en, {
+  ivTitle: 'Interval checker', ivSub: 'General principles: live vaccines and antibody products (page 4)',
+  ivPlan: 'Vaccine to give', ivDate: 'Date to give it', ivHist: 'What the patient has had', ivAddV: 'Add a live vaccine', ivAddP: 'Add an antibody product or blood', ivRm: 'Remove',
+  ivEmpty: 'Nothing added yet. Add a live vaccine or an antibody product the patient has had, with its date.',
+  ivOk: (d) => `OK to give on ${d}`, ivWait: (d) => `Wait until ${d}`, ivBadDate: 'Enter valid dates.',
+  ivSame: (n, d) => `${n} (${d}): given on the same day, which is allowed for live vaccines.`,
+  ivLL: (n, d, e) => `${n} (${d}): live vaccines need 4 weeks between them. Earliest ${e}.`,
+  ivLLok: (n, d) => `${n} (${d}): at least 4 weeks ago, so this is fine.`,
+  ivFuture: (n, d) => `${n} (${d}) is dated after the planned date.`,
+  ivNoLive: (n, d) => `${n} (${d}): an inactivated vaccine needs no interval after a live vaccine.`,
+  ivAb: (n, d, e) => `${n} (${d}): measles, mumps, rubella and varicella vaccines wait for the antibodies to clear. Earliest ${e}.`,
+  ivAbok: (n, d) => `${n} (${d}): the waiting time has passed.`,
+  ivNoAb: (n, d) => `${n} (${d}): the guideline gives no waiting time for this vaccine after antibody products (it gives one for measles, mumps, rubella and varicella vaccines).`,
+  ivRepeat: (v, p, e) => `${p} was given within 2 weeks after ${v}: repeat ${v} once the waiting time has passed (from ${e}).`,
+  ivLiveTag: 'live', ivInactTag: 'inactivated', ivRule: 'Rules from the guideline: two live vaccines go on the same day or at least 4 weeks apart; inactivated vaccines have no limit; after an antibody product the measles, mumps, rubella and varicella vaccines wait 4 months (HRIG 20 IU/kg), 6 months (packed red cells 10 mL/kg), 7 months (plasma or platelets 10 mL/kg) or 8 months (IVIG 300–400 mg/kg). Other doses: see the guideline.',
+});
+Object.assign(T.th, {
+  ivTitle: 'ตรวจระยะห่างวัคซีน', ivSub: 'หลักการทั่วไป: วัคซีนชนิดเชื้อมีชีวิตและผลิตภัณฑ์ที่มีแอนติบอดี (หน้า 4)',
+  ivPlan: 'วัคซีนที่จะให้', ivDate: 'วันที่จะให้', ivHist: 'สิ่งที่ผู้ป่วยเคยได้รับ', ivAddV: 'เพิ่มวัคซีนชนิดเชื้อมีชีวิต', ivAddP: 'เพิ่มอิมมิวโนโกลบิวลินหรือเลือด', ivRm: 'ลบ',
+  ivEmpty: 'ยังไม่ได้เพิ่มรายการ เพิ่มวัคซีนชนิดเชื้อมีชีวิตหรือผลิตภัณฑ์ที่มีแอนติบอดีที่ผู้ป่วยเคยได้รับ พร้อมวันที่',
+  ivOk: (d) => `ให้ได้ในวันที่ ${d}`, ivWait: (d) => `รอถึงวันที่ ${d}`, ivBadDate: 'กรุณากรอกวันที่ให้ถูกต้อง',
+  ivSame: (n, d) => `${n} (${d}): ให้ในวันเดียวกัน ซึ่งทำได้สำหรับวัคซีนชนิดเชื้อมีชีวิต`,
+  ivLL: (n, d, e) => `${n} (${d}): วัคซีนชนิดเชื้อมีชีวิตต้องเว้นระยะห่างกัน 4 สัปดาห์ ให้ได้เร็วที่สุด ${e}`,
+  ivLLok: (n, d) => `${n} (${d}): ห่างกันอย่างน้อย 4 สัปดาห์แล้ว ให้ได้`,
+  ivFuture: (n, d) => `${n} (${d}) มีวันที่หลังวันที่จะให้วัคซีน`,
+  ivNoLive: (n, d) => `${n} (${d}): วัคซีนชนิดเชื้อตายไม่ต้องเว้นระยะหลังวัคซีนชนิดเชื้อมีชีวิต`,
+  ivAb: (n, d, e) => `${n} (${d}): วัคซีนหัด คางทูม หัดเยอรมัน และอีสุกอีใส ต้องรอให้แอนติบอดีหมดไปก่อน ให้ได้เร็วที่สุด ${e}`,
+  ivAbok: (n, d) => `${n} (${d}): พ้นระยะเวลารอแล้ว`,
+  ivNoAb: (n, d) => `${n} (${d}): คำแนะนำไม่ได้ระบุระยะเวลารอหลังผลิตภัณฑ์ที่มีแอนติบอดีสำหรับวัคซีนนี้ (ระบุไว้เฉพาะวัคซีนหัด คางทูม หัดเยอรมัน และอีสุกอีใส)`,
+  ivRepeat: (v, p, e) => `ได้รับ ${p} ภายใน 2 สัปดาห์หลังได้ ${v}: ให้ ${v} ซ้ำเมื่อพ้นระยะเวลารอ (ตั้งแต่ ${e})`,
+  ivLiveTag: 'เชื้อเป็น', ivInactTag: 'เชื้อตาย', ivRule: 'หลักการจากคำแนะนำ: วัคซีนชนิดเชื้อมีชีวิตสองชนิดให้ในวันเดียวกันหรือห่างกันอย่างน้อย 4 สัปดาห์ วัคซีนชนิดเชื้อตายไม่จำกัด หลังได้ผลิตภัณฑ์ที่มีแอนติบอดี วัคซีนหัด คางทูม หัดเยอรมัน และอีสุกอีใสต้องรอ 4 เดือน (HRIG 20 หน่วยสากล/กก.) 6 เดือน (เม็ดเลือดแดงเข้มข้น 10 มล./กก.) 7 เดือน (พลาสมาหรือเกล็ดเลือด 10 มล./กก.) หรือ 8 เดือน (IVIG 300–400 มก./กก.) ขนาดอื่นดูในคำแนะนำ',
+});
+const IV_PROD = [
+  { id: 'hrig', months: 4, n: X('HRIG 20 IU/kg', 'HRIG 20 หน่วยสากล/กก.') },
+  { id: 'prbc', months: 6, n: X('Packed red cells 10 mL/kg', 'เม็ดเลือดแดงเข้มข้น 10 มล./กก.') },
+  { id: 'plt', months: 7, n: X('Plasma or platelets 10 mL/kg', 'พลาสมาหรือเกล็ดเลือด 10 มล./กก.') },
+  { id: 'ivig', months: 8, n: X('IVIG 300–400 mg/kg', 'IVIG 300–400 มก./กก.') },
+];
+const IV_AB = ['mmr', 'vzv']; // measles-mumps-rubella and varicella
+// one entry per product; a vaccine that comes both live and inactivated (influenza, hepatitis A, JE) gets one entry for each
+const ivItems = () => VACCINES.flatMap((v) => {
+  const live = v.kind.includes('live'), mixed = live && v.kind.some((k) => k !== 'live');
+  return mixed ? [{ id: v.id + ':live', v, live: true, mixed }, { id: v.id + ':inact', v, live: false, mixed }] : [{ id: v.id, v, live, mixed }];
+});
+const ivName = (it) => L(it.v) + (it.mixed ? ` (${T[S.lang][it.live ? 'ivLiveTag' : 'ivInactTag']})` : '');
+const ivToday = () => { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); };
+const ivParse = (s) => { const d = /^\d{4}-\d{2}-\d{2}$/.test(s || '') ? new Date(s + 'T00:00:00Z') : null; return d && !isNaN(d) ? d : null; };
+const ivAddDays = (d, n) => new Date(d.getTime() + n * 86400000);
+const ivAddMonths = (d, n) => { const r = new Date(d.getTime()), day = r.getUTCDate(); r.setUTCDate(1); r.setUTCMonth(r.getUTCMonth() + n); r.setUTCDate(Math.min(day, new Date(Date.UTC(r.getUTCFullYear(), r.getUTCMonth() + 1, 0)).getUTCDate())); return r; };
+const ivFmt = (d) => d.toLocaleDateString(S.lang === 'th' ? 'th-TH' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+const IV = { plan: 'mmr', date: ivToday(), hist: [] };
+// the verdict for giving IV.plan on IV.date, given the history: { ok, until, rows[], advice[] } (or null when the dates are not valid)
+function ivCompute(st) {
+  const items = ivItems(), P = items.find((i) => i.id === st.plan), T0 = ivParse(st.date);
+  if (!P || !T0) return null;
+  const tl = T[S.lang], rows = [], advice = [];
+  let until = null;
+  const wait = (e) => { if (!until || e > until) until = e; };
+  const live = st.hist.filter((h) => h.kind === 'v' && ivParse(h.date)).map((h) => ({ ...h, D: ivParse(h.date), it: items.find((i) => i.id === h.id) }));
+  const prod = st.hist.filter((h) => h.kind === 'p' && ivParse(h.date)).map((h) => ({ ...h, D: ivParse(h.date), p: IV_PROD.find((x) => x.id === h.id) }));
+  live.forEach((h) => {
+    const n = ivName(h.it), d = ivFmt(h.D), diff = Math.round((T0 - h.D) / 86400000);
+    if (!P.live) rows.push({ ok: true, text: tl.ivNoLive(n, d) });
+    else if (diff === 0) rows.push({ ok: true, text: tl.ivSame(n, d) });
+    else if (diff < 0) rows.push({ ok: null, text: tl.ivFuture(n, d) });
+    else if (diff >= 28) rows.push({ ok: true, text: tl.ivLLok(n, d) });
+    else { const e = ivAddDays(h.D, 28); wait(e); rows.push({ ok: false, text: tl.ivLL(n, d, ivFmt(e)) }); }
+  });
+  prod.forEach((h) => {
+    const n = L(h.p.n), d = ivFmt(h.D);
+    if (!(P.live && IV_AB.includes(P.v.id))) { rows.push({ ok: true, text: tl.ivNoAb(n, d) }); return; }
+    const e = ivAddMonths(h.D, h.p.months);
+    if (T0 >= e) rows.push({ ok: true, text: tl.ivAbok(n, d) });
+    else { wait(e); rows.push({ ok: false, text: tl.ivAb(n, d, ivFmt(e)) }); }
+  });
+  // an antibody product within 2 weeks AFTER measles-mumps-rubella or varicella vaccine: that vaccine is repeated later
+  live.filter((h) => IV_AB.includes(h.it.v.id)).forEach((h) => prod.forEach((p) => {
+    const days = Math.round((p.D - h.D) / 86400000);
+    if (days >= 0 && days <= 14) advice.push(tl.ivRepeat(L(h.it.v), L(p.p.n), ivFmt(ivAddMonths(p.D, p.p.months))));
+  }));
+  return { ok: !until, until, rows, advice };
+}
+function ivResultHtml() {
+  const tl = T[S.lang], r = ivCompute(IV);
+  if (!r) return `<div class="alt">${esc(tl.ivBadDate)}</div>`;
+  const dot = (ok) => `<span class="sbadge ${ok === true ? 's-rec' : ok === false ? 's-contra' : 's-opt'}">${ok === true ? '✓' : ok === false ? '✕' : '!'}</span>`;
+  return `<div class="plan iv-verdict" data-iv="${r.ok ? 'ok' : 'wait'}"><div class="plan-lv"><span class="sbadge ${r.ok ? 's-rec' : 's-contra'}">${r.ok ? '✓' : '✕'}</span><span>${esc(r.ok ? tl.ivOk(ivFmt(ivParse(IV.date))) : tl.ivWait(ivFmt(r.until)))}</span></div>
+    ${r.rows.length ? `<ul class="iv-rows">${r.rows.map((x) => `<li>${dot(x.ok)} ${esc(x.text)}</li>`).join('')}</ul>` : `<div class="alt">${esc(tl.ivEmpty)}</div>`}
+    ${r.advice.length ? `<div class="plan-sub"><div class="bt">${esc(ht().notes)}</div><ul>${r.advice.map((a) => `<li>${esc(a)}</li>`).join('')}</ul></div>` : ''}</div>`;
+}
+function ivBody() {
+  const tl = T[S.lang], items = ivItems();
+  const opt = (arr, cur, label) => arr.map((x) => `<option value="${x.id}"${x.id === cur ? ' selected' : ''}>${esc(label(x))}</option>`).join('');
+  const rows = IV.hist.map((h, i) => `<div class="iv-row" data-i="${i}"><select data-iv="${i}:id" aria-label="${esc(tl.ivHist)}">${h.kind === 'v' ? opt(items.filter((x) => x.live), h.id, ivName) : opt(IV_PROD, h.id, (x) => L(x.n))}</select><input type="date" data-iv="${i}:date" value="${esc(h.date)}" aria-label="${esc(tl.ivDate)}"><button class="btn" data-act="ivrm" data-i="${i}" aria-label="${esc(tl.ivRm)}">✕</button></div>`).join('');
+  return `<div class="iv-form"><label class="iv-f"><span>${esc(tl.ivPlan)}</span><select id="iv-plan" data-iv="plan">${opt(items, IV.plan, ivName)}</select></label>
+    <label class="iv-f"><span>${esc(tl.ivDate)}</span><input type="date" id="iv-date" data-iv="date" value="${esc(IV.date)}"></label></div>
+    <div class="bt">${esc(tl.ivHist)}</div>${rows}
+    <div class="iv-add"><button class="btn" data-act="ivaddv">+ ${esc(tl.ivAddV)}</button><button class="btn" data-act="ivaddp">+ ${esc(tl.ivAddP)}</button></div>
+    <div id="ivres">${ivResultHtml()}</div><div class="alt">${esc(tl.ivRule)}</div>`;
+}
+function openInterval() {
+  openModal(mHead(esc(T[S.lang].ivTitle), esc(T[S.lang].ivSub)) + `<div class="mb" id="ivbody">${ivBody()}</div>` + mFoot(), { wide: false, rerender: openInterval });
+}
+const ivRefreshAll = () => { const mb = document.getElementById('ivbody'); if (!mb) return; const y = mb.scrollTop; mb.innerHTML = ivBody(); mb.scrollTop = y; };
+const ivRefreshResult = () => { const r = document.getElementById('ivres'); if (r) r.innerHTML = ivResultHtml(); };
+
+/* ---------- pregnancy timeline (pregnancy chapter, guideline pages 48–49) ---------- */
+Object.assign(T.en, {
+  ptTitle: 'Pregnancy timeline', ptWeeks: 'weeks of pregnancy', ptGa: 'Weeks pregnant now', ptBest: 'best window', ptPossible: 'possible', ptTd: 'Td only',
+  ptIfInd: 'If indicated (comorbidity, risk or another indication)', ptAvoid: 'Not in pregnancy',
+  ptAvoidList: 'Live-attenuated vaccines (for example MMR, varicella, zoster, dengue, yellow fever); HPV (give the remaining doses after delivery); adjuvanted RSVPreF3.',
+  ptNow: (w) => `At ${w} weeks:`, ptBestNow: 'best window now', ptPossNow: 'possible now', ptTdNow: 'Td only for now; Tdap, TdaP or aP from 16 weeks', ptOpens: (w) => `window opens at ${w} weeks`, ptClosed: 'window has passed; give after delivery if still needed',
+});
+Object.assign(T.th, {
+  ptTitle: 'ช่วงเวลาให้วัคซีนในระหว่างตั้งครรภ์', ptWeeks: 'สัปดาห์ของอายุครรภ์', ptGa: 'อายุครรภ์ขณะนี้ (สัปดาห์)', ptBest: 'ช่วงที่เหมาะสมที่สุด', ptPossible: 'ให้ได้', ptTd: 'Td เท่านั้น',
+  ptIfInd: 'ถ้ามีข้อบ่งชี้ (ภาวะร่วม โรคประจำตัว หรือข้อบ่งชี้อื่น)', ptAvoid: 'ไม่ให้ในหญิงตั้งครรภ์',
+  ptAvoidList: 'วัคซีนชนิดเชื้อมีชีวิตอ่อนฤทธิ์ (เช่น MMR อีสุกอีใส งูสวัด ไข้เลือดออก ไข้เหลือง) วัคซีนเอชพีวี (ให้โดสที่เหลือหลังคลอด) และวัคซีนอาร์เอสวีชนิด adjuvanted RSVPreF3',
+  ptNow: (w) => `เมื่ออายุครรภ์ ${w} สัปดาห์:`, ptBestNow: 'ช่วงที่เหมาะสมที่สุดในขณะนี้', ptPossNow: 'ให้ได้ในขณะนี้', ptTdNow: 'ตอนนี้ให้ได้เฉพาะ Td; Tdap, TdaP หรือ aP ให้ได้ตั้งแต่ 16 สัปดาห์', ptOpens: (w) => `เริ่มให้ได้ที่ ${w} สัปดาห์`, ptClosed: 'พ้นช่วงเวลาแล้ว หากยังจำเป็นให้หลังคลอด',
+});
+const PT_MAX = 40;
+const PT_ROWS = [
+  { id: 'tdap', n: X('Td / Tdap / TdaP / aP', 'Td / Tdap / TdaP / aP'), seg: [{ a: 0, b: 16, k: 'td' }, { a: 16, b: 20, k: 'ok' }, { a: 20, b: 32, k: 'best' }, { a: 32, b: 40, k: 'ok' }],
+    note: X('Td can be given at any stage (never vaccinated or fewer than 3 doses: 3 doses at 0, 1 and 6 months, with dose 2 at least 2 weeks before delivery; last dose over 10 years ago: 1 dose at least 2 weeks before delivery). Tdap, TdaP or aP replaces 1 Td dose, best at 20–32 weeks and possible from 16 weeks. If missed, give it later in pregnancy or after delivery.',
+      'ให้ Td ได้ทุกช่วงของการตั้งครรภ์ (ไม่เคยได้หรือได้น้อยกว่า 3 โดส: 3 โดส ที่ 0, 1 และ 6 เดือน โดยโดสที่ 2 ห่างจากวันคลอดอย่างน้อย 2 สัปดาห์; โดสสุดท้ายนานกว่า 10 ปี: 1 โดสก่อนคลอดอย่างน้อย 2 สัปดาห์) ให้ Tdap, TdaP หรือ aP แทน Td 1 โดส เหมาะสมที่สุดที่ 20–32 สัปดาห์ และให้ได้ตั้งแต่ 16 สัปดาห์ หากไม่ได้รับให้พิจารณาให้ในช่วงอายุครรภ์หลังจากนั้นหรือหลังคลอด') },
+  { id: 'flu', n: X('Influenza (inactivated)', 'ไข้หวัดใหญ่ (ชนิดเชื้อตาย)'), seg: [{ a: 0, b: 12, k: 'ok' }, { a: 12, b: 20, k: 'best' }, { a: 20, b: 40, k: 'ok' }],
+    note: X('Best at 12–20 weeks; any stage is acceptable. Before 12 weeks only when there is a high risk of severe influenza or an outbreak. If the annual dose was given before pregnancy, another can be given more than 6 months after it.',
+      'เหมาะสมที่สุดที่อายุครรภ์ 12–20 สัปดาห์ แต่ให้ได้ทุกช่วงของการตั้งครรภ์ พิจารณาก่อน 12 สัปดาห์เมื่อมีภาวะเสี่ยงสูงต่อไข้หวัดใหญ่รุนแรงหรือมีการระบาด หากได้รับวัคซีนประจำปีก่อนตั้งครรภ์ ให้ซ้ำได้โดยห่างจากโดสก่อนมากกว่า 6 เดือน') },
+  { id: 'rsv', n: X('RSV (bivalent RSVpreF)', 'อาร์เอสวี (bivalent RSVpreF)'), seg: [{ a: 24, b: 28, k: 'ok' }, { a: 28, b: 32, k: 'best' }, { a: 32, b: 36, k: 'ok' }],
+    note: X('24–36 weeks, with most benefit at 28–32 weeks. Strongly recommended when the baby will be under 6 months old during the Thai RSV season (July–November). Give it at least 15 days before delivery.',
+      'อายุครรภ์ 24–36 สัปดาห์ โดยน่าจะได้ประโยชน์สูงสุดที่ 28–32 สัปดาห์ และแนะนำอย่างยิ่งในกรณีที่คาดว่าทารกจะมีอายุน้อยกว่า 6 เดือนในช่วงที่มีการระบาดในประเทศไทยช่วงเดือนกรกฎาคมถึงเดือนพฤศจิกายน ควรให้อย่างน้อย 15 วันก่อนคลอด') },
+];
+const PT_IF = [X('COVID-19', 'โควิด 19'), X('Hepatitis A', 'ไวรัสตับอักเสบเอ'), X('Hepatitis B', 'ไวรัสตับอักเสบบี'), X('Pneumococcal (PCV20, 1 dose)', 'นิวโมค็อกคัส (PCV20 1 โดส)'), X('Meningococcal', 'ไข้กาฬหลังแอ่น'), X('Rabies', 'พิษสุนัขบ้า')];
+const ptX = (w) => (w / PT_MAX) * 100;
+function ptRowNow(row, w) {
+  const tl = T[S.lang], s = row.seg.find((x) => w >= x.a && w < x.b) || (w === PT_MAX ? row.seg[row.seg.length - 1] : null);
+  if (s) return s.k === 'best' ? tl.ptBestNow : s.k === 'ok' ? tl.ptPossNow : tl.ptTdNow;
+  return w < row.seg[0].a ? tl.ptOpens(row.seg[0].a) : tl.ptClosed;
+}
+function ptNowHtml(w) {
+  if (w == null || isNaN(w) || w < 0 || w > 42) return '';
+  const n = Math.min(Math.round(w), 42);
+  return `<div class="bt">${esc(T[S.lang].ptNow(n))}</div><ul>${PT_ROWS.map((r) => `<li><b>${esc(L(r.n))}</b>: ${esc(ptRowNow(r, n))}</li>`).join('')}</ul>`;
+}
+function pregTimelineBlock() {
+  const tl = T[S.lang];
+  const ticks = [0, 8, 16, 24, 32, 40].map((w) => `<span style="left:${ptX(w)}%">${w}</span>`).join('');
+  const rows = PT_ROWS.map((r) => `<div class="pt-row" data-pt="${r.id}"><div class="pt-lab">${esc(L(r.n))}</div><div class="pt-track">${r.seg.map((s) => `<i class="pt-seg pt-${s.k}" style="left:${ptX(s.a)}%;width:${ptX(s.b - s.a)}%" title="${s.a}–${s.b}"></i>`).join('')}<b class="pt-now" hidden></b></div><div class="pt-note alt">${esc(L(r.note))}</div></div>`).join('');
+  const body = `<div class="pt-axis"><span class="pt-lab"></span><div class="pt-ticks">${ticks}</div></div>${rows}
+    <div class="pt-legend"><span><i class="pt-seg pt-best"></i>${esc(tl.ptBest)}</span><span><i class="pt-seg pt-ok"></i>${esc(tl.ptPossible)}</span><span><i class="pt-seg pt-td"></i>${esc(tl.ptTd)}</span><span class="alt">${esc(tl.ptWeeks)}</span></div>
+    <label class="iv-f pt-ga"><span>${esc(tl.ptGa)}</span><input type="number" id="ga" min="0" max="42" step="1" inputmode="numeric" placeholder="0–42"></label><div id="ga-now" class="plan-sub"></div>
+    <div class="plan-sub"><div class="bt">${esc(tl.ptIfInd)}</div><div class="figs">${PT_IF.map((x) => `<span class="tag">${esc(L(x))}</span>`).join('')}</div></div>
+    <div class="plan-sub"><div class="bt">${esc(tl.ptAvoid)}</div><div class="alt">${esc(tl.ptAvoidList)}</div></div>`;
+  return block('preg:timeline', 'var(--k-preg)', esc(tl.ptTitle), body, true);
+}
+function ptGaUpdate(v) {
+  const w = v === '' ? null : Number(v);
+  document.querySelectorAll('.pt-now').forEach((el) => { const on = w != null && w >= 0 && w <= PT_MAX; el.hidden = !on; if (on) el.style.left = ptX(w) + '%'; });
+  const box = document.getElementById('ga-now'); if (box) box.innerHTML = ptNowHtml(w);
+}
+
+/* ---------- clicks and edits for the clinical tools (planner, pathways, interval checker, pregnancy timeline) ---------- */
+function copyText(text) {
+  const done = () => toast(ht().copied), fail = () => toast(ht().copyFail);
+  try { navigator.clipboard.writeText(text).then(done, fail); } catch (e) { fail(); }
+}
+document.addEventListener('click', (e) => {
+  const el = e.target.closest('[data-act]');
+  if (!el) return;
+  const d = el.dataset;
+  switch (d.act) {
+    case 'tplan': openPlanner(); break;
+    case 'tiv': openInterval(); break;
+    case 'tzos': openWizard('zoster'); break;
+    case 'thpv': openWizard('hpv'); break;
+    case 'wzpick': wzPick(d.wz, d.q, d.val); break;
+    case 'wzreset': WZS[d.wz] = {}; closeModal(); openWizard(d.wz); break;
+    case 'wzcopy': copyText(WZ_TEXT[d.wz] || ''); break;
+    case 'plage': PL.age = d.val || null; plRefresh(); break;
+    case 'plcond': PL.conds.has(d.val) ? PL.conds.delete(d.val) : PL.conds.add(d.val); plRefresh(); break;
+    case 'plcopy': copyText(plCopyText); break;
+    case 'ivaddv': IV.hist.push({ kind: 'v', id: ivItems().find((i) => i.live).id, date: ivToday() }); ivRefreshAll(); break;
+    case 'ivaddp': IV.hist.push({ kind: 'p', id: 'ivig', date: ivToday() }); ivRefreshAll(); break;
+    case 'ivrm': IV.hist.splice(+d.i, 1); ivRefreshAll(); break;
+  }
+});
+// selects and date boxes of the interval checker (the result updates in place, so a box keeps its focus)
+const ivEdit = (e) => {
+  const k = e.target.dataset && e.target.dataset.iv;
+  if (!k) return;
+  if (k === 'plan') IV.plan = e.target.value;
+  else if (k === 'date') IV.date = e.target.value;
+  else { const [i, f] = k.split(':'); if (IV.hist[+i]) IV.hist[+i][f] = e.target.value; }
+  ivRefreshResult();
+};
+document.addEventListener('change', ivEdit);
+document.addEventListener('input', (e) => {
+  if (e.target.type === 'date') ivEdit(e);
+  if (e.target.id === 'ga') ptGaUpdate(e.target.value);
+});
+
+renderAll();
 
 </script>
 </body>
