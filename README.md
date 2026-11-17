@@ -13,7 +13,7 @@ the full guideline, or the product label.
 
 ## What it does
 
-- 17 vaccines grouped by pathogen type (3 bacterial, 14 viral, with a Pathogen filter), each with the guideline's vaccine information, administration, side effects / precautions /
+- 17 vaccines grouped by infection type (4 respiratory, 3 sexually transmitted, 10 other, with an Infection type filter), each with the guideline's vaccine information, administration, side effects / precautions /
   contraindications, additional recommendations and references, in Thai (original wording) and English.
 - Filters by age group (Table 1), condition (Table 2: pregnancy, healthcare personnel, heart/diabetes/lung disease,
   CKD, liver disease, asplenia, HIV, immunocompromise, transplant, travellers), recommendation level, live / non-live,
