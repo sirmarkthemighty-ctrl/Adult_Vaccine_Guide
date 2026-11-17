@@ -31,7 +31,8 @@ the full guideline, or the product label.
 - Guides for pregnancy, solid organ and stem cell transplant, asplenia, travellers, and the
   general principles of adult vaccination.
 - A heart **Donate** button opens the author's PromptPay QR code for voluntary support.
-- Soft-tint look like the Adult Bronchodilator Device Guide, light and dark themes, Thai / English, phone layout,
+- Bedside UI with Fluent touches like the Adult Bronchodilator Device Guide (soft tints, two-layer elevation, focus ring,
+  guide bar pinned with the search bar), light and dark themes, Thai / English, phone layout,
   colour-coded blocks that fold.
 
 Tap the version badge next to the title for the changelog.
