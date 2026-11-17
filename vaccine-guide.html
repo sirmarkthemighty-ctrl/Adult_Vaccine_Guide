@@ -254,7 +254,7 @@ a { color: var(--accent); }
 .mb > * { flex-shrink: 0; }
 .tcell .sline { flex-wrap: wrap; row-gap: 2px; }
 .sel .chip { text-align: left; border: 1px solid var(--line2); }
-.seg .sl { white-space: normal; overflow: visible; text-overflow: clip; hyphens: manual; line-height: 1.15; }
+.seg .sl { line-height: 1.15; }
 @media (max-width: 640px) {
   .ptbl thead { display: none; }
   .ptbl, .ptbl tbody, .ptbl tr, .ptbl td { display: block; width: 100%; }
@@ -380,6 +380,11 @@ button:active:not(:disabled) { filter: brightness(.93); }
 .toolhdr .cv { display: inline-flex; color: var(--faint); transition: transform .15s; }
 .toolhdr.open .cv { transform: rotate(180deg); }
 
+/* condition strip: short "IC" label when the strip is too narrow for "Immunocomp" */
+.seg .sl .ab { display: none; font-weight: 700; }
+.strip.cond { container-type: inline-size; }
+@container (max-width: 340px) { .seg .sl .full.has-ab { display: none; } .seg .sl .ab { display: inline; } }
+
 </style>
 </head>
 <body>
@@ -422,7 +427,7 @@ const CONDITIONS = [
   { id: 'cld', tiny: 'Liver', tinyTh: 'ตับ', en: 'Chronic liver disease', short: 'Liver disease', th: 'โรคตับเรื้อรัง', shortTh: 'ตับเรื้อรัง' },
   { id: 'asplenia', tiny: 'Asplenia', tinyTh: 'ม้าม', en: 'Asplenia and hyposplenia', short: 'Asplenia', th: 'ไม่มีม้ามหรือม้ามทำงานผิดปกติ', shortTh: 'ไม่มีม้าม' },
   { id: 'hiv', tiny: 'HIV', tinyTh: 'HIV', en: 'HIV', th: 'ผู้ติดเชื้อเอชไอวี', shortTh: 'HIV' },
-  { id: 'ic', tiny: 'Immuno­comp', tinyTh: 'ภูมิบกพร่อง', en: 'Immunocompromised', th: 'ภาวะภูมิคุ้มกันบกพร่อง', shortTh: 'ภูมิคุ้มกันบกพร่อง' },
+  { id: 'ic', tiny: 'Immunocomp', narrow: 'IC', tinyTh: 'ภูมิบกพร่อง', en: 'Immunocompromised', th: 'ภาวะภูมิคุ้มกันบกพร่อง', shortTh: 'ภูมิคุ้มกันบกพร่อง' },
   { id: 'tx', tiny: 'Transplant', tinyTh: 'ปลูกถ่าย', en: 'Post-transplantation', short: 'Transplant', th: 'หลังปลูกถ่ายอวัยวะ / เซลล์ต้นกำเนิด', shortTh: 'ปลูกถ่าย' },
   { id: 'travel', tiny: 'Travel', tinyTh: 'เดินทาง', en: 'Traveler', th: 'นักท่องเที่ยวและนักเดินทาง', shortTh: 'นักเดินทาง' },
 ];
@@ -1667,7 +1672,7 @@ const GUIDE_META = {
 
 const changelogData = [
   {
-    version: '1.9.0', date: 'November 17, 2026', title: 'Infection-type groups and Bedside UI',
+    version: '1.9.1', date: 'November 17, 2026', title: 'Infection-type groups and Bedside UI',
     features: [
       'Vaccines are grouped by the infection they mainly prevent: respiratory infections (influenza, COVID-19, RSV, pneumococcal), sexually transmitted infections (HPV, hepatitis B, mpox) and other infections (the remaining 10), with a heading and count for each group and search by "respiratory" or "sexually transmitted". The Group pathogens button in the filters switches the headings off to show one plain list; the choice is remembered on the device.',
       'Bedside UI with Fluent touches, as in the other guides: indigo-600 selected state, soft two-layer card elevation, flat cards (no box inside a box), blurred dialog overlay with a short fade / zoom (off with reduced motion), a visible keyboard focus ring, press feedback on buttons, and the search bar pinned while the page scrolls.',
@@ -1703,6 +1708,7 @@ const changelogData = [
       'Light and dark mode, Thai / English switch, colour-coded blocks that fold.',
     ],
     bugs: [
+      'In the condition bars of a card, "Immunocomp" wrapped onto two lines in narrow cards and pushed its bar down. Labels now stay on one line, and Immunocompromised shows as "IC" when the card is narrow (explained in the Key).',
       'The PDF table page now finishes drawing even when the guide is open in a background tab or a hidden frame.',
     ],
   },
@@ -1729,7 +1735,7 @@ const T = {
     disc: 'Decision support only: read the disclaimer',
     search: 'Search vaccine, brand, condition, drug…', searchShort: 'Search…',
     age: 'Age', cond: 'Condition', level: 'Level', type: 'Type', all: 'All', any: 'Any',
-    live: 'Live', nonlive: 'Non-live', updated: 'Updated 2026', clear: 'Clear filters', key: 'Key', filters: 'Filters', remove: 'Remove filter', toolsTitle: 'Clinical Tools & Knowledge', groupPath: 'Group pathogens', groups: { resp: ['Respiratory', 'Respiratory infections'], sti: ['STI', 'Sexually transmitted infections (STI)'], oth: ['Other', 'Other infections'] },
+    live: 'Live', nonlive: 'Non-live', updated: 'Updated 2026', clear: 'Clear filters', key: 'Key', filters: 'Filters', remove: 'Remove filter', shortKey: 'Short labels: HCP = healthcare personnel, DM = diabetes, CKD = chronic kidney disease, IC = immunocompromised.', toolsTitle: 'Clinical Tools & Knowledge', groupPath: 'Group pathogens', groups: { resp: ['Respiratory', 'Respiratory infections'], sti: ['STI', 'Sexually transmitted infections (STI)'], oth: ['Other', 'Other infections'] },
     donBtn: 'Donate', donTitle: 'Support this guide', donAlt: 'PromptPay QR code for donations',
     donIntro: 'This guide is free to use. If it helps your practice, you can support its development by scanning this PromptPay QR code with your banking app.',
     donScan: 'Scan with a Thai banking app (PromptPay / Thai QR Payment).',
@@ -1771,7 +1777,7 @@ const T = {
     disc: 'เป็นเครื่องมือช่วยตัดสินใจเท่านั้น: อ่านข้อจำกัดความรับผิดชอบ',
     search: 'ค้นหาวัคซีน ชื่อการค้า โรค ยา…', searchShort: 'ค้นหา…',
     age: 'อายุ', cond: 'ภาวะ', level: 'ระดับ', type: 'ชนิด', all: 'ทั้งหมด', any: 'ทุกแบบ',
-    live: 'เชื้อเป็น', nonlive: 'ไม่ใช่เชื้อเป็น', updated: 'ปรับปรุงปี 2569', clear: 'ล้างตัวกรอง', key: 'คำอธิบายสี', filters: 'ตัวกรอง', remove: 'ลบตัวกรอง', toolsTitle: 'เครื่องมือและความรู้ทางคลินิก', groupPath: 'จัดกลุ่มเชื้อก่อโรค', groups: { resp: ['ทางเดินหายใจ', 'โรคติดเชื้อทางเดินหายใจ'], sti: ['STI', 'โรคติดต่อทางเพศสัมพันธ์ (STI)'], oth: ['อื่น ๆ', 'โรคติดเชื้ออื่น ๆ'] },
+    live: 'เชื้อเป็น', nonlive: 'ไม่ใช่เชื้อเป็น', updated: 'ปรับปรุงปี 2569', clear: 'ล้างตัวกรอง', key: 'คำอธิบายสี', filters: 'ตัวกรอง', remove: 'ลบตัวกรอง', shortKey: 'ตัวย่อ: HCP = บุคลากรทางการแพทย์, DM = เบาหวาน, CKD = โรคไตเรื้อรัง, IC = ภาวะภูมิคุ้มกันบกพร่อง', toolsTitle: 'เครื่องมือและความรู้ทางคลินิก', groupPath: 'จัดกลุ่มเชื้อก่อโรค', groups: { resp: ['ทางเดินหายใจ', 'โรคติดเชื้อทางเดินหายใจ'], sti: ['STI', 'โรคติดต่อทางเพศสัมพันธ์ (STI)'], oth: ['อื่น ๆ', 'โรคติดเชื้ออื่น ๆ'] },
     donBtn: 'สนับสนุน', donTitle: 'สนับสนุนคู่มือนี้', donAlt: 'QR พร้อมเพย์สำหรับสนับสนุนผู้พัฒนา',
     donIntro: 'คู่มือนี้ใช้ได้ฟรี หากเป็นประโยชน์ต่อการทำงาน สามารถสนับสนุนการพัฒนาได้โดยสแกน QR พร้อมเพย์นี้ด้วยแอปธนาคาร',
     donScan: 'สแกนด้วยแอปธนาคารของไทย (พร้อมเพย์ / Thai QR Payment)',
@@ -1939,7 +1945,7 @@ function stripHtml(row) {
   const t1 = TABLE1[row];
   const age = t1 ? `<div class="strip age">${AGE_BANDS.map((a) => `<div class="seg" title="${esc(L(a))}"><div class="sl">${esc(L(a).replace(/ (years|ปี)$/, ''))}</div><div class="bars">${(t1[a.id] || [['na']]).map((l) => `<div class="bar s-${l[0]}" title="${esc(statusLabel(l[0]) + (l[1] ? ' — ' + (S.lang === 'th' ? l[2] : l[1]) : ''))}"></div>`).join('')}</div></div>`).join('')}</div>` : `<div class="alt">${esc(t().noT1)}</div>`;
   const t2 = TABLE2[row];
-  const cond = t2 ? `<div class="strip cond" style="margin-top:6px">${CONDITIONS.map((c) => `<div class="seg" title="${esc(L(c))}"><div class="sl">${esc(S.lang === 'th' ? c.tinyTh : c.tiny)}</div><div class="bars">${(t2[c.id] || [['na']]).map((l) => `<div class="bar s-${l[0]}" title="${esc(L(c) + ': ' + statusLabel(l[0]) + (l[1] ? ' — ' + (S.lang === 'th' ? l[2] : l[1]) : ''))}"></div>`).join('')}</div></div>`).join('')}</div>` : '';
+  const cond = t2 ? `<div class="strip cond" style="margin-top:6px">${CONDITIONS.map((c) => `<div class="seg" title="${esc(L(c))}"><div class="sl"><span class="full${c.narrow ? ' has-ab' : ''}">${esc(S.lang === 'th' ? c.tinyTh : c.tiny)}</span>${c.narrow ? `<span class="ab">${esc(c.narrow)}</span>` : ''}</div><div class="bars">${(t2[c.id] || [['na']]).map((l) => `<div class="bar s-${l[0]}" title="${esc(L(c) + ': ' + statusLabel(l[0]) + (l[1] ? ' — ' + (S.lang === 'th' ? l[2] : l[1]) : ''))}"></div>`).join('')}</div></div>`).join('')}</div>` : '';
   return age + cond;
 }
 function filterLabel() {
@@ -2447,7 +2453,7 @@ function openDonate() {
   const m = modalStack[modalStack.length - 1]; if (m) m.ov.dataset.donateModal = '';
 }
 function openKey() {
-  const render = () => openModal(mHead(esc(t().key)) + `<div class="mb"><div class="box"><div class="bt">${esc(t().legend1)}</div>${legendHtml(1)}</div><div class="box"><div class="bt">${esc(t().legend2)}</div>${legendHtml(2)}</div><div class="alt">${esc(t().hsctNote)}</div></div>` + mFoot(), { rerender: render });
+  const render = () => openModal(mHead(esc(t().key)) + `<div class="mb"><div class="box"><div class="bt">${esc(t().legend1)}</div>${legendHtml(1)}</div><div class="box"><div class="bt">${esc(t().legend2)}</div>${legendHtml(2)}</div><div class="alt">${esc(t().hsctNote)}</div><div class="alt">${esc(t().shortKey)}</div></div>` + mFoot(), { rerender: render });
   render();
 }
 function openDisclaimer() {
