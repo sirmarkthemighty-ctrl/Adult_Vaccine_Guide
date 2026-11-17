@@ -458,6 +458,21 @@ button:active:not(:disabled) { filter: brightness(.93); }
 }
 @media (max-width: 640px) { .gbtn { padding: 8px 2px; font-size: 10.5px; font-weight: 700; box-shadow: none; } }
 
+/* ---------- calmer planner: one card per answer, one line per vaccine, sources folded ---------- */
+.pl-grp { gap: 0; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); overflow: hidden; }
+.pl-h { margin: 0; padding: 8px 12px; background: color-mix(in srgb, var(--line) 35%, var(--panel)); }
+.pl-item, :root.dark .pl-item { border: 0; border-top: 1px solid var(--line); border-radius: 0; box-shadow: none; background: transparent; padding: 7px 12px; gap: 4px; }
+.pl-top { gap: 8px; flex-wrap: nowrap; }
+.pl-name { all: unset; cursor: pointer; font-weight: 600; font-size: 13.5px; min-width: 0; overflow-wrap: anywhere; }
+.pl-name:hover { text-decoration: underline; }
+.pl-cond { font-size: 11px; color: var(--faint); font-style: italic; }
+.pl-go { margin-left: auto; flex-shrink: 0; }
+.pl-why summary, .pl-rule summary { cursor: pointer; font-size: 12px; color: var(--faint); list-style: none; }
+.pl-why summary::before, .pl-rule summary::before { content: '›'; display: inline-block; margin-right: 5px; transition: transform .15s; }
+.pl-why[open] summary::before, .pl-rule[open] summary::before { transform: rotate(90deg); }
+.pl-why .pl-src { border-top: 0; padding-top: 4px; }
+.pl-grp[data-bucket=na] .pl-name { font-weight: 500; color: var(--faint); }
+
 </style>
 </head>
 <body>
@@ -1745,8 +1760,10 @@ const GUIDE_META = {
 
 const changelogData = [
   {
-    version: '1.10.3', date: 'November 17, 2026', title: 'Infection-type groups and Bedside UI',
+    version: '1.10.5', date: 'November 17, 2026', title: 'Infection-type groups and Bedside UI',
     features: [
+      'Patient planner: when HIV is picked, a CD4 row appears (unknown, <200 or <15%, ≥200 and ≥15%). The chosen level settles the "If CD4 …" lines: live vaccines become a firm "do not give" at <200, and vaccines listed only for CD4 ≥200 show a note when it is lower.',
+      'Patient planner is calmer: one card per answer (do not give, recommended, …) with one line per vaccine; the age and condition sources fold under "Why", the rule under "How it works", and the count badges row is gone. Warnings stay visible.',
       'Vaccines are grouped by the infection they mainly prevent: respiratory infections (influenza, COVID-19, RSV, pneumococcal), sexually transmitted infections (HPV, hepatitis B, mpox) and other infections (the remaining 10), with a heading and count for each group and search by "respiratory" or "sexually transmitted". The Group pathogens button in the filters switches the headings off to show one plain list; the choice is remembered on the device.',
       'Bedside UI with Fluent touches, as in the other guides: indigo-600 selected state, soft two-layer card elevation, flat cards (no box inside a box), blurred dialog overlay with a short fade / zoom (off with reduced motion), a visible keyboard focus ring, press feedback on buttons, and the search bar pinned while the page scrolls.',
     ],
@@ -3039,8 +3056,8 @@ Object.assign(T.en, {
   plTitle: 'Patient planner', plSub: 'Table 1 (age) and Table 2 (conditions) combined for one patient',
   plAge: 'Age', plConds: 'Conditions (pick all that apply)',
   plRule: 'How it works: for each vaccine the strongest recommendation among the age band and the chosen conditions is shown (recommended, then risk-based, shared decision, consider). A contraindication in any chosen condition wins. A conditional one (for example "If CD4 <200") appears as a warning.',
-  plNone: 'Pick an age band, one or more conditions, or both, to see the plan.',
-  plSrc: 'Where it comes from', plWarn: 'Warning', plPath: 'Pathway', plCopy: 'Copy plan', plConditional: 'conditional',
+  plCd4: 'CD4 count', plCd4U: 'Unknown', plCd4Lt: '<200 or <15%', plCd4Ge: '≥200 and ≥15%', plCd4Na: 'Listed only for CD4 ≥200 and ≥15%, so not applicable at this CD4', plRuleH: 'How it works', plNone: 'Pick an age band, one or more conditions, or both, to see the plan.',
+  plSrc: 'Why', plWarn: 'Warning', plPath: 'Pathway', plCopy: 'Copy plan', plConditional: 'conditional',
   plH: { contra: 'Do not give', rec: 'Recommended', risk: 'Recommended for the risk or indication', scdm: 'Shared decision', opt: 'Consider (optional)', na: 'No guidance for this selection' },
 });
 Object.assign(T.th, {
@@ -3049,45 +3066,53 @@ Object.assign(T.th, {
   plTitle: 'วางแผนวัคซีนรายผู้ป่วย', plSub: 'รวมตารางที่ 1 (ตามอายุ) และตารางที่ 2 (ตามภาวะ) สำหรับผู้ป่วยหนึ่งราย',
   plAge: 'อายุ', plConds: 'ภาวะ (เลือกได้หลายข้อ)',
   plRule: 'หลักการ: แต่ละวัคซีนแสดงคำแนะนำที่หนักแน่นที่สุดจากกลุ่มอายุและภาวะที่เลือก (แนะนำ → มีข้อบ่งชี้ → ตัดสินใจร่วมกัน → พิจารณาให้) หากมีข้อห้ามใช้ในภาวะใดภาวะหนึ่งที่เลือก ให้ถือข้อห้ามเป็นหลัก ส่วนข้อห้ามที่มีเงื่อนไข (เช่น "ถ้า CD4 <200") จะแสดงเป็นคำเตือน',
-  plNone: 'เลือกกลุ่มอายุ ภาวะอย่างน้อยหนึ่งข้อ หรือทั้งสองอย่าง เพื่อดูแผน',
-  plSrc: 'ที่มาของคำแนะนำ', plWarn: 'คำเตือน', plPath: 'แนวทาง', plCopy: 'คัดลอกแผน', plConditional: 'มีเงื่อนไข',
+  plCd4: 'ระดับ CD4', plCd4U: 'ไม่ทราบ', plCd4Lt: '<200 หรือ <15%', plCd4Ge: '≥200 และ ≥15%', plCd4Na: 'แนะนำเฉพาะเมื่อ CD4 ≥200 และ ≥15% จึงไม่ใช้กับระดับ CD4 นี้', plRuleH: 'หลักการ', plNone: 'เลือกกลุ่มอายุ ภาวะอย่างน้อยหนึ่งข้อ หรือทั้งสองอย่าง เพื่อดูแผน',
+  plSrc: 'ที่มา', plWarn: 'คำเตือน', plPath: 'แนวทาง', plCopy: 'คัดลอกแผน', plConditional: 'มีเงื่อนไข',
   plH: { contra: 'ห้ามให้', rec: 'แนะนำ', risk: 'แนะนำตามข้อบ่งชี้หรือความเสี่ยง', scdm: 'ตัดสินใจร่วมกัน', opt: 'พิจารณาให้ (ทางเลือก)', na: 'ไม่มีคำแนะนำสำหรับกลุ่มที่เลือก' },
 });
 
 /* ---------- patient planner ---------- */
-const PL = { age: null, conds: new Set() };
+const PL = { age: null, conds: new Set(), cd4: null }; // cd4: null (unknown), 'lt' (<200 or <15%), 'ge' (≥200 and ≥15%)
+const plCd4 = () => (PL.conds.has('hiv') ? PL.cd4 : null);
+// a note that depends on CD4: 'lt' when it says <200, 'ge' when it says ≥200
+const cd4Kind = (ln) => (/CD4 ≥200/.test(ln[1]) ? 'ge' : /CD4 <200/.test(ln[1]) ? 'lt' : null);
 const PL_ORDER = ['contra', 'rec', 'risk', 'scdm', 'opt', 'na'];
 const PL_RANK = { rec: 4, risk: 3, scdm: 2, opt: 1 };
 const PL_PATH = { pcv: 'pcv', hbv: 'hbv', lzv: 'tzos', rzv: 'tzos', hpv: 'thpv' };
 // one result per vaccine row: the sources (age band, each condition) with their lines, and the combined answer
-function plannerResult(age, conds) {
+function plannerResult(age, conds, cd4) {
   return rowNames().map(({ v, r, name }) => {
-    const entries = [];
+    const entries = []; let cd4Gone = false;
     if (age) { const l = cellT1(r, age); if (l) entries.push({ src: AGE_BANDS.find((a) => a.id === age), lines: l }); }
     [...conds].forEach((c) => {
-      const l = (cellT2(r, c) || []).filter((x) => x[0] !== 't1'); // "See Table 1" is covered by the age entry
+      let l = (cellT2(r, c) || []).filter((x) => x[0] !== 't1'); // "See Table 1" is covered by the age entry
+      if (c === 'hiv' && cd4) { const gone = l.filter((x) => cd4Kind(x) && cd4Kind(x) !== cd4); l = l.filter((x) => !gone.includes(x)); if (gone.some((x) => x[0] !== 'contra')) cd4Gone = true; }
       if (l.length) entries.push({ src: CONDITIONS.find((x) => x.id === c), lines: l });
     });
-    const flat = entries.flatMap((e) => e.lines.map((ln) => ({ src: e.src, st: ln[0], note: ln })));
-    const hard = flat.filter((x) => x.st === 'contra' && !x.note[1]);
-    const soft = flat.filter((x) => x.st === 'contra' && x.note[1]);
+    const flat = entries.flatMap((e) => e.lines.map((ln) => ({ src: e.src, st: ln[0], note: ln, fixed: !!cd4 && e.src.id === 'hiv' && !!cd4Kind(ln) }))); // fixed: the CD4 the user entered settles the condition
+    const hard = flat.filter((x) => x.st === 'contra' && (!x.note[1] || x.fixed));
+    const soft = flat.filter((x) => x.st === 'contra' && x.note[1] && !x.fixed);
     const pos = flat.filter((x) => PL_RANK[x.st]);
     let final = 'na';
     if (hard.length) final = 'contra';
     else if (pos.length) final = pos.reduce((a, b) => (PL_RANK[b.st] > PL_RANK[a.st] ? b : a)).st;
     else if (soft.length) final = 'contra';
-    return { v, r, name, entries, final, conditional: final === 'contra' && !hard.length, warn: final === 'contra' ? [] : soft };
+    return { v, r, name, entries, final, conditional: final === 'contra' && !hard.length, warn: final === 'contra' ? [] : soft, cd4Gone: cd4Gone && final !== 'contra' };
   });
 }
 const plNote = (ln) => (ln[1] ? (S.lang === 'th' ? ln[2] : ln[1]) : '');
 function plItemHtml(x) {
+  const tl = T[S.lang];
   const src = x.entries.map((e) => `<div class="pl-src"><span class="pl-s">${esc(L(e.src))}</span>${e.lines.map((ln) => `<span class="pl-l"><span class="sbadge s-${ln[0]}">${esc(statusLabel(ln[0]))}</span>${plNote(ln) ? ` ${esc(plNote(ln))}` : ''}</span>`).join('')}</div>`).join('');
-  const warn = x.warn.map((w) => `<div class="pl-warn">⚠ ${esc(T[S.lang].plWarn)}: ${esc(L(w.src))}: ${esc(statusLabel('contra'))} — ${esc(plNote(w.note))}</div>`).join('');
-  const path = PL_PATH[x.r] ? `<button class="vlink" data-act="${PL_PATH[x.r]}">${esc(T[S.lang].plPath)} ›</button>` : '';
-  return `<div class="pl-item" data-pl="${x.r}" data-final="${x.final}"><div class="pl-top"><b>${esc(x.name)}</b><span class="sbadge s-${x.final}">${esc(statusLabel(x.final))}${x.conditional ? ' (' + esc(T[S.lang].plConditional) + ')' : ''}</span><span class="pl-go"><button class="vlink" data-act="vaccine" data-id="${x.v.id}">${esc(L(x.v))} ›</button>${path}</span></div>${src}${warn}</div>`;
+  const na = x.cd4Gone ? `<div class="pl-warn">⚠ ${esc(L(CONDITIONS.find((c) => c.id === 'hiv')))}: ${esc(tl.plCd4Na)}</div>` : '';
+  const warn = na + x.warn.map((w) => `<div class="pl-warn">⚠ ${esc(L(w.src))}: ${esc(plNote(w.note))}</div>`).join('');
+  const path = PL_PATH[x.r] ? `<button class="vlink" data-act="${PL_PATH[x.r]}">${esc(tl.plPath)} ›</button>` : '';
+  const why = src ? `<details class="pl-why"><summary>${esc(tl.plSrc)}</summary>${src}</details>` : '';
+  const cond = x.conditional ? `<span class="pl-cond">${esc(tl.plConditional)}</span>` : '';
+  return `<div class="pl-item" data-pl="${x.r}" data-final="${x.final}"><div class="pl-top"><button class="pl-name" data-act="vaccine" data-id="${x.v.id}">${esc(x.name)}</button>${cond}<span class="pl-go">${path}</span></div>${warn}${why}</div>`;
 }
 function plText(res) {
-  const lines = [`${T[S.lang].plTitle} (IDAT 2026)`, `${T[S.lang].plAge}: ${PL.age ? L(AGE_BANDS.find((a) => a.id === PL.age)) : '-'}`, `${T[S.lang].plConds.replace(/ \(.*\)$/, '')}: ${PL.conds.size ? [...PL.conds].map((c) => L(CONDITIONS.find((x) => x.id === c))).join('; ') : '-'}`, ''];
+  const lines = [`${T[S.lang].plTitle} (IDAT 2026)`, `${T[S.lang].plAge}: ${PL.age ? L(AGE_BANDS.find((a) => a.id === PL.age)) : '-'}`, `${T[S.lang].plConds.replace(/ \(.*\)$/, '')}: ${PL.conds.size ? [...PL.conds].map((c) => L(CONDITIONS.find((x) => x.id === c))).join('; ') : '-'}`, ...(plCd4() ? [`${T[S.lang].plCd4}: ${T[S.lang][plCd4() === 'lt' ? 'plCd4Lt' : 'plCd4Ge']}`] : []), ''];
   PL_ORDER.forEach((b) => {
     const g = res.filter((x) => x.final === b); if (!g.length) return;
     lines.push(T[S.lang].plH[b] + ':');
@@ -3102,13 +3127,13 @@ function plBody() {
   const chip = (on, act, val, label) => `<button class="chip${on ? ' on' : ''}" data-act="${act}" data-val="${val}" aria-pressed="${on}">${esc(label)}</button>`;
   const sel = `<div class="fgroup"><span class="lab">${esc(tl.plAge)}:</span>${chip(!PL.age, 'plage', '', t().all)}${AGE_BANDS.map((a) => chip(PL.age === a.id, 'plage', a.id, L(a).replace(/ (years|ปี)$/, ''))).join('')}</div>
     <div class="fgroup"><span class="lab">${esc(tl.plConds)}:</span>${CONDITIONS.map((c) => chip(PL.conds.has(c.id), 'plcond', c.id, S.lang === 'th' ? (c.shortTh || c.th) : (c.short || c.en))).join('')}</div>
-    <div class="alt">${esc(tl.plRule)}</div>`;
+    ${PL.conds.has('hiv') ? `<div class="fgroup" id="plcd4"><span class="lab">${esc(tl.plCd4)}:</span>${chip(!PL.cd4, 'plcd4', '', tl.plCd4U)}${chip(PL.cd4 === 'lt', 'plcd4', 'lt', tl.plCd4Lt)}${chip(PL.cd4 === 'ge', 'plcd4', 'ge', tl.plCd4Ge)}</div>` : ''}
+    <details class="pl-rule"><summary>${esc(tl.plRuleH)}</summary><div class="alt">${esc(tl.plRule)}</div></details>`;
   if (!PL.age && !PL.conds.size) { plCopyText = ''; return `<div class="pl-sel">${sel}</div><div class="empty">${esc(tl.plNone)}</div>`; }
-  const res = plannerResult(PL.age, PL.conds);
+  const res = plannerResult(PL.age, PL.conds, plCd4());
   plCopyText = plText(res);
-  const counts = PL_ORDER.map((b) => [b, res.filter((x) => x.final === b).length]).filter((c) => c[1]);
   const groups = PL_ORDER.map((b) => { const g = res.filter((x) => x.final === b); return g.length ? `<section class="pl-grp" data-bucket="${b}"><h3 class="pl-h"><span class="sbadge s-${b}">${esc(tl.plH[b])}</span><span class="grp-n">${g.length}</span></h3>${g.map(plItemHtml).join('')}</section>` : ''; }).join('');
-  return `<div class="pl-sel">${sel}</div><div class="pl-count">${counts.map((c) => `<span class="sbadge s-${c[0]}">${esc(tl.plH[c[0]])}: ${c[1]}</span>`).join('')}</div>${groups}<div><button class="btn" data-act="plcopy">${esc(tl.plCopy)}</button></div>`;
+  return `<div class="pl-sel">${sel}</div>${groups}<div><button class="btn" data-act="plcopy">${esc(tl.plCopy)}</button></div>`;
 }
 function openPlanner() {
   openModal(mHead(esc(T[S.lang].plTitle), esc(T[S.lang].plSub)) + `<div class="mb" id="plbody">${plBody()}</div>` + mFoot(), { wide: true, rerender: openPlanner });
@@ -3297,6 +3322,7 @@ document.addEventListener('click', (e) => {
     case 'wzreset': WZS[d.wz] = {}; closeModal(); openWizard(d.wz); break;
     case 'wzcopy': copyText(WZ_TEXT[d.wz] || ''); break;
     case 'plage': PL.age = d.val || null; plRefresh(); break;
+    case 'plcd4': PL.cd4 = d.val || null; plRefresh(); break;
     case 'plcond': PL.conds.has(d.val) ? PL.conds.delete(d.val) : PL.conds.add(d.val); plRefresh(); break;
     case 'plcopy': copyText(plCopyText); break;
     case 'ivaddv': IV.hist.push({ kind: 'v', id: ivItems().find((i) => i.live).id, date: ivToday() }); ivRefreshAll(); break;
