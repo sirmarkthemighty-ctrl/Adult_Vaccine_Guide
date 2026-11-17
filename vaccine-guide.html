@@ -327,6 +327,15 @@ a { color: var(--accent); }
 .modal:has(.don-body) { width: min(440px, 100%); }
 @media (max-width: 640px) { .pill-donate .pill-txt { display: none; } .pill-donate { padding: 0 10px; } .modal:has(.don-body) { min-height: 0; border-radius: 16px; margin: auto; } .ov:has(.don-body) { align-items: center; padding: 12px; } }
 
+/* pathogen group headings */
+.grp-h { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; margin: 6px 0 0; font-size: 13px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+.grp-h::after { content: ""; flex: 1; height: 1px; background: var(--line2); }
+.grp-h:first-child { margin-top: 0; }
+.grp-n { order: 1; min-width: 22px; height: 20px; padding: 0 7px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; font-size: 11.5px; letter-spacing: 0; background: var(--chip); color: var(--chipText); }
+.grp-h { order: 0; }
+.grp-bac { color: var(--tt-opt); } .grp-vir { color: var(--tt-scdm); }
+.list .grp-h { margin-top: 10px; }
+
 </style>
 </head>
 <body>
@@ -1614,6 +1623,13 @@ const GUIDE_META = {
 
 const changelogData = [
   {
+    version: '1.7.0', date: 'November 17, 2026', title: 'Grouped by pathogen',
+    features: [
+      'Vaccines are grouped by the type of pathogen they protect against: bacterial (tetanus-diphtheria-pertussis, pneumococcal, meningococcal) and viral (the other 14), with a heading and count for each group, a Pathogen filter, and search by "bacteria" or "virus".',
+    ],
+    bugs: [],
+  },
+  {
     version: '1.6.0', date: 'November 5, 2026', title: 'Donate button',
     features: [
       'Donate button (heart) beside the language switch opens the PromptPay QR code for supporting the guide; the QR stays on a white card in dark mode so it scans.',
@@ -1665,9 +1681,9 @@ const T = {
     sub: 'Adult and elderly immunization, based on the IDAT recommendations 2569 B.E. (2026).',
     by: 'Made by Warodom Phaenthong, M.D.',
     disc: 'Decision support only: read the disclaimer',
-    search: 'Search vaccine, brand, condition, drug…', searchShort: 'Search vaccines…',
+    search: 'Search vaccine, brand, condition, drug…', searchShort: 'Search…',
     age: 'Age', cond: 'Condition', level: 'Level', type: 'Type', all: 'All', any: 'Any',
-    live: 'Live', nonlive: 'Non-live', updated: 'Updated 2026', clear: 'Clear filters', key: 'Key', filters: 'Filters', remove: 'Remove filter',
+    live: 'Live', nonlive: 'Non-live', updated: 'Updated 2026', clear: 'Clear filters', key: 'Key', filters: 'Filters', remove: 'Remove filter', pathogen: 'Pathogen', bacteria: 'Bacteria', virus: 'Virus', grpBac: 'Bacterial vaccines', grpVir: 'Viral vaccines',
     donBtn: 'Donate', donTitle: 'Support this guide', donAlt: 'PromptPay QR code for donations',
     donIntro: 'This guide is free to use. If it helps your practice, you can support its development by scanning this PromptPay QR code with your banking app.',
     donScan: 'Scan with a Thai banking app (PromptPay / Thai QR Payment).',
@@ -1707,9 +1723,9 @@ const T = {
     sub: 'วัคซีนสำหรับผู้ใหญ่และผู้สูงอายุ ตามคำแนะนำของสมาคมโรคติดเชื้อแห่งประเทศไทย พ.ศ. 2569',
     by: 'จัดทำโดย Warodom Phaenthong, M.D.',
     disc: 'เป็นเครื่องมือช่วยตัดสินใจเท่านั้น: อ่านข้อจำกัดความรับผิดชอบ',
-    search: 'ค้นหาวัคซีน ชื่อการค้า โรค ยา…', searchShort: 'ค้นหาวัคซีน…',
+    search: 'ค้นหาวัคซีน ชื่อการค้า โรค ยา…', searchShort: 'ค้นหา…',
     age: 'อายุ', cond: 'ภาวะ', level: 'ระดับ', type: 'ชนิด', all: 'ทั้งหมด', any: 'ทุกแบบ',
-    live: 'เชื้อเป็น', nonlive: 'ไม่ใช่เชื้อเป็น', updated: 'ปรับปรุงปี 2569', clear: 'ล้างตัวกรอง', key: 'คำอธิบายสี', filters: 'ตัวกรอง', remove: 'ลบตัวกรอง',
+    live: 'เชื้อเป็น', nonlive: 'ไม่ใช่เชื้อเป็น', updated: 'ปรับปรุงปี 2569', clear: 'ล้างตัวกรอง', key: 'คำอธิบายสี', filters: 'ตัวกรอง', remove: 'ลบตัวกรอง', pathogen: 'เชื้อก่อโรค', bacteria: 'แบคทีเรีย', virus: 'ไวรัส', grpBac: 'วัคซีนป้องกันเชื้อแบคทีเรีย', grpVir: 'วัคซีนป้องกันเชื้อไวรัส',
     donBtn: 'สนับสนุน', donTitle: 'สนับสนุนคู่มือนี้', donAlt: 'QR พร้อมเพย์สำหรับสนับสนุนผู้พัฒนา',
     donIntro: 'คู่มือนี้ใช้ได้ฟรี หากเป็นประโยชน์ต่อการทำงาน สามารถสนับสนุนการพัฒนาได้โดยสแกน QR พร้อมเพย์นี้ด้วยแอปธนาคาร',
     donScan: 'สแกนด้วยแอปธนาคารของไทย (พร้อมเพย์ / Thai QR Payment)',
@@ -1754,7 +1770,7 @@ const store = {
 };
 const S = {
   lang: store.get('tavg-lang', 'en') === 'th' ? 'th' : 'en',
-  q: '', age: null, conds: new Set(), levels: new Set(), live: null, upd: false,
+  q: '', age: null, conds: new Set(), levels: new Set(), live: null, upd: false, path: null,
   view: store.get('tavg-view', 'grid') === 'list' ? 'list' : 'grid',
   fopen: store.get('tavg-filters', window.innerWidth > 640 ? '1' : '0') === '1',
 };
@@ -1798,11 +1814,20 @@ const isLive = (v) => v.kind.includes('live');
 const hasNonLive = (v) => v.kind.some((k) => k !== 'live');
 const doseLine = (v) => { const s = v.sections.find((x) => x.k === 'admin'); return s ? L(s.items[0]) : ''; };
 
+/* ---------- pathogen type ---------- */
+// Tetanus / diphtheria / pertussis, pneumococcal and meningococcal vaccines target bacteria; the rest target viruses.
+// (This classification is the app's own, not stated in the guideline.)
+const BACTERIAL = ['tdap', 'pcv', 'mening'];
+const PATHOGENS = ['bac', 'vir'];
+VACCINES.forEach((v) => { v.path = BACTERIAL.includes(v.id) ? 'bac' : 'vir'; });
+const pathLabel = (p) => (p === 'bac' ? t().bacteria : t().virus);
+
 /* ---------- search index ---------- */
 const flat = (items, acc = []) => { items.forEach((i) => { acc.push(i.th, i.en); if (i.sub) flat(i.sub, acc); }); return acc; };
 VACCINES.forEach((v) => {
   const parts = [v.en, v.th, v.abbr, v.keywords];
   v.sections.forEach((s) => flat(s.items, parts));
+  parts.push(v.path === 'bac' ? 'bacteria bacterial แบคทีเรีย' : 'virus viral ไวรัส');
   v.hay = parts.join(' ').toLowerCase();
 });
 
@@ -1813,6 +1838,7 @@ function filtered() {
     if (S.live === 'live' && !isLive(v)) return false;
     if (S.live === 'nonlive' && !hasNonLive(v)) return false;
     if (S.upd && !UPDATED_2026.includes(v.id)) return false;
+    if (S.path && v.path !== S.path) return false;
     if (S.age && rowsOf(v).every((r) => !linesFor(r).length)) return false;
     // several conditions: the vaccine must be indicated in every one of them (intersection)
     if (S.conds.size) return [...S.conds].every((c) => condMatch(v, c));
@@ -1916,7 +1942,7 @@ function renderGuides() {
   ].join('');
 }
 // number of filters in use (search not counted) and their removable summary chips
-const activeCount = () => (S.age ? 1 : 0) + S.conds.size + S.levels.size + (S.live ? 1 : 0) + (S.upd ? 1 : 0);
+const activeCount = () => (S.age ? 1 : 0) + S.conds.size + S.levels.size + (S.live ? 1 : 0) + (S.upd ? 1 : 0) + (S.path ? 1 : 0);
 function activeChips() {
   const out = [];
   const x = (act, val, label, sw) => out.push(`<button class="achip" data-act="${act}" data-val="${val}" aria-label="${esc(t().remove + ': ' + label)}">${sw ? `<span class="sw s-${sw}"></span>` : ''}${esc(label)}<span aria-hidden="true">×</span></button>`);
@@ -1925,6 +1951,7 @@ function activeChips() {
   S.levels.forEach((s) => x('level', s, statusLabel(s), s));
   if (S.live) x('live', S.live, S.live === 'live' ? t().live : t().nonlive);
   if (S.upd) x('upd', '1', t().updated);
+  if (S.path) x('path', '', pathLabel(S.path));
   return out.join('');
 }
 function renderFilters() {
@@ -1940,30 +1967,33 @@ function renderFilters() {
     <div class="fgroup"><span class="lab">${esc(t().age)}:</span>${chip(!S.age, 'age', '', t().all)}${AGE_BANDS.map((a) => chip(S.age === a.id, 'age', a.id, L(a).replace(/ (years|ปี)$/, ''))).join('')}</div>
     <div class="fgroup"><span class="lab">${esc(t().cond)}:</span>${chip(!S.conds.size, 'cond', '', t().all)}${CONDITIONS.map((c) => chip(S.conds.has(c.id), 'cond', c.id, S.lang === 'th' ? (c.shortTh || c.th) : (c.short || c.en))).join('')}</div>
     <div class="fgroup"><span class="lab">${esc(t().level)}:</span>${STATUS_ORDER.map((s) => chip(S.levels.has(s), 'level', s, statusLabel(s), s)).join('')}</div>
+    <div class="fgroup"><span class="lab">${esc(t().pathogen)}:</span>${chip(!S.path, 'path', '', t().all)}${PATHOGENS.map((p) => chip(S.path === p, 'path', p, pathLabel(p))).join('')}</div>
     <div class="fgroup"><span class="lab">${esc(t().type)}:</span>${chip(S.live === 'live', 'live', 'live', t().live)}${chip(S.live === 'nonlive', 'live', 'nonlive', t().nonlive)}${chip(S.upd, 'upd', '1', t().updated)}</div>`;
 }
 function renderList() {
   const list = filtered();
-  const active = S.q || S.age || S.conds.size || S.levels.size || S.live || S.upd;
+  const active = S.q || S.age || S.conds.size || S.levels.size || S.live || S.upd || S.path;
   $('#resbar').innerHTML = `<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">${active ? `<button class="clearbtn" data-act="clearall">${esc(t().clear)}</button>` : ''}<span>${t().showing(list.length, VACCINES.length)}${S.conds.size > 1 ? ' · ' + esc(t().allConds) : ''}</span></div><button class="keybtn" data-act="key">${I.key}${esc(t().key)}</button>`;
   const out = $('#out');
   if (!list.length) { out.className = ''; out.innerHTML = `<div class="empty">${esc(t().empty)}</div>`; return; }
+  // each group = a heading (with its count) followed by its vaccines
+  const grouped = (render) => PATHOGENS.map((p) => { const g = list.filter((v) => v.path === p); return g.length ? `<h2 class="grp-h grp-${p}" data-group="${p}">${esc(p === 'bac' ? t().grpBac : t().grpVir)}<span class="grp-n">${g.length}</span></h2>${g.map(render).join('')}` : ''; }).join('');
   if (S.view === 'list') {
     out.className = 'list';
-    out.innerHTML = list.map((v) => `<div class="row" style="--vc:${VCOLORS[v.id]}" data-vid="${v.id}">
+    out.innerHTML = grouped((v) => `<div class="row" style="--vc:${VCOLORS[v.id]}" data-vid="${v.id}">
       <div><div class="nm">${esc(S.lang === 'th' ? v.th : v.en)}</div><div class="th">${esc(S.lang === 'th' ? v.en : v.th)} · ${esc(v.abbr)}</div></div>
       <div>${statusBox(v)}</div>
-      <button class="detbtn" data-act="vaccine" data-id="${v.id}">${esc(t().details)} ›</button></div>`).join('');
+      <button class="detbtn" data-act="vaccine" data-id="${v.id}">${esc(t().details)} ›</button></div>`);
     return;
   }
   out.className = 'grid';
-  out.innerHTML = list.map((v) => `<article class="card" style="--vc:${VCOLORS[v.id]}" data-vid="${v.id}">
+  out.innerHTML = grouped((v) => `<article class="card" style="--vc:${VCOLORS[v.id]}" data-vid="${v.id}">
     <div class="toprow"><div class="names"><h3>${esc(S.lang === 'th' ? v.th : v.en)}</h3><div class="th">${esc(S.lang === 'th' ? v.en : v.th)}</div><div class="abbr">${esc(v.abbr)}</div></div>
     <button class="detbtn" data-act="vaccine" data-id="${v.id}">${esc(t().details)} ›</button></div>
     ${tagsHtml(v)}
     ${statusBox(v)}
     <div class="dose"><b>${esc(t().dose)}:</b> ${esc(doseLine(v))}</div>
-  </article>`).join('');
+  </article>`);
 }
 function renderAll() { document.documentElement.lang = S.lang; document.title = t().title; renderHeader(); renderGuides(); renderFilters(); renderList(); }
 
@@ -2398,11 +2428,12 @@ document.addEventListener('click', (e) => {
     case 'cond': if (!val) S.conds.clear(); else S.conds.has(val) ? S.conds.delete(val) : S.conds.add(val); renderFilters(); renderList(); break;
     case 'level': S.levels.has(val) ? S.levels.delete(val) : S.levels.add(val); renderFilters(); renderList(); break;
     case 'live': S.live = S.live === val ? null : val; renderFilters(); renderList(); break;
+    case 'path': S.path = val || null; renderFilters(); renderList(); break;
     case 'upd': S.upd = !S.upd; renderFilters(); renderList(); break;
     case 'ftoggle': S.fopen = !S.fopen; store.set('tavg-filters', S.fopen ? '1' : '0'); renderFilters(); break;
     case 'view': S.view = val; store.set('tavg-view', val); renderFilters(); renderList(); break;
     case 'clearq': S.q = ''; renderFilters(); renderList(); $('#q').focus(); break;
-    case 'clearall': S.q = ''; S.age = null; S.conds.clear(); S.levels.clear(); S.live = null; S.upd = false; renderFilters(); renderList(); break;
+    case 'clearall': S.q = ''; S.age = null; S.conds.clear(); S.levels.clear(); S.live = null; S.upd = false; S.path = null; renderFilters(); renderList(); break;
     case 'vaccine': openVaccine(el.dataset.id); break;
     case 'group': openGroup(el.dataset.id); break;
     case 'general': openGeneral(); break;
