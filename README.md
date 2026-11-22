@@ -30,6 +30,8 @@ the full guideline, or the product label.
 - **Interval checker**: live vaccines (same day or 4 weeks apart) and the 4 / 6 / 7 / 8 month waits after HRIG, packed red
   cells, plasma or platelets, and IVIG before measles, mumps, rubella and varicella vaccines.
 - **Zoster** and **HPV** pathways in the same step-by-step style as the pneumococcal and hepatitis B ones.
+- **Tetanus** wound pathway (history, clean or contaminated wound, time since the last dose) and **Rabies** pathway (pre-exposure, or WHO category I to III with vaccine history, IM and intradermal schedules, immunoglobulin), in a "Wounds & bites" row. Rabies follows the Saovabha Red Cross guideline 2018.
+- CD4 row in the patient planner when HIV is picked; a calmer planner layout; 12, 20 and 28 week marks on the pregnancy timeline.
 - A pregnancy timeline (Td/Tdap, influenza, RSV windows by week) at the top of the pregnancy guide.
 - The guide buttons sit in three labelled rows (tools and reference, vaccine pathways, special populations) inside a
   collapsible section.
