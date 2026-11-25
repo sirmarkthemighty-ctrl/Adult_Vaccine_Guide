@@ -510,6 +510,12 @@ button.pl-h .cv svg { width: 14px; height: 14px; }
 .pl-item.open .pl-name { box-shadow: 0 0 0 2px color-mix(in srgb, currentColor 45%, transparent); }
 .pl-grp[data-bucket=na] .pl-name { color: var(--tt-na); font-weight: 600; }
 
+/* interval checker rules as a short bullet list */
+.iv-rules { font-size: 12.5px; color: var(--muted, var(--faint)); display: flex; flex-direction: column; gap: 4px; }
+.iv-rules ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 3px; }
+.iv-rules li.sub { list-style: none; margin-left: -4px; }
+.iv-rules li.sub ul { list-style: circle; }
+
 </style>
 </head>
 <body>
@@ -1797,6 +1803,16 @@ const GUIDE_META = {
 // Data comes from data-*.js (transcribed from the IDAT 2569/2026 guideline); ASSETS is injected by the build.
 
 const changelogData = [
+  {
+    version: '1.10.13', date: 'November 25, 2026', title: 'Interval checker audit',
+    features: [
+      'Audit of the interval checker against the general principles chapter (page 4): live vaccines on the same day or 4 weeks apart, and 4, 6, 7 and 8 months after HRIG, packed red cells, plasma or platelets, and IVIG before measles, mumps, rubella and varicella vaccines. The rules and dates match the guideline.',
+    ],
+    bugs: [
+      'An antibody product dated after the planned date no longer gives a false "wait" for MMR or varicella; within 2 weeks after the planned vaccine it now says the vaccine would need repeating, and with more than 2 weeks it says nothing to do.',
+      'A live vaccine dated less than 4 weeks after the planned live vaccine (not the same day) is now flagged as breaking the 4-week interval instead of a plain note.',
+    ],
+  },
   {
     version: '1.10.12', date: 'November 24, 2026', title: 'Infection-type groups and Bedside UI',
     features: [
@@ -3339,12 +3355,22 @@ Object.assign(T.en, {
   ivLL: (n, d, e) => `${n} (${d}): live vaccines need 4 weeks between them. Earliest ${e}.`,
   ivLLok: (n, d) => `${n} (${d}): at least 4 weeks ago, so this is fine.`,
   ivFuture: (n, d) => `${n} (${d}) is dated after the planned date.`,
+  ivFutureLL: (n, d) => `${n} (${d}) is dated after the planned date, less than 4 weeks later and not on the same day: live vaccines need 4 weeks between them, so this order breaks the interval.`,
+  ivRepeatPlan: (v, p, d, e) => `${p} (${d}) is within 2 weeks after the planned ${v}: ${v} would need repeating once the waiting time has passed (from ${e}).`,
   ivNoLive: (n, d) => `${n} (${d}): an inactivated vaccine needs no interval after a live vaccine.`,
   ivAb: (n, d, e) => `${n} (${d}): measles, mumps, rubella and varicella vaccines wait for the antibodies to clear. Earliest ${e}.`,
   ivAbok: (n, d) => `${n} (${d}): the waiting time has passed.`,
   ivNoAb: (n, d) => `${n} (${d}): the guideline gives no waiting time for this vaccine after antibody products (it gives one for measles, mumps, rubella and varicella vaccines).`,
   ivRepeat: (v, p, e) => `${p} was given within 2 weeks after ${v}: repeat ${v} once the waiting time has passed (from ${e}).`,
-  ivLiveTag: 'live', ivInactTag: 'inactivated', ivRule: 'Rules from the guideline: two live vaccines go on the same day or at least 4 weeks apart; inactivated vaccines have no limit; after an antibody product the measles, mumps, rubella and varicella vaccines wait 4 months (HRIG 20 IU/kg), 6 months (packed red cells 10 mL/kg), 7 months (plasma or platelets 10 mL/kg) or 8 months (IVIG 300–400 mg/kg). Other doses: see the guideline.',
+  ivLiveTag: 'live', ivInactTag: 'inactivated', ivRuleH: 'Rules from the guideline',
+  ivRules: [
+    'Two live vaccines: give on the same day, or at least 4 weeks apart.',
+    'Inactivated vaccines: no interval limit.',
+    'After an antibody product, wait before measles, mumps, rubella and varicella vaccines:',
+    ['4 months after HRIG 20 IU/kg', '6 months after packed red cells 10 mL/kg', '7 months after plasma or platelets 10 mL/kg', '8 months after IVIG 300–400 mg/kg'],
+    'Antibody product within 2 weeks after one of those vaccines: repeat the vaccine once the waiting time has passed.',
+    'Other doses of antibody products: see the guideline.',
+  ],
 });
 Object.assign(T.th, {
   ivTitle: 'ตรวจระยะห่างวัคซีน', ivSub: 'หลักการทั่วไป: วัคซีนชนิดเชื้อมีชีวิตและผลิตภัณฑ์ที่มีแอนติบอดี (หน้า 4)',
@@ -3355,12 +3381,22 @@ Object.assign(T.th, {
   ivLL: (n, d, e) => `${n} (${d}): วัคซีนชนิดเชื้อมีชีวิตต้องเว้นระยะห่างกัน 4 สัปดาห์ ให้ได้เร็วที่สุด ${e}`,
   ivLLok: (n, d) => `${n} (${d}): ห่างกันอย่างน้อย 4 สัปดาห์แล้ว ให้ได้`,
   ivFuture: (n, d) => `${n} (${d}) มีวันที่หลังวันที่จะให้วัคซีน`,
+  ivFutureLL: (n, d) => `${n} (${d}) มีวันที่หลังวันที่จะให้วัคซีน ห่างไม่ถึง 4 สัปดาห์และไม่ใช่วันเดียวกัน: วัคซีนชนิดเชื้อมีชีวิตต้องเว้นระยะ 4 สัปดาห์ การเรียงลำดับนี้จึงผิดระยะห่าง`,
+  ivRepeatPlan: (v, p, d, e) => `${p} (${d}) อยู่ภายใน 2 สัปดาห์หลังวัคซีน ${v} ที่จะให้: ต้องให้ ${v} ซ้ำเมื่อพ้นระยะเวลารอ (ตั้งแต่ ${e})`,
   ivNoLive: (n, d) => `${n} (${d}): วัคซีนชนิดเชื้อตายไม่ต้องเว้นระยะหลังวัคซีนชนิดเชื้อมีชีวิต`,
   ivAb: (n, d, e) => `${n} (${d}): วัคซีนหัด คางทูม หัดเยอรมัน และอีสุกอีใส ต้องรอให้แอนติบอดีหมดไปก่อน ให้ได้เร็วที่สุด ${e}`,
   ivAbok: (n, d) => `${n} (${d}): พ้นระยะเวลารอแล้ว`,
   ivNoAb: (n, d) => `${n} (${d}): คำแนะนำไม่ได้ระบุระยะเวลารอหลังผลิตภัณฑ์ที่มีแอนติบอดีสำหรับวัคซีนนี้ (ระบุไว้เฉพาะวัคซีนหัด คางทูม หัดเยอรมัน และอีสุกอีใส)`,
   ivRepeat: (v, p, e) => `ได้รับ ${p} ภายใน 2 สัปดาห์หลังได้ ${v}: ให้ ${v} ซ้ำเมื่อพ้นระยะเวลารอ (ตั้งแต่ ${e})`,
-  ivLiveTag: 'เชื้อเป็น', ivInactTag: 'เชื้อตาย', ivRule: 'หลักการจากคำแนะนำ: วัคซีนชนิดเชื้อมีชีวิตสองชนิดให้ในวันเดียวกันหรือห่างกันอย่างน้อย 4 สัปดาห์ วัคซีนชนิดเชื้อตายไม่จำกัด หลังได้ผลิตภัณฑ์ที่มีแอนติบอดี วัคซีนหัด คางทูม หัดเยอรมัน และอีสุกอีใสต้องรอ 4 เดือน (HRIG 20 หน่วยสากล/กก.) 6 เดือน (เม็ดเลือดแดงเข้มข้น 10 มล./กก.) 7 เดือน (พลาสมาหรือเกล็ดเลือด 10 มล./กก.) หรือ 8 เดือน (IVIG 300–400 มก./กก.) ขนาดอื่นดูในคำแนะนำ',
+  ivLiveTag: 'เชื้อเป็น', ivInactTag: 'เชื้อตาย', ivRuleH: 'หลักการจากคำแนะนำ',
+  ivRules: [
+    'วัคซีนชนิดเชื้อมีชีวิตสองชนิด: ให้ในวันเดียวกัน หรือห่างกันอย่างน้อย 4 สัปดาห์',
+    'วัคซีนชนิดเชื้อตาย: ไม่จำกัดระยะห่าง',
+    'หลังได้ผลิตภัณฑ์ที่มีแอนติบอดี ต้องรอก่อนให้วัคซีนหัด คางทูม หัดเยอรมัน และอีสุกอีใส:',
+    ['4 เดือนหลัง HRIG 20 หน่วยสากล/กก.', '6 เดือนหลังเม็ดเลือดแดงเข้มข้น 10 มล./กก.', '7 เดือนหลังพลาสมาหรือเกล็ดเลือด 10 มล./กก.', '8 เดือนหลัง IVIG 300–400 มก./กก.'],
+    'ถ้าได้ผลิตภัณฑ์ที่มีแอนติบอดีภายใน 2 สัปดาห์หลังวัคซีนเหล่านี้: ให้วัคซีนซ้ำเมื่อพ้นระยะเวลารอ',
+    'ขนาดอื่นของผลิตภัณฑ์ที่มีแอนติบอดี: ดูในคำแนะนำ',
+  ],
 });
 const IV_PROD = [
   { id: 'hrig', months: 4, n: X('HRIG 20 IU/kg', 'HRIG 20 หน่วยสากล/กก.') },
@@ -3394,13 +3430,18 @@ function ivCompute(st) {
     const n = ivName(h.it), d = ivFmt(h.D), diff = Math.round((T0 - h.D) / 86400000);
     if (!P.live) rows.push({ ok: true, text: tl.ivNoLive(n, d) });
     else if (diff === 0) rows.push({ ok: true, text: tl.ivSame(n, d) });
-    else if (diff < 0) rows.push({ ok: null, text: tl.ivFuture(n, d) });
+    else if (diff < 0) rows.push({ ok: null, text: P.live && h.it.live && -diff < 28 ? tl.ivFutureLL(n, d) : tl.ivFuture(n, d) });
     else if (diff >= 28) rows.push({ ok: true, text: tl.ivLLok(n, d) });
     else { const e = ivAddDays(h.D, 28); wait(e); rows.push({ ok: false, text: tl.ivLL(n, d, ivFmt(e)) }); }
   });
   prod.forEach((h) => {
-    const n = L(h.p.n), d = ivFmt(h.D);
-    if (!(P.live && IV_AB.includes(P.v.id))) { rows.push({ ok: true, text: tl.ivNoAb(n, d) }); return; }
+    const n = L(h.p.n), d = ivFmt(h.D), mmrVzv = P.live && IV_AB.includes(P.v.id);
+    if (!mmrVzv) { rows.push({ ok: true, text: tl.ivNoAb(n, d) }); return; }
+    if (h.D > T0) { // the product comes after the planned date: no wait, but within 2 weeks after the vaccine it means repeating the vaccine
+      rows.push({ ok: null, text: tl.ivFuture(n, d) });
+      if (Math.round((h.D - T0) / 86400000) <= 14) advice.push(tl.ivRepeatPlan(L(P.v), n, d, ivFmt(ivAddMonths(h.D, h.p.months))));
+      return;
+    }
     const e = ivAddMonths(h.D, h.p.months);
     if (T0 >= e) rows.push({ ok: true, text: tl.ivAbok(n, d) });
     else { wait(e); rows.push({ ok: false, text: tl.ivAb(n, d, ivFmt(e)) }); }
@@ -3428,7 +3469,7 @@ function ivBody() {
     <label class="iv-f"><span>${esc(tl.ivDate)}</span><input type="date" id="iv-date" data-iv="date" value="${esc(IV.date)}"></label></div>
     <div class="bt">${esc(tl.ivHist)}</div>${rows}
     <div class="iv-add"><button class="btn" data-act="ivaddv">+ ${esc(tl.ivAddV)}</button><button class="btn" data-act="ivaddp">+ ${esc(tl.ivAddP)}</button></div>
-    <div id="ivres">${ivResultHtml()}</div><div class="alt">${esc(tl.ivRule)}</div>`;
+    <div id="ivres">${ivResultHtml()}</div><div class="iv-rules"><div class="bt">${esc(tl.ivRuleH)}</div><ul>${tl.ivRules.map((r) => (Array.isArray(r) ? `<li class="sub"><ul>${r.map((s) => `<li>${esc(s)}</li>`).join('')}</ul></li>` : `<li>${esc(r)}</li>`)).join('')}</ul></div>`;
 }
 function openInterval() {
   openModal(mHead(esc(T[S.lang].ivTitle), esc(T[S.lang].ivSub)) + `<div class="mb" id="ivbody">${ivBody()}</div>` + mFoot(), { wide: false, rerender: openInterval });
