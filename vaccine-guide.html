@@ -516,6 +516,26 @@ button.pl-h .cv svg { width: 14px; height: 14px; }
 .iv-rules li.sub { list-style: none; margin-left: -4px; }
 .iv-rules li.sub ul { list-style: circle; }
 
+/* ---------- smoother motion: folds slide, windows fade out, new content rises in, hover and press ease ---------- */
+.bb { padding: 0; display: grid; grid-template-rows: 1fr; transition: grid-template-rows .3s cubic-bezier(.16, 1, .3, 1), opacity .22s ease; }
+.bb > .bi { min-height: 0; overflow: hidden; padding: 0 14px; }
+.bb > .bi::before, .bb > .bi::after { content: ""; display: block; height: 10px; }
+.bb > .bi::after { height: 12px; }
+.blk.closed > .bb { display: grid; grid-template-rows: 0fr; opacity: 0; visibility: hidden; transition: grid-template-rows .3s cubic-bezier(.16, 1, .3, 1), opacity .18s ease, visibility 0s .3s; }
+.blk > .bh .cv { transition: transform .25s cubic-bezier(.16, 1, .3, 1); }
+.toolhdr .cv, button.pl-h .cv { transition: transform .25s cubic-bezier(.16, 1, .3, 1); }
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } }
+.reveal { animation: rise .26s cubic-bezier(.16, 1, .3, 1); }
+.ov-out { position: fixed; inset: 0; z-index: 50; display: flex; align-items: flex-start; justify-content: center; padding: 16px; overflow: visible; background: rgba(15, 23, 42, .7); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); pointer-events: none; animation: bd-out .18s ease forwards; }
+@media (max-width: 640px) { .ov-out { padding: 0; } }
+.ov-out .modal { animation: bd-zoom-out .18s ease forwards; }
+@keyframes bd-out { to { opacity: 0; } }
+@keyframes bd-zoom-out { to { opacity: 0; transform: scale(.97) translateY(4px); } }
+button, .chip, .gbtn, .pw-opt, .pl-name, .btn, .card { transition: background-color .16s ease, border-color .16s ease, color .16s ease, box-shadow .2s ease, transform .16s cubic-bezier(.16, 1, .3, 1), opacity .16s ease; }
+@media (hover: hover) { .card:hover { transform: translateY(-2px); } .gbtn:hover, .chip:hover, .pl-name:hover { transform: translateY(-1px); } }
+button:active { transform: scale(.97); }
+@media (prefers-reduced-motion: reduce) { .bb, .blk.closed > .bb, .reveal, .ov-out, .ov-out .modal { animation: none; transition: none; } .card:hover, .gbtn:hover, .chip:hover, .pl-name:hover, button:active { transform: none; } }
+
 </style>
 </head>
 <body>
@@ -1804,6 +1824,13 @@ const GUIDE_META = {
 
 const changelogData = [
   {
+    version: '1.10.14', date: 'November 26, 2026', title: 'Smoother motion',
+    features: [
+      'Smoother animations: foldable sections slide open and shut instead of jumping, windows fade and shrink away when closed, new content (a pathway plan, the next question, a planner reason, the tools row) rises in, and cards, chips and buttons ease on hover and press. Everything stays still for people who ask their device to reduce motion.',
+    ],
+    bugs: [],
+  },
+  {
     version: '1.10.13', date: 'November 25, 2026', title: 'Interval checker audit',
     features: [
       'Audit of the interval checker against the general principles chapter (page 4): live vaccines on the same day or 4 weeks apart, and 4, 6, 7 and 8 months after HRIG, packed red cells, plasma or platelets, and IVIG before measles, mumps, rubella and varicella vaccines. The rules and dates match the guideline.',
@@ -2238,9 +2265,11 @@ function openModal(html, opts = {}) {
   modalStack.push({ ov, rerender: opts.rerender });
   return ov;
 }
+// replay the short rise-in on one element (used for what just changed, never for whole re-renders)
+function reveal(el) { if (!el) return; el.classList.remove('reveal'); void el.offsetWidth; el.classList.add('reveal'); }
 function closeModal() {
   const m = modalStack.pop();
-  if (m) m.ov.remove();
+  if (m) { const ov = m.ov; ov.className = 'ov-out'; ov.setAttribute('inert', ''); setTimeout(() => ov.remove(), 180); }
   if (!modalStack.length) document.body.style.overflow = '';
 }
 function rerenderModals() {
@@ -2256,7 +2285,7 @@ const mFoot = (left = '') => `<div class="mf"><div style="display:flex;gap:8px;f
 const foldKey = (k) => 'tavg-fold:' + k;
 function block(key, color, title, body, defOpen) {
   const st = store.get(foldKey(key), defOpen ? 'o' : 'c');
-  return `<section class="blk${st === 'c' ? ' closed' : ''}" style="--k:${color}" data-fold="${esc(key)}"><button class="bh" data-act="fold" aria-expanded="${st !== 'c'}"><span class="t"><i></i>${title}</span><span class="cv">${I.chev}</span></button><div class="bb">${body}</div></section>`;
+  return `<section class="blk${st === 'c' ? ' closed' : ''}" style="--k:${color}" data-fold="${esc(key)}"><button class="bh" data-act="fold" aria-expanded="${st !== 'c'}"><span class="t"><i></i>${title}</span><span class="cv">${I.chev}</span></button><div class="bb"><div class="bi">${body}</div></div></section>`;
 }
 function itemsHtml(items) {
   return `<ul>${items.map((i) => {
@@ -2658,7 +2687,7 @@ document.addEventListener('click', (e) => {
     case 'cond': if (!val) S.conds.clear(); else S.conds.has(val) ? S.conds.delete(val) : S.conds.add(val); renderFilters(); renderList(); break;
     case 'level': S.levels.has(val) ? S.levels.delete(val) : S.levels.add(val); renderFilters(); renderList(); break;
     case 'live': S.live = S.live === val ? null : val; renderFilters(); renderList(); break;
-    case 'ttoggle': S.tools = !S.tools; store.set('tavg-tools', S.tools ? '1' : '0'); renderGuides(); break;
+    case 'ttoggle': S.tools = !S.tools; store.set('tavg-tools', S.tools ? '1' : '0'); renderGuides(); if (S.tools) reveal($('#gbtns')); break;
     case 'gtoggle': S.group = !S.group; store.set('tavg-group', S.group ? '1' : '0'); renderFilters(); renderList(); break;
     case 'upd': S.upd = !S.upd; renderFilters(); renderList(); break;
     case 'ftoggle': S.fopen = !S.fopen; store.set('tavg-filters', S.fopen ? '1' : '0'); renderFilters(); break;
@@ -2997,7 +3026,7 @@ function openWizard(id, inPlace) {
   const html = mHead(esc(L(def.title)), esc(L(def.sub))) + `<div class="mb"><ol class="pw">${steps}</ol>${card}${details}</div>` +
     mFoot(`<button class="btn" data-act="wzreset" data-wz="${id}">${esc(ht().restart)}</button><button class="btn" data-act="vaccine" data-id="${def.vaccine}">${esc(L(v))} ›</button>`);
   const top = modalStack[modalStack.length - 1];
-  if (inPlace && top) { top.ov.querySelector('.modal').innerHTML = html; return; }
+  if (inPlace && top) { const m = top.ov.querySelector('.modal'); m.innerHTML = html; reveal(m.querySelector('.plan')); reveal([...m.querySelectorAll('.pw-step')].pop()); return; }
   openModal(html, { wide: true, rerender: () => openWizard(id) });
 }
 function wzPick(id, qid, val) {
@@ -3550,8 +3579,8 @@ document.addEventListener('click', (e) => {
     case 'wzpick': wzPick(d.wz, d.q, d.val); break;
     case 'wzreset': WZS[d.wz] = {}; openWizard(d.wz, true); break;
     case 'wzcopy': copyText(WZ_TEXT[d.wz] || ''); break;
-    case 'plopen': PL.openI = PL.openI === d.r ? null : d.r; plRefresh(); break;
-    case 'plgrp': { const s = PL.openG || new Set([plFirst]); s.has(d.b) ? s.delete(d.b) : s.add(d.b); PL.openG = s; plRefresh(); break; }
+    case 'plopen': PL.openI = PL.openI === d.r ? null : d.r; plRefresh(); if (PL.openI) reveal(document.querySelector('.pl-item.open .pl-det')); break;
+    case 'plgrp': { const s = PL.openG || new Set([plFirst]); s.has(d.b) ? s.delete(d.b) : s.add(d.b); PL.openG = s; plRefresh(); if (s.has(d.b)) reveal(document.querySelector(`[data-bucket=${d.b}] .pl-pills`)); break; }
     case 'plclear': PL.age = null; PL.conds.clear(); PL.cd4 = null; PL.openI = null; PL.openG = null; plRefresh(); break;
     case 'plage': PL.age = d.val || null; plRefresh(); break;
     case 'plcd4': PL.cd4 = d.val || null; plRefresh(); break;
